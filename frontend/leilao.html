@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lote 07 · Campo Vermelho · Leilão · Spice Gallery</title>
+  <meta name="description" content="Leilão de Campo Vermelho, óleo sobre linho de Rafa Quintino. Dê seu lance no Spice Gallery.">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Gloock&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script>document.documentElement.classList.add('js')</script>
+</head>
+<body class="noite">
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  <div class="cortina" aria-hidden="true"><div class="cortina__painel"></div><div class="cortina__painel"></div><p class="cortina__marca">Spice</p><span class="cortina__contador">000</span></div>
+
+  <!-- PHP: include 'views/partials/topo.php' -->
+  <header class="topo">
+    <div class="topo__interno envolve">
+      <a class="marca" href="index.html" aria-label="Spice Gallery, início">
+        <span class="marca__nome">Spice<i>.</i></span>
+        <span class="marca__sub">Gallery<br>museu online</span>
+      </a>
+      <button class="topo__menu" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+      <nav class="nav" id="nav" aria-label="Principal">
+        <a href="index.html#galeria">Galeria</a>
+        <a href="artista.html">Artistas</a>
+        <a href="leiloes.html" aria-current="page">Leilões<span class="ao-vivo" aria-hidden="true"></span></a>
+        <a href="entrar.html">Entrar</a>
+        <a class="botao botao--acafrao botao--sem-seta" href="publicar.html">Publicar arte</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <!-- PHP: $leilao = Leilao por id (?id=7) + JOIN Obra + Usuario; $lances = Lance WHERE id_leilao ORDER BY valor DESC -->
+    <div class="envolve">
+      <nav class="trilha" aria-label="Você está em">
+        <ol>
+          <li><a href="leiloes.html">Leilões</a></li>
+          <li aria-current="page">Lote 07</li>
+        </ol>
+      </nav>
+
+      <div class="exposicao">
+        <div class="parede-luz" data-holofote>
+          <figure class="quadro quadro--ouro quadro--pendurado">
+            <div class="quadro__passe"><img src="assets/img/obras/campo-vermelho.webp" alt="Campo Vermelho: grandes campos de vermelho, preto e rosa com bordas esfumadas" width="800" height="1066"></div>
+          </figure>
+        </div>
+
+        <aside class="painel-lance" data-cascata>
+          <p class="rotulo">Lote 07 · Ao vivo</p>
+          <h1 class="ficha__titulo">Campo Vermelho</h1>
+          <a class="ficha__artista" href="artista.html">
+            <span class="avatar" style="--cor:var(--paprica)">RQ</span>
+            <span><strong>Rafa Quintino</strong><small>22 anos · Óleo sobre linho</small></span>
+          </a>
+
+          <p class="legenda">Encerra em</p>
+          <div class="contagem" data-fim="2026-12-05T21:00:00-03:00" style="margin:12px 0 30px">5 de dezembro de 2026, 21h</div>
+
+          <p class="legenda">Lance atual</p>
+          <p class="painel-lance__valor" data-lance-atual data-contar="1480" data-moeda>R$ 1.480</p>
+          <p class="painel-lance__sub"><span data-qtd-lances>17</span> lances · incremento mínimo R$ 50 · inicial R$ 600</p>
+
+          <!-- PHP: esconder o formulário se o usuário logado for o autor da obra (RN-08) ou se não houver login -->
+          <form class="cartao-form" method="post" action="lance.php" data-lance data-atual="1480" data-incremento="50" data-fim="2026-12-05T21:00:00-03:00" style="margin-top:26px">
+            <input type="hidden" name="id_leilao" value="7">
+            <div class="campo campo-valor" style="margin-bottom:6px">
+              <label for="valor">Seu lance (mínimo <span data-minimo>R$ 1.530</span>)</label>
+              <span aria-hidden="true">R$</span>
+              <input id="valor" name="valor" type="number" inputmode="numeric" step="1" min="1530" value="1530" required>
+            </div>
+            <div class="rapidos" role="group" aria-label="Lances rápidos">
+              <button type="button" data-soma="50">+ R$ 50</button>
+              <button type="button" data-soma="100">+ R$ 100</button>
+              <button type="button" data-soma="250">+ R$ 250</button>
+            </div>
+            <p class="campo__erro" role="alert"></p>
+            <button class="botao botao--acafrao botao--largo" type="submit">Dar lance</button>
+          </form>
+          <p class="campo__ajuda" style="margin-top:14px">Artistas não dão lances nas próprias obras. Lances não podem ser cancelados.</p>
+        </aside>
+      </div>
+    </div>
+
+    <section class="secao envolve" aria-labelledby="historico-titulo" style="padding-top:0">
+      <div class="avaliacoes">
+        <div>
+          <p class="rotulo">Histórico</p>
+          <h2 class="secao__titulo" id="historico-titulo" style="margin-bottom:28px">Quem levantou a mão</h2>
+          <ol class="regras-lista" data-revelar>
+            <li>Início e fim do leilão são fixos.</li>
+            <li>Cada lance supera o atual pelo incremento mínimo.</li>
+            <li>No horário final, o maior lance válido vence e abre-se a pendência de pagamento.</li>
+          </ol>
+        </div>
+        <!-- PHP: foreach ($lances as $lance): -->
+        <ol class="historico" aria-live="polite" data-cascata>
+          <li><span class="avatar" style="--cor:var(--anil)">CV</span><span><strong>Caio Ventura</strong><time datetime="2026-11-09T14:12">hoje, 14:12</time></span><b>R$ 1.480</b></li>
+          <li><span class="avatar" style="--cor:var(--cardamomo)">BA</span><span><strong>Bento Ayala</strong><time datetime="2026-11-09T11:40">hoje, 11:40</time></span><b>R$ 1.400</b></li>
+          <li><span class="avatar" style="--cor:var(--canela)">NT</span><span><strong>Nina Takeda</strong><time datetime="2026-11-08T22:03">ontem, 22:03</time></span><b>R$ 1.250</b></li>
+          <li><span class="avatar" style="--cor:var(--anil)">CV</span><span><strong>Caio Ventura</strong><time datetime="2026-11-08T19:30">ontem, 19:30</time></span><b>R$ 1.100</b></li>
+          <li><span class="avatar" style="--cor:var(--rosa)">LM</span><span><strong>Lia Moraes</strong><time datetime="2026-11-07T20:15">7 nov, 20:15</time></span><b>R$ 900</b></li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <!-- PHP: include 'views/partials/rodape.php' -->
+  <footer class="rodape">
+    <div class="envolve">
+      <div class="rodape__grade">
+        <div>
+          <h2>Um museu sem medo de julgamento.</h2>
+          <p>Spice Gallery é um museu online onde jovens artistas publicam, recebem avaliações e levam suas obras a leilão.</p>
+        </div>
+        <div>
+          <h3>Visitar</h3>
+          <ul><li><a href="index.html#galeria">Galeria</a></li><li><a href="artista.html">Artistas</a></li><li><a href="leiloes.html">Leilões</a></li></ul>
+        </div>
+        <div>
+          <h3>Criar</h3>
+          <ul><li><a href="publicar.html">Publicar arte</a></li><li><a href="entrar.html#cadastro">Criar conta</a></li><li><a href="entrar.html">Entrar</a></li></ul>
+        </div>
+        <div>
+          <h3>A casa</h3>
+          <ul><li><a href="index.html#regras">Regras da casa</a></li><li><a href="publicar.html#termos">Direitos autorais</a></li><li><a href="leiloes.html#como-funciona">Como funciona o leilão</a></li></ul>
+        </div>
+      </div>
+      <p class="rodape__marca" aria-hidden="true">Spice</p>
+      <div class="rodape__base"><span>© 2026 Spice Gallery · Projeto SA, SENAI Joinville</span><span>Miguel · Bruna · Uriel</span></div>
+    </div>
+  </footer>
+
+  <script src="assets/js/vendor/gsap.min.js" defer></script>
+  <script src="assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <script src="assets/js/vendor/SplitText.min.js" defer></script>
+  <script src="assets/js/vendor/Flip.min.js" defer></script>
+  <script src="assets/js/vendor/ScrambleTextPlugin.min.js" defer></script>
+  <script src="assets/js/vendor/lenis.min.js" defer></script>
+  <script src="assets/js/movimento.js" defer></script>
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>

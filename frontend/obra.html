@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sol de Açafrão, de Lia Moraes · Spice Gallery</title>
+  <meta name="description" content="Sol de Açafrão, pintura digital de Lia Moraes. Veja a obra e deixe sua avaliação no Spice Gallery.">
+  <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Gloock&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  <div class="cortina" aria-hidden="true"><div class="cortina__painel"></div><div class="cortina__painel"></div><p class="cortina__marca">Spice</p><span class="cortina__contador">000</span></div>
+
+  <!-- PHP: include 'views/partials/topo.php' -->
+  <header class="topo">
+    <div class="topo__interno envolve">
+      <a class="marca" href="index.html" aria-label="Spice Gallery, início">
+        <span class="marca__nome">Spice<i>.</i></span>
+        <span class="marca__sub">Gallery<br>museu online</span>
+      </a>
+      <button class="topo__menu" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+      <nav class="nav" id="nav" aria-label="Principal">
+        <a href="index.html#galeria" aria-current="page">Galeria</a>
+        <a href="artista.html">Artistas</a>
+        <a href="leiloes.html">Leilões<span class="ao-vivo" aria-hidden="true"></span></a>
+        <a href="entrar.html">Entrar</a>
+        <a class="botao botao--tinta botao--sem-seta" href="publicar.html">Publicar arte</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <!-- PHP: $obra = buscar Obra por id (?id=1) + JOIN Usuario (autor) + AVG/COUNT de Avaliacao -->
+    <div class="envolve">
+      <nav class="trilha" aria-label="Você está em">
+        <ol>
+          <li><a href="index.html">Galeria</a></li>
+          <li><a href="index.html#galeria">Sala 02</a></li>
+          <li aria-current="page">Nº 0001</li>
+        </ol>
+      </nav>
+
+      <div class="exposicao">
+        <div class="parede-luz" data-holofote>
+          <figure class="quadro quadro--ouro quadro--pendurado">
+            <div class="quadro__passe"><img src="assets/img/obras/sol-de-acafrao.webp" alt="Sol de Açafrão: um grande sol amarelo sobre faixa azul, meia-lua vermelha e uma barra preta vertical" width="800" height="1000"></div>
+          </figure>
+        </div>
+
+        <aside class="ficha" data-cascata>
+          <p class="rotulo">Nº 0001 · Pintura digital</p>
+          <h1 class="ficha__titulo">Sol de Açafrão</h1>
+          <a class="ficha__artista" href="artista.html">
+            <span class="avatar" style="--cor:var(--paprica)">LM</span>
+            <span><strong>Lia Moraes</strong><small>19 anos · Joinville, SC</small></span>
+          </a>
+          <p class="ficha__texto">Pintei pensando nas manhãs de feira com a minha avó: o calor do açafrão, o azul do toldo, a sombra comprida de quem chega cedo. Formas simples, porque a memória também simplifica.</p>
+          <dl>
+            <div><dt>Categoria</dt><dd>Pintura digital</dd></div>
+            <div><dt>Publicada em</dt><dd>14 out 2026</dd></div>
+            <div><dt>Avaliação</dt><dd><span class="estrelas" style="--nota:4.8" aria-hidden="true"></span> 4,8</dd></div>
+            <div><dt>Status</dt><dd>Publicada</dd></div>
+          </dl>
+          <div class="hero__acoes" style="margin-top:0">
+            <a class="botao botao--tinta" href="#avaliar">Avaliar esta obra</a>
+            <a class="botao" href="artista.html">Galeria da artista</a>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <section class="secao envolve" id="avaliacoes" aria-labelledby="avaliacoes-titulo" style="padding-top:0">
+      <div class="avaliacoes">
+        <div>
+          <p class="rotulo">Avaliações</p>
+          <div class="media" data-revelar>
+            <b>4,8</b>
+            <div><span class="estrelas" style="--nota:4.8" aria-hidden="true"></span><small>média de 31 avaliações</small></div>
+          </div>
+          <ul class="distribuicao" aria-label="Distribuição das notas" data-revelar>
+            <li><span>5★</span><span class="barra"><i style="--p:81%"></i></span><span>25</span></li>
+            <li><span>4★</span><span class="barra"><i style="--p:13%"></i></span><span>4</span></li>
+            <li><span>3★</span><span class="barra"><i style="--p:6%"></i></span><span>2</span></li>
+            <li><span>2★</span><span class="barra"><i style="--p:0%"></i></span><span>0</span></li>
+            <li><span>1★</span><span class="barra"><i style="--p:0%"></i></span><span>0</span></li>
+          </ul>
+
+          <!-- PHP: mostrar o formulário só se houver usuário logado E ele não for o autor da obra (RN-04, RN-05) -->
+          <form class="cartao-form" id="avaliar" method="post" action="avaliar.php" data-revelar>
+            <input type="hidden" name="id_obra" value="1">
+            <input type="hidden" name="id_avaliacao" value="">
+            <fieldset class="campo">
+              <legend>Sua nota</legend>
+              <div class="estrelas-input">
+                <input type="radio" id="nota-5" name="nota" value="5" required><label for="nota-5">★<span class="sr-only">5 estrelas</span></label>
+                <input type="radio" id="nota-4" name="nota" value="4"><label for="nota-4">★<span class="sr-only">4 estrelas</span></label>
+                <input type="radio" id="nota-3" name="nota" value="3"><label for="nota-3">★<span class="sr-only">3 estrelas</span></label>
+                <input type="radio" id="nota-2" name="nota" value="2"><label for="nota-2">★<span class="sr-only">2 estrelas</span></label>
+                <input type="radio" id="nota-1" name="nota" value="1"><label for="nota-1">★<span class="sr-only">1 estrela</span></label>
+              </div>
+            </fieldset>
+            <div class="campo">
+              <label for="comentario">Comentário</label>
+              <textarea id="comentario" name="comentario" maxlength="1000" placeholder="O que essa obra fez você sentir?"></textarea>
+            </div>
+            <button class="botao botao--tinta botao--largo" type="submit">Publicar avaliação</button>
+            <p class="campo__ajuda" style="margin-top:14px">Artistas não avaliam a própria obra. Você pode editar ou apagar só as suas avaliações.</p>
+          </form>
+        </div>
+
+        <div>
+          <h2 class="secao__titulo" id="avaliacoes-titulo" style="margin:0 0 36px">O que a parede ouviu</h2>
+          <!-- PHP: foreach ($avaliacoes as $a): ordem por dataHora DESC -->
+          <ol class="comentarios" data-cascata>
+            <li class="comentario comentario--meu">
+              <span class="avatar" style="--cor:var(--cardamomo)">US</span>
+              <div>
+                <div class="comentario__cab"><strong>Você</strong><span class="estrelas" role="img" style="--nota:4" aria-label="4 de 5"></span><time datetime="2026-11-08">ontem</time></div>
+                <p>A barra preta cortando o sol me deixou inquieto, no bom sentido. Queria ver isso em tamanho real.</p>
+                <!-- PHP: ações só aparecem quando id_usuario da avaliação = usuário logado (RN-06) -->
+                <div class="comentario__acoes">
+                  <button class="texto-botao" type="button" data-editar="12" data-nota="4">Editar</button>
+                  <form method="post" action="avaliacao-excluir.php" data-confirmar="Excluir sua avaliação? Isso não pode ser desfeito.">
+                    <input type="hidden" name="id_avaliacao" value="12">
+                    <button class="texto-botao" type="submit">Excluir</button>
+                  </form>
+                </div>
+              </div>
+            </li>
+            <li class="comentario">
+              <span class="avatar" style="--cor:var(--anil)">CV</span>
+              <div>
+                <div class="comentario__cab"><strong>Caio Ventura</strong><span class="estrelas" role="img" style="--nota:5" aria-label="5 de 5"></span><time datetime="2026-11-06">há 3 dias</time></div>
+                <p>A paleta é perfeita. Esse amarelo contra o azul tem a temperatura exata de manhã de verão.</p>
+              </div>
+            </li>
+            <li class="comentario">
+              <span class="avatar" style="--cor:var(--canela)">NT</span>
+              <div>
+                <div class="comentario__cab"><strong>Nina Takeda</strong><span class="estrelas" role="img" style="--nota:5" aria-label="5 de 5"></span><time datetime="2026-10-30">há 10 dias</time></div>
+                <p>Lembra cartaz da Bauhaus, mas com afeto. As linhas no canto parecem um caderno de receitas.</p>
+              </div>
+            </li>
+            <li class="comentario">
+              <span class="avatar" style="--cor:var(--paprica)">RQ</span>
+              <div>
+                <div class="comentario__cab"><strong>Rafa Quintino</strong><span class="estrelas" role="img" style="--nota:4" aria-label="4 de 5"></span><time datetime="2026-10-22">há 18 dias</time></div>
+                <p>Composição forte. Senti falta de alguma textura, mas talvez a limpeza seja justamente o ponto.</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section class="secao envolve" aria-labelledby="mais-titulo" style="padding-top:0">
+      <header class="secao__cab">
+        <div>
+          <p class="rotulo">Da mesma parede</p>
+          <h2 class="secao__titulo" id="mais-titulo">Mais de Lia Moraes</h2>
+        </div>
+        <a class="link-seta" href="artista.html" data-revelar>Ver galeria completa</a>
+      </header>
+      <div class="salao salao--artista">
+        <article class="obra" data-categoria="pintura">
+          <a class="obra__link" href="obra.html" data-cursor="Ver obra">
+            <figure class="quadro quadro--madeira"><div class="quadro__passe"><img src="assets/img/obras/mercado-6h.webp" alt="Mercado, 6h, de Lia Moraes" width="800" height="600" loading="lazy"></div></figure>
+            <div class="placa"><span class="placa__num">Nº 0004</span><h3 class="placa__titulo">Mercado, 6h</h3><p class="placa__meta">Óleo sobre tela · 2025</p><p class="placa__nota"><span class="estrelas" style="--nota:4.3" aria-hidden="true"></span><span>4,3</span><small>(12)</small></p></div>
+          </a>
+        </article>
+        <article class="obra" data-categoria="digital">
+          <a class="obra__link" href="obra.html" data-cursor="Ver obra">
+            <figure class="quadro quadro--fino"><div class="quadro__passe"><img src="assets/img/obras/mare-alta.webp" alt="Maré Alta, de Lia Moraes" width="800" height="600" loading="lazy"></div></figure>
+            <div class="placa"><span class="placa__num">Nº 0011</span><h3 class="placa__titulo">Maré Alta</h3><p class="placa__meta">Pintura digital · 2026</p><p class="placa__nota"><span class="estrelas" style="--nota:4.0" aria-hidden="true"></span><span>4,0</span><small>(6)</small></p></div>
+          </a>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- PHP: include 'views/partials/rodape.php' -->
+  <footer class="rodape">
+    <div class="envolve">
+      <div class="rodape__grade">
+        <div>
+          <h2>Um museu sem medo de julgamento.</h2>
+          <p>Spice Gallery é um museu online onde jovens artistas publicam, recebem avaliações e levam suas obras a leilão.</p>
+        </div>
+        <div>
+          <h3>Visitar</h3>
+          <ul><li><a href="index.html#galeria">Galeria</a></li><li><a href="artista.html">Artistas</a></li><li><a href="leiloes.html">Leilões</a></li></ul>
+        </div>
+        <div>
+          <h3>Criar</h3>
+          <ul><li><a href="publicar.html">Publicar arte</a></li><li><a href="entrar.html#cadastro">Criar conta</a></li><li><a href="entrar.html">Entrar</a></li></ul>
+        </div>
+        <div>
+          <h3>A casa</h3>
+          <ul><li><a href="index.html#regras">Regras da casa</a></li><li><a href="publicar.html#termos">Direitos autorais</a></li><li><a href="leiloes.html#como-funciona">Como funciona o leilão</a></li></ul>
+        </div>
+      </div>
+      <p class="rodape__marca" aria-hidden="true">Spice</p>
+      <div class="rodape__base"><span>© 2026 Spice Gallery · Projeto SA, SENAI Joinville</span><span>Miguel · Bruna · Uriel</span></div>
+    </div>
+  </footer>
+
+  <script src="assets/js/vendor/gsap.min.js" defer></script>
+  <script src="assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <script src="assets/js/vendor/SplitText.min.js" defer></script>
+  <script src="assets/js/vendor/Flip.min.js" defer></script>
+  <script src="assets/js/vendor/ScrambleTextPlugin.min.js" defer></script>
+  <script src="assets/js/vendor/lenis.min.js" defer></script>
+  <script src="assets/js/movimento.js" defer></script>
+  <script src="assets/js/app.js" defer></script>
+</body>
+</html>
