@@ -30,7 +30,7 @@
   const rnd = gsap.utils.random;
   const fmt = new Intl.NumberFormat('pt-BR');
   const brl = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
-  const CORES = ['#e3a42b', '#b8361e', '#d9826b', '#f0c24b', '#5f6b3a', '#efe6d6'];
+  const CORES = ['#c9a24a', '#e3a5b2', '#a8445f', '#f3dc9a', '#c4d5e8', '#cfe0d0', '#fbf6f1'];
   const TITULOS = '.secao__titulo, .corredor__titulo, .vitrine__titulo, .chamada__titulo, .cartaz__nome, .leiloes-cab h1, .ficha__titulo, .atelie__titulo, .porta__arte p';
 
   // Tudo que aparece na tela espera a cortina abrir (promessa nova a cada página montada).
@@ -187,7 +187,7 @@
   function poeira(canvas) {
     const ctx = canvas.getContext('2d');
     const noite = canvas.dataset.tom === 'noite' || document.body.classList.contains('noite');
-    const tons = noite ? ['255,214,150', '227,164,43', '255,240,210'] : ['227,164,43', '184,54,30', '138,74,38'];
+    const tons = noite ? ['255,214,150', '217,178,94', '255,240,210'] : ['201,162,74', '227,165,178', '159,187,149'];
     const area = canvas.parentElement;
     let w = 0, h = 0, parts = [], ativo = false, impar = false;
     const mouse = { x: -9999, y: -9999 };
@@ -286,7 +286,7 @@
       const img = link.querySelector('img');
       const brilho = document.createElement('span');
       brilho.className = 'brilho';
-      q.append(brilho);
+      (q.querySelector('.quadro__passe') || q).append(brilho); // o passe recorta o reflexo; o quadro fica livre para a crista
       const r0 = parseFloat(getComputedStyle(q).getPropertyValue('--r')) || 0;
       gsap.set(q, { rotation: r0, transformPerspective: 900 });
       const rx = gsap.quickTo(q, 'rotationX', { duration: 0.6, ease: 'power3' });
@@ -541,7 +541,7 @@
       .to(q, { scale: 22, duration: 3, ease: 'power3.in', onUpdate: aproximar })
       .to(ma, { xPercent: -150, scale: 1.5, autoAlpha: 0, duration: 1.7, ease: 'power2.in' }, '<')
       .to(mb, { xPercent: 150, scale: 1.5, autoAlpha: 0, duration: 1.7, ease: 'power2.in' }, '<')
-      .set(m, { backgroundColor: '#e3a42b' })
+      .set(m, { backgroundColor: '#f3d3da' })
       .set(q, { autoAlpha: 0 })
       .from($$('.mergulho__alem > *', m), { yPercent: 90, autoAlpha: 0, stagger: 0.28, duration: 1, ease: 'power3.out' })
       .to({}, { duration: 0.9 });
