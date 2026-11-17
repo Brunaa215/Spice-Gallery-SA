@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+/vendor/
+/.idea/
+/.vscode/
+*.log
+.DS_Store
+# imagens enviadas pelos usuarios
+/public/uploads/obras/*
+!/public/uploads/obras/.gitkeep

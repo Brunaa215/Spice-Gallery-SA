@@ -1,0 +1,2 @@
+# Bloqueia acesso HTTP direto ao codigo da aplicacao.
+Require all denied

@@ -1,0 +1,5 @@
+# Imagens enviadas pelos artistas: nada aqui pode ser executado como script.
+<FilesMatch "\.(php|phtml|phar|php\d)$">
+    Require all denied
+</FilesMatch>
+Options -Indexes

@@ -1,0 +1,2 @@
+# Os scripts SQL nao devem ser baixados por HTTP.
+Require all denied
