@@ -30,6 +30,7 @@ foreach ($obras as $o)
         <div class="hero__acoes" style="margin-top:0">
           <?php if ($ehDono): ?>
             <a class="botao botao--tinta" href="<?= e(url('obras.create')) ?>">Publicar nova obra</a>
+            <a class="botao" href="<?= e(url('carteira')) ?>">Minha carteira</a>
             <a class="botao" href="<?= e(url('password')) ?>">Minha senha</a>
           <?php else: ?>
             <a class="botao botao--tinta" href="#obras">Ver as obras</a>
@@ -77,7 +78,7 @@ foreach ($obras as $o)
               <tr>
                 <td><a href="<?= e(url('leiloes.show', ['id' => $l['id']])) ?>"><?= numeroLote($l['id']) ?></a></td>
                 <td><?= e($l['titulo']) ?></td>
-                <td><?= e(Leilao::estado($l)) ?></td>
+                <td><?= $l['id_vencedor'] ? 'Vendida para ' . e($l['vencedor'] ?? 'outra conta') : e(Leilao::estado($l)) ?></td>
                 <td><?= dataHora($l['dataInicio']) ?></td>
                 <td><?= dataHora($l['dataFim']) ?></td>
                 <td><?= brl(Leilao::atual($l)) ?> (<?= (int) $l['lances'] ?>)</td>

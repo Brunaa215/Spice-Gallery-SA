@@ -1584,3 +1584,46 @@ html:not(.presas) .mergulho__quadro { width: min(52vw, 300px); }
 /* folga em cima e embaixo: a cópia precisa ter a mesma altura da máscara, senão os dois
    deslocamentos opostos (yPercent) não se anulam e a tinta sai torta no meio da animação */
 .regra__tinta > span { display: block; padding-block: 0.25em; color: var(--num-cor); will-change: transform; }
+
+/* ---------- backend (PHP) ----------
+   Peças que só existem com o servidor: "Sair" no menu (é um formulário POST)
+   e as tabelas da curadoria / "Seus leilões". */
+.nav__sair { display: contents; }
+.nav__sair button {
+  background: none;
+  border: 0;
+  padding: 6px 0;
+  cursor: pointer;
+  color: inherit;
+  font: italic 500 1.2rem/1.2 var(--fonte-display);
+}
+.nav__sair button:hover { color: var(--paprica); }
+@media (max-width: 880px) { .nav__sair button { font-size: 2.2rem; } }
+
+.tabela-rolagem { overflow-x: auto; }
+.tabela { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+.tabela th {
+  text-align: left;
+  font: 500 0.7rem/1.4 var(--fonte-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--tinta-suave);
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--linha-forte);
+  white-space: nowrap;
+}
+.tabela td { padding: 12px; border-bottom: 1px solid var(--linha); vertical-align: middle; }
+.tabela tr:hover td { background: color-mix(in srgb, var(--rosa) 12%, transparent); }
+
+/* carteira de créditos: saldo no menu, resumo + compra lado a lado, extrato */
+.nav__saldo { font: 500 0.72rem/1 var(--fonte-mono); letter-spacing: 0.04em; color: var(--ouro-escuro); margin-left: 4px; white-space: nowrap; }
+.noite .nav__saldo { color: var(--acafrao); }
+@media (max-width: 880px) { .nav__saldo { font-size: 1rem; } }
+.carteira { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(30px, 5vw, 80px); align-items: start; }
+.carteira .cartaz__numeros dd { font-size: clamp(1.6rem, 3.4vw, 2.5rem); overflow-wrap: anywhere; }
+@media (max-width: 860px) { .carteira { grid-template-columns: 1fr; } }
+.pacotes { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0 18px; }
+.pacotes .botao { padding: 0.6em 1.1em; font-size: 1rem; }
+.tabela .credito { color: var(--salvia-escura); }
+.tabela .debito { color: var(--paprica); }
+.noite .tabela .credito { color: var(--menta); }

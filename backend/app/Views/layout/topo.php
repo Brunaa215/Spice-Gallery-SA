@@ -43,6 +43,7 @@ $marcar = fn(string $item): string => $menu === $item ? ' aria-current="page"' :
         <a href="<?= e(url('leiloes')) ?>"<?= $marcar('leiloes') ?>>Leilões<span class="ao-vivo" aria-hidden="true"></span></a>
         <?php if ($current): ?>
           <a href="<?= e(url('artistas.show', ['id' => $current['id']])) ?>"<?= $marcar('minha-sala') ?>>Minha sala</a>
+          <a href="<?= e(url('carteira')) ?>"<?= $marcar('carteira') ?>>Carteira <span class="nav__saldo"><?= brl($current['saldo']) ?></span></a>
           <?php if ($isAdmin): ?>
             <a href="<?= e(url('curadoria')) ?>"<?= $marcar('curadoria') ?>>Curadoria</a>
           <?php endif; ?>

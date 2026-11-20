@@ -56,6 +56,7 @@ use App\Core\Csrf;
             <span>Aceito os termos de uso e de direitos autorais.<small>Obrigatório para publicar obras.</small></span>
           </label>
           <button class="botao botao--tinta botao--largo" type="submit">Criar conta de artista</button>
+          <p class="campo__ajuda" style="margin-top:14px">Toda conta nova ganha <?= brl(\App\Models\Movimentacao::BONUS_BOAS_VINDAS) ?> em créditos fictícios para dar lances nos leilões.</p>
         </form>
       </div>
     </div>

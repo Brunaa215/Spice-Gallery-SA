@@ -4,6 +4,7 @@
  * Variáveis: $leiloes (só APROVADOS, com o estado calculado)
  */
 use App\Models\Leilao;
+use App\Models\Movimentacao;
 use App\Models\Obra;
 ?>
   <main id="conteudo">
@@ -71,7 +72,7 @@ use App\Models\Obra;
           <p class="rotulo">Regras do martelo</p>
           <h2 class="secao__titulo" id="como-titulo">Como funciona</h2>
         </div>
-        <p class="secao__nota" data-revelar>O leilão encerra sozinho no horário marcado. O maior lance válido vence e o sistema abre uma pendência de pagamento entre comprador e artista.</p>
+        <p class="secao__nota" data-revelar>Os lances usam créditos fictícios da carteira (toda conta nova ganha <?= brl(Movimentacao::BONUS_BOAS_VINDAS) ?>). O leilão encerra sozinho no horário marcado: o maior lance vence e o valor vai direto para o artista.</p>
       </header>
       <div class="regras">
         <article class="regra">
@@ -82,12 +83,12 @@ use App\Models\Obra;
         <article class="regra">
           <span class="regra__num" aria-hidden="true">II</span>
           <h3>Lances</h3>
-          <p>Cada lance supera o atual somando o incremento mínimo. Quem criou a obra não pode dar lance nela.</p>
+          <p>Cada lance supera o atual somando o incremento mínimo e fica reservado nos seus créditos enquanto você estiver na frente. Quem criou a obra não pode dar lance nela.</p>
         </article>
         <article class="regra">
           <span class="regra__num" aria-hidden="true">III</span>
           <h3>Martelo</h3>
-          <p>No horário final o leilão fecha. Vence o maior lance e comprador e artista combinam o pagamento.</p>
+          <p>No horário final o leilão fecha. Vence o maior lance: o valor sai da carteira de quem venceu e entra na carteira do artista.</p>
         </article>
       </div>
     </section>

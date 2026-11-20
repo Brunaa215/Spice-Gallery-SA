@@ -16,7 +16,7 @@ use App\Core\Csrf;
     <section class="secao envolve" aria-label="Contas" style="padding-top:clamp(30px,4vw,60px)">
       <div class="tabela-rolagem">
         <table class="tabela">
-          <thead><tr><th>#</th><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Desde</th><th>Situação</th><th></th></tr></thead>
+          <thead><tr><th>#</th><th>Nome</th><th>E-mail</th><th>Perfil</th><th>Créditos</th><th>Desde</th><th>Situação</th><th></th></tr></thead>
           <tbody>
             <?php foreach ($usuarios as $u): ?>
               <tr>
@@ -24,6 +24,7 @@ use App\Core\Csrf;
                 <td><a href="<?= e(url('artistas.show', ['id' => $u['id']])) ?>"><?= e($u['nome']) ?></a></td>
                 <td><?= e($u['email']) ?></td>
                 <td><?= e($u['perfil']) ?></td>
+                <td><?= brl($u['saldo']) ?></td>
                 <td><?= dataCurta($u['criadoEm']) ?></td>
                 <td><?= (int) $u['ativo'] ? 'Ativa' : 'Desativada' ?></td>
                 <td>

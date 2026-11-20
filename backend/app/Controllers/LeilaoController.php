@@ -6,6 +6,7 @@ use App\Core\Csrf;
 use App\Core\View;
 use App\Models\Lance;
 use App\Models\Leilao;
+use App\Models\Movimentacao;
 use RuntimeException;
 
 final class LeilaoController
@@ -36,6 +37,8 @@ final class LeilaoController
             'leilao' => $leilao,
             'lances' => (new Lance())->doLeilao($id),
             'ehAutor' => $ehAutor,
+            // Crédito que a pessoa ainda pode usar em lances (saldo menos o que está reservado).
+            'disponivel' => $u ? (new Movimentacao())->resumo((int) $u['id'])['disponivel'] : 0,
         ]);
     }
 

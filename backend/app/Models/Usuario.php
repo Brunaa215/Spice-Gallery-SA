@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use App\Core\Database;
+use Throwable;
 
 final class Usuario
 {
@@ -60,7 +61,7 @@ final class Usuario
     public function all(): array
     {
         return Database::connection()
-            ->query('SELECT id, nome, email, perfil, ativo, criadoEm FROM Usuario ORDER BY id')
+            ->query('SELECT id, nome, email, perfil, ativo, saldo, criadoEm FROM Usuario ORDER BY id')
             ->fetchAll();
     }
 
@@ -72,12 +73,23 @@ final class Usuario
     }
 
     // RN-01/RN-02: toda conta nova é de artista e registra quando aceitou os termos.
+    // Ela já nasce com os créditos de boas-vindas; conta e créditos entram juntos ou nenhum entra.
     public function create(string $nome, string $email, string $senha): int
     {
         $pdo = Database::connection();
-        $s = $pdo->prepare('INSERT INTO Usuario (nome, email, senhaHash, perfil, aceiteTermosEm) VALUES (?, ?, ?, ?, NOW())');
-        $s->execute([$nome, $email, password_hash($senha, PASSWORD_DEFAULT), self::ARTISTA]);
-        return (int) $pdo->lastInsertId();
+        $pdo->beginTransaction();
+        try {
+            $s = $pdo->prepare('INSERT INTO Usuario (nome, email, senhaHash, perfil, aceiteTermosEm) VALUES (?, ?, ?, ?, NOW())');
+            $s->execute([$nome, $email, password_hash($senha, PASSWORD_DEFAULT), self::ARTISTA]);
+            $id = (int) $pdo->lastInsertId();
+            Movimentacao::lancar($pdo, $id, Movimentacao::BONUS, Movimentacao::BONUS_BOAS_VINDAS, 'Créditos de boas-vindas');
+            $pdo->commit();
+            return $id;
+        } catch (Throwable $e) {
+            if ($pdo->inTransaction())
+                $pdo->rollBack();
+            throw $e;
+        }
     }
 
     public function changePassword(int $id, string $senha): void

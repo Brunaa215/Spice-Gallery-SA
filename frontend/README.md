@@ -1,12 +1,22 @@
 # Spice Gallery: front-end
 
-Protótipo navegável do front. HTML, CSS e JavaScript puros, sem build. Abra `index.html` no navegador (funciona direto do arquivo, sem servidor).
+**Esta pasta está ligada ao backend.** Ela é a pasta que o navegador acessa: o `index.php` daqui recebe
+todas as páginas e chama o PHP de `../backend` (controllers, models, banco). O visual (`assets/`) é
+usado pelo site de verdade, e as imagens enviadas pelos artistas caem em `uploads/`.
 
-Para ver a troca de páginas sem recarregar, sirva a pasta por HTTP (direto do arquivo o navegador bloqueia o `fetch`, e cada link recarrega a página normalmente):
+Para abrir o site (com o MySQL do XAMPP ligado e o banco importado, veja `../backend/README.md`):
 
 ```
-php -S localhost:8000        # ou: python -m http.server 8000
+php -S localhost:8000 -t frontend
 ```
+
+(rodado da raiz do projeto; ou `cd frontend` e `php -S localhost:8000`) e acesse `http://localhost:8000`.
+Sem o `-t frontend`, rodando da raiz, a página inicial dá "Not Found". O Live Server do VS Code não roda PHP, então não serve para isso.
+
+As telas `.html` originais do protótipo estão em `prototipo/`, só como referência. Elas viraram as
+views PHP em `../backend/app/Views` (tabela abaixo) e mostram dados fixos.
+
+O texto abaixo é o README original do protótipo.
 
 ## Navegação sem recarregar
 

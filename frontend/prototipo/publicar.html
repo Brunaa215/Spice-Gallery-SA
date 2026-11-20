@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Publicar obra · Spice Gallery</title>
+  <meta name="description" content="Publique sua obra no Spice Gallery: título, descrição, categoria e imagem.">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Marcellus+SC&family=Pinyon+Script&display=swap">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  <div class="cortina" aria-hidden="true"><div class="cortina__painel"></div><div class="cortina__painel"></div><p class="cortina__marca">Spice</p><span class="cortina__contador">000</span></div>
+
+  <!-- PHP: include 'views/partials/topo.php' — página só para usuários logados com perfil de artista (RN-03) -->
+  <header class="topo">
+    <div class="topo__interno envolve">
+      <a class="marca" href="index.html" aria-label="Spice Gallery, início">
+        <span class="marca__nome">Spice<i>.</i></span>
+        <span class="marca__sub">Gallery<br>museu online</span>
+      </a>
+      <button class="topo__menu" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+      <nav class="nav" id="nav" aria-label="Principal">
+        <a href="index.html#galeria">Galeria</a>
+        <a href="artista.html">Artistas</a>
+        <a href="leiloes.html">Leilões<span class="ao-vivo" aria-hidden="true"></span></a>
+        <a href="entrar.html">Entrar</a>
+        <a class="botao botao--tinta botao--sem-seta" href="publicar.html" aria-current="page">Publicar arte</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <!-- PHP: INSERT em Obra (status = 'PUBLICADA' ou 'EM_ANALISE'); se disponivelLeilao, INSERT em Leilao com status 'AGUARDANDO_CURADORIA' -->
+    <form class="atelie envolve" method="post" action="publicar.php" enctype="multipart/form-data">
+      <label class="soltar" data-soltar data-cursor="Escolher">
+        <input type="file" name="imagem" accept="image/png,image/jpeg,image/webp" required>
+        <span class="soltar__vazio">
+          <svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="8" y="14" width="64" height="52"/><rect x="16" y="22" width="48" height="36" stroke-dasharray="4 4"/><path d="M40 50V30M32 37l8-8 8 8"/><circle cx="40" cy="6" r="2.5" fill="currentColor"/><path d="M40 8l-14 6M40 8l14 6"/></svg>
+          <strong>Solte sua obra aqui</strong>
+          <span>ou clique para escolher. PNG, JPG ou WEBP, até 10 MB.</span>
+        </span>
+        <span class="quadro quadro--ouro quadro--pendurado" hidden>
+          <span class="quadro__passe" style="display:block"><img alt="Prévia da obra escolhida"></span>
+        </span>
+      </label>
+
+      <div data-cascata>
+        <p class="rotulo">Ateliê · nova obra</p>
+        <h1 class="atelie__titulo">Pendure sua obra.</h1>
+        <p class="secao__nota" style="margin-bottom:38px">Toda obra precisa de título, descrição, categoria e imagem. Depois de publicada, ela ganha um número de catálogo e uma parede só dela.</p>
+
+        <div class="campo">
+          <label for="titulo">Título</label>
+          <input id="titulo" name="titulo" type="text" maxlength="255" required autocomplete="off" placeholder="Ex.: Sol de Açafrão">
+        </div>
+        <div class="campo">
+          <label for="descricao">Descrição</label>
+          <textarea id="descricao" name="descricao" maxlength="2000" required placeholder="Conte de onde a obra veio, técnica, inspiração..."></textarea>
+        </div>
+        <div class="campo">
+          <label for="categoria">Categoria</label>
+          <select id="categoria" name="categoria" required>
+            <option value="">Escolha uma categoria</option>
+            <option value="pintura">Pintura</option>
+            <option value="digital">Ilustração / pintura digital</option>
+            <option value="aquarela">Aquarela</option>
+            <option value="gravura">Gravura</option>
+            <option value="fotografia">Fotografia</option>
+            <option value="escultura">Escultura</option>
+          </select>
+        </div>
+
+        <label class="marcar" id="termos">
+          <input type="checkbox" name="aceiteTermos" value="1" required>
+          <span>Declaro que sou autor(a) desta obra e aceito os termos de direitos autorais.
+            <small>A obra continua sua. O Spice Gallery só exibe e, se você quiser, leiloa.</small></span>
+        </label>
+
+        <label class="marcar">
+          <input type="checkbox" name="disponivelLeilao" value="1">
+          <span>Disponível para leilão
+            <small>Só obras exclusivas. A curadoria aprova antes de o leilão abrir.</small></span>
+        </label>
+
+        <fieldset class="leilao-campos" hidden disabled>
+          <legend class="sr-only">Dados do leilão</legend>
+          <div class="campos-dupla">
+            <div class="campo">
+              <label for="valorInicial">Lance inicial (R$)</label>
+              <input id="valorInicial" name="valorInicial" type="number" min="1" step="1" inputmode="numeric" required placeholder="600">
+            </div>
+            <div class="campo">
+              <label for="incremento">Incremento mínimo (R$)</label>
+              <input id="incremento" name="incremento" type="number" min="1" step="1" inputmode="numeric" required placeholder="50">
+            </div>
+            <div class="campo">
+              <label for="dataInicio">Início</label>
+              <input id="dataInicio" name="dataInicio" type="datetime-local" required>
+            </div>
+            <div class="campo">
+              <label for="dataFim">Término</label>
+              <input id="dataFim" name="dataFim" type="datetime-local" required>
+            </div>
+          </div>
+        </fieldset>
+
+        <button class="botao botao--tinta botao--largo" type="submit">Publicar na galeria</button>
+      </div>
+    </form>
+  </main>
+
+  <!-- PHP: include 'views/partials/rodape.php' -->
+  <footer class="rodape">
+    <div class="envolve">
+      <div class="rodape__grade">
+        <div>
+          <h2>Um museu sem medo de julgamento.</h2>
+          <p>Spice Gallery é um museu online onde jovens artistas publicam, recebem avaliações e levam suas obras a leilão.</p>
+        </div>
+        <div>
+          <h3>Visitar</h3>
+          <ul><li><a href="index.html#galeria">Galeria</a></li><li><a href="artista.html">Artistas</a></li><li><a href="leiloes.html">Leilões</a></li></ul>
+        </div>
+        <div>
+          <h3>Criar</h3>
+          <ul><li><a href="publicar.html">Publicar arte</a></li><li><a href="entrar.html#cadastro">Criar conta</a></li><li><a href="entrar.html">Entrar</a></li></ul>
+        </div>
+        <div>
+          <h3>A casa</h3>
+          <ul><li><a href="index.html#regras">Regras da casa</a></li><li><a href="publicar.html#termos">Direitos autorais</a></li><li><a href="leiloes.html#como-funciona">Como funciona o leilão</a></li></ul>
+        </div>
+      </div>
+      <p class="rodape__marca" aria-hidden="true">Spice</p>
+      <div class="rodape__base"><span>© 2026 Spice Gallery · Projeto SA, SENAI Joinville</span><span>Miguel · Bruna · Uriel</span></div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/vendor/gsap.min.js" defer></script>
+  <script src="../assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <script src="../assets/js/vendor/SplitText.min.js" defer></script>
+  <script src="../assets/js/vendor/Flip.min.js" defer></script>
+  <script src="../assets/js/vendor/ScrambleTextPlugin.min.js" defer></script>
+  <script src="../assets/js/vendor/lenis.min.js" defer></script>
+  <script src="../assets/js/movimento.js" defer></script>
+  <script src="../assets/js/app.js" defer></script>
+</body>
+</html>

@@ -86,9 +86,17 @@ function localDateTime(string $v): ?string
 const MESES = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
 const CORES_AVATAR = ['paprica', 'anil', 'cardamomo', 'canela', 'rosa', 'acafrao'];
 
+// R$ 1.480 / R$ 8,50: os centavos só aparecem quando existem.
 function brl(float|string|null $v): string
 {
-    return 'R$ ' . number_format((float) $v, 0, ',', '.');
+    $v = (float) $v;
+    $casas = centavos(abs($v)) % 100 === 0 ? 0 : 2;
+    return 'R$ ' . number_format($v, $casas, ',', '.');
+}
+// Dinheiro em centavos (inteiro): comparar e somar assim evita erro de arredondamento de float.
+function centavos(float|string|null $v): int
+{
+    return (int) round((float) $v * 100);
 }
 function nota(float|string|null $v): string
 {

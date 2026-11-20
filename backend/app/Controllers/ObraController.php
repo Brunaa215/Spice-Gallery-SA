@@ -184,6 +184,11 @@ final class ObraController
             flash('warning', 'Esta obra está em leilão com lances e não pode ser excluída agora.');
             go('obras.show', ['id' => $id]);
         }
+        // Obra arrematada já foi paga com créditos: ela pertence a quem venceu.
+        if ($leilao && $leilao['id_vencedor']) {
+            flash('warning', 'Esta obra foi arrematada em leilão e não pode mais ser excluída.');
+            go('obras.show', ['id' => $id]);
+        }
         (new Obra())->delete($id);
         Upload::remover($obra['urlImagem']);
         flash('success', 'Obra excluída.');

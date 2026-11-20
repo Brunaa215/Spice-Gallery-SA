@@ -3,7 +3,7 @@ namespace App\Core;
 
 use RuntimeException;
 
-// Recebe a imagem da obra e grava em public/uploads/obras com nome aleatório.
+// Recebe a imagem da obra e grava em frontend/uploads/obras com nome aleatório.
 final class Upload
 {
     public const LIMITE = 10 * 1024 * 1024; // 10 MB, igual ao aviso do front
@@ -15,7 +15,7 @@ final class Upload
         return $arquivo !== null && ($arquivo['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_NO_FILE;
     }
 
-    // Devolve o caminho relativo à pasta public/ (vai para Obra.urlImagem).
+    // Devolve o caminho relativo à pasta frontend/ (vai para Obra.urlImagem).
     public static function imagem(array $arquivo): string
     {
         $erro = $arquivo['error'] ?? UPLOAD_ERR_NO_FILE;
@@ -51,8 +51,9 @@ final class Upload
             unlink($arquivo);
     }
 
+    // A pasta que o navegador acessa: Spice-Gallery-SA/frontend (ao lado de backend/).
     private static function pastaPublica(): string
     {
-        return dirname(__DIR__, 2) . '/public';
+        return dirname(__DIR__, 3) . '/frontend';
     }
 }

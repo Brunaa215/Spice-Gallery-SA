@@ -1,7 +1,7 @@
 <?php
 /**
  * Um leilão com contagem regressiva e lances (era leilao.html).
- * Variáveis: $leilao, $lances, $ehAutor
+ * Variáveis: $leilao, $lances, $ehAutor, $disponivel (crédito livre de quem está logado)
  */
 use App\Core\Csrf;
 use App\Models\Leilao;
@@ -12,6 +12,12 @@ $aoVivo = $estado === 'AO_VIVO';
 $atual = Leilao::atual($leilao);
 $minimo = Leilao::minimo($leilao);
 $qtd = (int) $leilao['lances'];
+// Quem está na frente: o primeiro da lista (maior valor).
+$lider = $lances[0] ?? null;
+$souLider = $current && $lider && (int) $lider['id_usuario'] === (int) $current['id'];
+$podeDarLance = $aoVivo && $current && !$ehAutor;
+$semCredito = centavos($disponivel) < centavos($minimo);
+$venci = $current && $leilao['id_vencedor'] && (int) $leilao['id_vencedor'] === (int) $current['id'];
 ?>
   <main id="conteudo">
     <div class="envolve">
@@ -52,9 +58,14 @@ $qtd = (int) $leilao['lances'];
           <p class="painel-lance__valor" data-lance-atual data-contar="<?= (int) $atual ?>" data-moeda><?= brl($atual) ?></p>
           <p class="painel-lance__sub"><span data-qtd-lances><?= $qtd ?></span> <?= $qtd === 1 ? 'lance' : 'lances' ?> · incremento mínimo <?= brl($leilao['incremento']) ?> · inicial <?= brl($leilao['valorInicial']) ?></p>
 
-          <?php if ($aoVivo && $current && !$ehAutor): ?>
-            <!-- data-lance-minimo: o mesmo mínimo que o servidor vai exigir (RN-08) -->
-            <form class="cartao-form" method="post" action="<?= e(url('lances.save')) ?>" data-lance data-atual="<?= (int) $atual ?>" data-lance-minimo="<?= (int) ceil($minimo) ?>" data-incremento="<?= (int) $leilao['incremento'] ?>" data-fim="<?= dataIso($leilao['dataFim']) ?>" style="margin-top:26px">
+          <?php if ($podeDarLance && $souLider): ?>
+            <p class="aviso" style="margin-top:26px">Você está na frente com <b><?= brl($lider['valor']) ?></b>. Esse valor fica reservado na sua carteira até alguém cobrir ou o leilão fechar.</p>
+          <?php elseif ($podeDarLance && $semCredito): ?>
+            <p class="aviso" style="margin-top:26px">Você tem <b><?= brl($disponivel) ?></b> disponíveis na carteira e o lance mínimo é <b><?= brl($minimo) ?></b>.</p>
+            <a class="botao botao--acafrao botao--largo" href="<?= e(url('carteira', ['leilao' => $leilao['id']])) ?>">Comprar créditos</a>
+          <?php elseif ($podeDarLance): ?>
+            <!-- data-lance-minimo: o mesmo mínimo que o servidor vai exigir (RN-08); data-disponivel: crédito livre -->
+            <form class="cartao-form" method="post" action="<?= e(url('lances.save')) ?>" data-lance data-atual="<?= (int) $atual ?>" data-lance-minimo="<?= (int) ceil($minimo) ?>" data-incremento="<?= (int) $leilao['incremento'] ?>" data-disponivel="<?= (int) floor($disponivel) ?>" data-fim="<?= dataIso($leilao['dataFim']) ?>" style="margin-top:26px">
               <?= Csrf::field() ?>
               <input type="hidden" name="id_leilao" value="<?= (int) $leilao['id'] ?>">
               <div class="campo campo-valor" style="margin-bottom:6px">
@@ -69,15 +80,26 @@ $qtd = (int) $leilao['lances'];
               </div>
               <p class="campo__erro" role="alert"></p>
               <button class="botao botao--acafrao botao--largo" type="submit">Dar lance</button>
+              <p class="campo__ajuda" style="margin-top:12px">Disponível na carteira: <?= brl($disponivel) ?> · <a href="<?= e(url('carteira', ['leilao' => $leilao['id']])) ?>">comprar créditos</a></p>
             </form>
           <?php elseif ($aoVivo && !$current): ?>
             <a class="botao botao--acafrao botao--largo" href="<?= e(url('login')) ?>" style="margin-top:26px">Entrar para dar lances</a>
+          <?php elseif ($estado === 'ENCERRADO' && $leilao['id_vencedor']): ?>
+            <?php if ($venci): ?>
+              <p class="aviso" style="margin-top:26px">Você arrematou esta obra! <b><?= brl($atual) ?></b> saiu da sua carteira e foi para o artista.</p>
+            <?php elseif ($ehAutor): ?>
+              <p class="aviso" style="margin-top:26px">Obra vendida para <?= e($leilao['vencedor'] ?? 'outra conta') ?>: <b><?= brl($atual) ?></b> entrou na sua carteira.</p>
+            <?php else: ?>
+              <p class="aviso" style="margin-top:26px">Arrematada por <?= e($leilao['vencedor'] ?? 'outra conta') ?>.</p>
+            <?php endif; ?>
+          <?php elseif ($estado === 'ENCERRADO' && !$qtd): ?>
+            <p class="aviso" style="margin-top:26px">O leilão fechou sem lances.</p>
           <?php elseif ($estado === Leilao::AGUARDANDO): ?>
             <p class="aviso" style="margin-top:26px">Este leilão ainda está com a curadoria. Só você e a curadoria conseguem vê-lo.</p>
           <?php elseif ($estado === Leilao::REPROVADO): ?>
             <p class="aviso" style="margin-top:26px">A curadoria não aprovou este leilão. Você pode marcar a obra para leilão de novo ao editá-la.</p>
           <?php endif; ?>
-          <p class="campo__ajuda" style="margin-top:14px"><?= $ehAutor ? 'Esta obra é sua: artistas não dão lances nas próprias obras.' : 'Artistas não dão lances nas próprias obras. Lances não podem ser cancelados.' ?></p>
+          <p class="campo__ajuda" style="margin-top:14px"><?= $ehAutor ? 'Esta obra é sua: artistas não dão lances nas próprias obras.' : 'Os lances usam os créditos fictícios da sua carteira. Artistas não dão lances nas próprias obras. Lances não podem ser cancelados.' ?></p>
         </aside>
       </div>
     </div>
@@ -89,8 +111,9 @@ $qtd = (int) $leilao['lances'];
           <h2 class="secao__titulo" id="historico-titulo" style="margin-bottom:28px">Quem levantou a mão</h2>
           <ol class="regras-lista" data-revelar>
             <li>Início e fim do leilão são fixos.</li>
-            <li>Cada lance supera o atual pelo incremento mínimo.</li>
-            <li>No horário final, o maior lance válido vence e abre-se a pendência de pagamento.</li>
+            <li>Cada lance supera o atual pelo incremento mínimo e precisa caber nos seus créditos.</li>
+            <li>Enquanto você está na frente, o valor do lance fica reservado na sua carteira.</li>
+            <li>No horário final, o maior lance vence: o valor sai da carteira de quem venceu e entra na do artista.</li>
           </ol>
         </div>
         <?php if ($lances): ?>

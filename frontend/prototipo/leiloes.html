@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leilão noturno · Spice Gallery</title>
+  <meta name="description" content="Leilões de obras de jovens artistas no Spice Gallery: lances ao vivo, data e hora fixas.">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Marcellus+SC&family=Pinyon+Script&display=swap">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script>document.documentElement.classList.add('js')</script>
+</head>
+<body class="noite">
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  <div class="cortina" aria-hidden="true"><div class="cortina__painel"></div><div class="cortina__painel"></div><p class="cortina__marca">Spice</p><span class="cortina__contador">000</span></div>
+
+  <!-- PHP: include 'views/partials/topo.php' -->
+  <header class="topo">
+    <div class="topo__interno envolve">
+      <a class="marca" href="index.html" aria-label="Spice Gallery, início">
+        <span class="marca__nome">Spice<i>.</i></span>
+        <span class="marca__sub">Gallery<br>museu online</span>
+      </a>
+      <button class="topo__menu" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+      <nav class="nav" id="nav" aria-label="Principal">
+        <a href="index.html#galeria">Galeria</a>
+        <a href="artista.html">Artistas</a>
+        <a href="leiloes.html" aria-current="page">Leilões<span class="ao-vivo" aria-hidden="true"></span></a>
+        <a href="entrar.html">Entrar</a>
+        <a class="botao botao--acafrao botao--sem-seta" href="publicar.html">Publicar arte</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <section class="leiloes-cab envolve" aria-labelledby="leiloes-titulo">
+      <canvas class="poeira" aria-hidden="true"></canvas>
+      <p class="rotulo">Sala noturna · as luzes baixam às 19h</p>
+      <h1 id="leiloes-titulo">Leilão <span>noturno</span></h1>
+      <p data-revelar>Só entram aqui obras exclusivas que o artista marcou como disponíveis e que a curadoria aprovou. Início e fim são fixos. O maior lance válido leva.</p>
+    </section>
+
+    <section class="secao envolve" aria-label="Lotes" style="padding-top:clamp(30px,4vw,60px)">
+      <!-- PHP: foreach ($leiloes as $leilao): JOIN Obra + Usuario; lance atual = MAX(Lance.valor) ou valorInicial -->
+      <div class="lotes">
+        <a class="lote" href="leilao.html" data-cursor="Dar lance">
+          <span class="estado"><span class="ao-vivo"></span> Ao vivo</span>
+          <figure class="quadro quadro--ouro"><div class="quadro__passe"><img src="../assets/img/obras/campo-vermelho.webp" alt="Campo Vermelho, de Rafa Quintino" width="800" height="1066" loading="lazy"></div></figure>
+          <span class="lote__num">Lote 07 · Nº 0006</span>
+          <h2>Campo Vermelho</h2>
+          <p class="lote__autor">Rafa Quintino · Óleo sobre linho</p>
+          <p class="legenda">Encerra em</p>
+          <div class="contagem contagem--mini" data-fim="2026-12-05T21:00:00-03:00">5 dez, 21h</div>
+          <dl class="lote__pe">
+            <div><dt>Lance atual</dt><dd>R$ 1.480</dd></div>
+            <div style="text-align:right"><dt>Lances</dt><dd>17</dd></div>
+          </dl>
+        </a>
+
+        <a class="lote" href="leilao.html" data-cursor="Dar lance">
+          <span class="estado"><span class="ao-vivo"></span> Ao vivo</span>
+          <figure class="quadro quadro--madeira"><div class="quadro__passe"><img src="../assets/img/obras/eclipse-doce.webp" alt="Eclipse Doce, de Nina Takeda" width="800" height="1000" loading="lazy"></div></figure>
+          <span class="lote__num">Lote 08 · Nº 0012</span>
+          <h2>Eclipse Doce</h2>
+          <p class="lote__autor">Nina Takeda · Gravura em metal</p>
+          <p class="legenda">Encerra em</p>
+          <div class="contagem contagem--mini" data-fim="2026-12-12T20:00:00-03:00">12 dez, 20h</div>
+          <dl class="lote__pe">
+            <div><dt>Lance atual</dt><dd>R$ 920</dd></div>
+            <div style="text-align:right"><dt>Lances</dt><dd>9</dd></div>
+          </dl>
+        </a>
+
+        <a class="lote" href="obra.html" data-cursor="Ver obra">
+          <span class="estado" style="color:var(--acafrao)">Em breve</span>
+          <figure class="quadro"><div class="quadro__passe"><img src="../assets/img/obras/noite-de-cravo.webp" alt="Noite de Cravo, de Rafa Quintino" width="800" height="1200" loading="lazy"></div></figure>
+          <span class="lote__num">Lote 09 · Nº 0010</span>
+          <h2>Noite de Cravo</h2>
+          <p class="lote__autor">Rafa Quintino · Óleo sobre tela</p>
+          <p class="legenda">Abre em</p>
+          <div class="contagem contagem--mini" data-inicio="2026-12-15T19:00:00-03:00" data-fim="2026-12-20T21:00:00-03:00">15 dez, 19h</div>
+          <dl class="lote__pe">
+            <div><dt>Lance inicial</dt><dd>R$ 600</dd></div>
+            <div style="text-align:right"><dt>Incremento</dt><dd>R$ 30</dd></div>
+          </dl>
+        </a>
+
+        <a class="lote lote--encerrado" href="obra.html" data-cursor="Ver obra">
+          <span class="estado">Encerrado</span>
+          <figure class="quadro quadro--fino"><div class="quadro__passe"><img src="../assets/img/obras/marmore-pimenta.webp" alt="Mármore Pimenta, de Nina Takeda" width="800" height="1000" loading="lazy"></div></figure>
+          <span class="lote__num">Lote 05 · Nº 0007</span>
+          <h2>Mármore Pimenta</h2>
+          <p class="lote__autor">Nina Takeda · Fotografia</p>
+          <p class="legenda">Encerrado em</p>
+          <div class="contagem contagem--fim">1 nov 2026, 21h</div>
+          <dl class="lote__pe">
+            <div><dt>Arrematado por</dt><dd>R$ 2.150</dd></div>
+            <div style="text-align:right"><dt>Lances</dt><dd>23</dd></div>
+          </dl>
+        </a>
+      </div>
+    </section>
+
+    <section class="secao envolve" id="como-funciona" aria-labelledby="como-titulo" style="padding-top:0">
+      <header class="secao__cab">
+        <div>
+          <p class="rotulo">Regras do martelo</p>
+          <h2 class="secao__titulo" id="como-titulo">Como funciona</h2>
+        </div>
+        <p class="secao__nota" data-revelar>O leilão encerra sozinho no horário marcado. O maior lance válido vence e o sistema abre uma pendência de pagamento entre comprador e artista.</p>
+      </header>
+      <div class="regras">
+        <article class="regra">
+          <span class="regra__num" aria-hidden="true">I</span>
+          <h3>Curadoria</h3>
+          <p>O artista marca a obra como disponível para leilão. A curadoria aprova antes de abrir.</p>
+        </article>
+        <article class="regra">
+          <span class="regra__num" aria-hidden="true">II</span>
+          <h3>Lances</h3>
+          <p>Cada lance supera o atual somando o incremento mínimo. Quem criou a obra não pode dar lance nela.</p>
+        </article>
+        <article class="regra">
+          <span class="regra__num" aria-hidden="true">III</span>
+          <h3>Martelo</h3>
+          <p>No horário final o leilão fecha. Vence o maior lance e comprador e artista combinam o pagamento.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- PHP: include 'views/partials/rodape.php' -->
+  <footer class="rodape">
+    <div class="envolve">
+      <div class="rodape__grade">
+        <div>
+          <h2>Um museu sem medo de julgamento.</h2>
+          <p>Spice Gallery é um museu online onde jovens artistas publicam, recebem avaliações e levam suas obras a leilão.</p>
+        </div>
+        <div>
+          <h3>Visitar</h3>
+          <ul><li><a href="index.html#galeria">Galeria</a></li><li><a href="artista.html">Artistas</a></li><li><a href="leiloes.html">Leilões</a></li></ul>
+        </div>
+        <div>
+          <h3>Criar</h3>
+          <ul><li><a href="publicar.html">Publicar arte</a></li><li><a href="entrar.html#cadastro">Criar conta</a></li><li><a href="entrar.html">Entrar</a></li></ul>
+        </div>
+        <div>
+          <h3>A casa</h3>
+          <ul><li><a href="index.html#regras">Regras da casa</a></li><li><a href="publicar.html#termos">Direitos autorais</a></li><li><a href="leiloes.html#como-funciona">Como funciona o leilão</a></li></ul>
+        </div>
+      </div>
+      <p class="rodape__marca" aria-hidden="true">Spice</p>
+      <div class="rodape__base"><span>© 2026 Spice Gallery · Projeto SA, SENAI Joinville</span><span>Miguel · Bruna · Uriel</span></div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/vendor/gsap.min.js" defer></script>
+  <script src="../assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <script src="../assets/js/vendor/SplitText.min.js" defer></script>
+  <script src="../assets/js/vendor/Flip.min.js" defer></script>
+  <script src="../assets/js/vendor/ScrambleTextPlugin.min.js" defer></script>
+  <script src="../assets/js/vendor/lenis.min.js" defer></script>
+  <script src="../assets/js/movimento.js" defer></script>
+  <script src="../assets/js/app.js" defer></script>
+</body>
+</html>

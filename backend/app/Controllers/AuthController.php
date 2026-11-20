@@ -4,6 +4,7 @@ namespace App\Controllers;
 use App\Core\Auth;
 use App\Core\Csrf;
 use App\Core\View;
+use App\Models\Movimentacao;
 use App\Models\Usuario;
 use PDOException;
 
@@ -68,7 +69,7 @@ final class AuthController
             go('login', [], 'cadastro');
         }
         Auth::login($id);
-        flash('success', 'Conta criada! Sua sala já está aberta.');
+        flash('success', 'Conta criada! Sua sala já está aberta e você ganhou ' . brl(Movimentacao::BONUS_BOAS_VINDAS) . ' em créditos para dar lances.');
         go('artistas.show', ['id' => $id]);
     }
 

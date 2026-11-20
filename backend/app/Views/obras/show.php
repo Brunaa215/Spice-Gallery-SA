@@ -12,6 +12,8 @@ $alt = $obra['titulo'] . ', de ' . $obra['autor'];
 $linkArtista = url('artistas.show', ['id' => $obra['id_usuario']]);
 // RN-04/RN-05: só avalia quem está logado e não é o autor
 $podeAvaliar = $current && !$ehAutor;
+// Obra vendida em leilão (já paga com créditos): não pode mais ser excluída.
+$arrematada = $leilao && $leilao['id_vencedor'];
 ?>
   <main id="conteudo">
     <div class="envolve">
@@ -48,7 +50,7 @@ $podeAvaliar = $current && !$ehAutor;
                 Sem avaliações
               <?php endif; ?>
             </dd></div>
-            <div><dt>Status</dt><dd><?= $leilao ? e(Leilao::estado($leilao)) . ' (leilão)' : 'Publicada' ?></dd></div>
+            <div><dt>Status</dt><dd><?php if ($arrematada): ?>Arrematada por <?= e($leilao['vencedor'] ?? 'outra conta') ?> (<?= brl($leilao['maiorLance']) ?>)<?php else: ?><?= $leilao ? e(Leilao::estado($leilao)) . ' (leilão)' : 'Publicada' ?><?php endif; ?></dd></div>
           </dl>
           <div class="hero__acoes" style="margin-top:0">
             <?php if ($leilao && ($leilao['status'] === Leilao::APROVADO || $ehAutor)): ?>
@@ -65,11 +67,13 @@ $podeAvaliar = $current && !$ehAutor;
               <?php if ($ehAutor): ?>
                 <a class="texto-botao" href="<?= e(url('obras.edit', ['id' => $obra['id']])) ?>">Editar obra</a>
               <?php endif; ?>
-              <form method="post" action="<?= e(url('obras.delete')) ?>" data-confirmar="Excluir esta obra? As avaliações e o leilão dela também serão apagados.">
-                <?= Csrf::field() ?>
-                <input type="hidden" name="id" value="<?= (int) $obra['id'] ?>">
-                <button class="texto-botao" type="submit">Excluir obra</button>
-              </form>
+              <?php if (!$arrematada): ?>
+                <form method="post" action="<?= e(url('obras.delete')) ?>" data-confirmar="Excluir esta obra? As avaliações e o leilão dela também serão apagados.">
+                  <?= Csrf::field() ?>
+                  <input type="hidden" name="id" value="<?= (int) $obra['id'] ?>">
+                  <button class="texto-botao" type="submit">Excluir obra</button>
+                </form>
+              <?php endif; ?>
             </div>
           <?php endif; ?>
         </aside>

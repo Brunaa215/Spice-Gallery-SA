@@ -20,6 +20,16 @@ SET @nina  = (SELECT id FROM Usuario WHERE email = 'nina@spice.com');
 SET @rafa  = (SELECT id FROM Usuario WHERE email = 'rafa@spice.com');
 SET @bento = (SELECT id FROM Usuario WHERE email = 'bento@spice.com');
 
+-- Carteira: os R$ 10 de boas-vindas de toda conta nova e uma compra simulada de R$ 5.000,
+-- para os lances lá embaixo estarem cobertos por créditos.
+INSERT INTO Movimentacao (tipo, valor, descricao, dataHora, id_usuario)
+SELECT 'BONUS', 10.00, 'Créditos de boas-vindas', criadoEm, id FROM Usuario WHERE id IN (@lia, @caio, @nina, @rafa, @bento)
+UNION ALL
+SELECT 'COMPRA', 5000.00, 'Compra de créditos (simulada)', criadoEm + INTERVAL 1 DAY, id FROM Usuario WHERE id IN (@lia, @caio, @nina, @rafa, @bento);
+UPDATE Usuario u
+   SET saldo = (SELECT SUM(m.valor) FROM Movimentacao m WHERE m.id_usuario = u.id)
+ WHERE u.id IN (@lia, @caio, @nina, @rafa, @bento);
+
 INSERT INTO Obra (titulo, descricao, urlImagem, status, categoria, criadoEm, id_usuario) VALUES
 ('Sol de Açafrão', 'Pintei pensando nas manhãs de feira com a minha avó: o calor do açafrão, o azul do toldo, a sombra comprida de quem chega cedo. Formas simples, porque a memória também simplifica.', 'assets/img/obras/sol-de-acafrao.webp', 'PUBLICADA', 'digital', NOW() - INTERVAL 30 DAY, @lia),
 ('Dunas de Canela', 'Acrílica sobre tela. As dunas da Joaquina vistas do ônibus, no fim da tarde.', 'assets/img/obras/dunas-de-canela.webp', 'PUBLICADA', 'pintura', NOW() - INTERVAL 29 DAY, @caio),
@@ -56,7 +66,8 @@ INSERT INTO Avaliacao (nota, comentario, dataHora, id_usuario, id_obra) VALUES
 (5, 'Simples e certeiro.', NOW() - INTERVAL 9 DAY, @rafa, @eclipse),
 (4, 'Parece pólen mesmo.', NOW() - INTERVAL 1 DAY, @caio, @polen);
 
--- Leilões: ao vivo, em breve, encerrado e um esperando a curadoria
+-- Leilões: ao vivo, em breve, encerrado e um esperando a curadoria.
+-- O encerrado (Mármore Pimenta) é fechado no primeiro acesso ao site: Rafa paga R$ 2.150 e Nina recebe.
 INSERT INTO Leilao (dataInicio, dataFim, valorInicial, incremento, status, id_obra) VALUES
 (NOW() - INTERVAL 3 DAY,  NOW() + INTERVAL 12 DAY, 600, 50, 'APROVADO', @campo),
 (NOW() - INTERVAL 1 DAY,  NOW() + INTERVAL 20 DAY, 400, 20, 'APROVADO', @eclipse),

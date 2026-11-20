@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spice Gallery — Museu online de jovens artistas</title>
+  <meta name="description" content="Spice Gallery: um museu online onde jovens artistas publicam suas obras, recebem avaliações e participam de leilões.">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Marcellus+SC&family=Pinyon+Script&display=swap">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  <div class="cortina" aria-hidden="true"><div class="cortina__painel"></div><div class="cortina__painel"></div><p class="cortina__marca">Spice</p><span class="cortina__contador">000</span></div>
+
+  <!-- PHP: include 'views/partials/topo.php' -->
+  <header class="topo">
+    <div class="topo__interno envolve">
+      <a class="marca" href="index.html" aria-label="Spice Gallery, início">
+        <span class="marca__nome">Spice<i>.</i></span>
+        <span class="marca__sub">Gallery<br>museu online</span>
+      </a>
+      <button class="topo__menu" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+      <nav class="nav" id="nav" aria-label="Principal">
+        <a href="index.html#galeria" aria-current="page">Galeria</a>
+        <a href="artista.html">Artistas</a>
+        <a href="leiloes.html">Leilões<span class="ao-vivo" aria-hidden="true"></span></a>
+        <a href="entrar.html">Entrar</a>
+        <a class="botao botao--tinta botao--sem-seta" href="publicar.html">Publicar arte</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <!-- ============ HERO ============ -->
+    <section class="hero envolve" aria-labelledby="hero-titulo">
+      <canvas class="poeira" aria-hidden="true"></canvas>
+      <div class="hero__texto">
+        <p class="rotulo">Sala de entrada · Nº 000</p>
+        <h1 class="hero__titulo" id="hero-titulo">Toda arte merece uma <em>parede</em>.</h1>
+        <p class="hero__lead">Um museu online para artistas de 16 a 25 anos. Publique suas obras, seja visto, receba avaliações honestas e, quando estiver pronto, leve seu trabalho a leilão. Sem medo de julgamento.</p>
+        <div class="hero__acoes">
+          <a class="botao botao--tinta" href="publicar.html">Publicar minha arte</a>
+          <a class="botao" href="#galeria">Visitar a galeria</a>
+        </div>
+        <!-- PHP: totais vindos de COUNT() em Obra, Usuario e Leilao -->
+        <dl class="hero__numeros">
+          <div><dt>obras na parede</dt><dd data-contar="1284">1.284</dd></div>
+          <div><dt>artistas</dt><dd data-contar="312">312</dd></div>
+          <div><dt>leilões ao vivo</dt><dd data-contar="9">9</dd></div>
+        </dl>
+      </div>
+
+      <div class="hero__parede" aria-hidden="true">
+        <figure class="quadro quadro--ouro quadro--pendurado q-a">
+          <div class="quadro__passe"><img src="../assets/img/obras/sol-de-acafrao.webp" alt="" width="800" height="1000"></div>
+        </figure>
+        <figure class="quadro quadro--fino q-b">
+          <div class="quadro__passe"><img src="../assets/img/obras/orbitas-lentas.webp" alt="" width="800" height="800"></div>
+        </figure>
+        <figure class="quadro quadro--madeira q-c">
+          <div class="quadro__passe"><img src="../assets/img/obras/mercado-6h.webp" alt="" width="800" height="600"></div>
+        </figure>
+        <div class="selo" data-magnetico>
+          <div class="selo__giro"><svg viewBox="0 0 200 200"><defs><path id="circulo" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs><text font-family="DM Mono, monospace" font-size="13" letter-spacing="3.4" fill="currentColor"><textPath href="#circulo">SPICE GALLERY • MUSEU ONLINE • DESDE 2026 • </textPath></text></svg></div>
+          <span class="selo__miolo">S</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ MERGULHO (sequência fixada no scroll) ============ -->
+    <section class="mergulho" aria-labelledby="mergulho-titulo">
+      <!-- invólucro e miolo: a entrada anima um, o mergulho anima o outro (nunca os dois no mesmo elemento) -->
+      <p class="mergulho__frase mergulho__frase--a" aria-hidden="true"><span class="mergulho__miolo">Cada quadro</span></p>
+      <p class="mergulho__frase mergulho__frase--b" aria-hidden="true"><span class="mergulho__miolo">é uma porta.</span></p>
+      <div class="mergulho__moldura">
+      <figure class="quadro quadro--ouro mergulho__quadro" aria-hidden="true">
+        <!-- SVG embutido: no zoom o navegador desenha só a área visível, em vetor -->
+        <div class="quadro__passe"><svg class="mergulho__obra" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" focusable="false"><rect width="800" height="1000" fill="#FBF1EC"/><rect x="0" y="620" width="800" height="380" fill="#9DB6D3"/><circle cx="464" cy="400" r="240" fill="#E2C070"/><path d="M 64 620 A 176 176 0 0 1 416 620 Z" fill="#C9647F"/><rect x="560" y="500" width="96" height="360" fill="#7F9A7C"/><line x1="80" y1="120" x2="256" y2="120" stroke="#A07A34" stroke-width="3"/><line x1="80" y1="150" x2="256" y2="150" stroke="#A07A34" stroke-width="3"/><line x1="80" y1="180" x2="256" y2="180" stroke="#A07A34" stroke-width="3"/><line x1="80" y1="210" x2="256" y2="210" stroke="#A07A34" stroke-width="3"/><line x1="80" y1="240" x2="256" y2="240" stroke="#A07A34" stroke-width="3"/><line x1="80" y1="270" x2="256" y2="270" stroke="#A07A34" stroke-width="3"/><line x1="80" y1="300" x2="256" y2="300" stroke="#A07A34" stroke-width="3"/><circle cx="688" cy="140" r="40" fill="none" stroke="#A07A34" stroke-width="4"/></svg></div>
+      </figure>
+      </div>
+      <div class="mergulho__alem">
+        <p class="mergulho__sobre">Do outro lado da moldura</p>
+        <h2 class="mergulho__titulo" id="mergulho-titulo">1.284 obras esperando seus olhos.</h2>
+        <a class="botao botao--tinta" href="#corredor">Começar a visita</a>
+      </div>
+    </section>
+
+    <!-- ============ FAIXA ============ -->
+    <div class="faixa" aria-hidden="true">
+      <div class="faixa__trilho">
+        <div class="faixa__grupo">
+          <span>Pintura</span><i style="--c:var(--acafrao)"></i><span>Ilustração digital</span><i style="--c:var(--paprica)"></i><span>Aquarela</span><i style="--c:var(--rosa)"></i><span>Gravura</span><i style="--c:var(--cardamomo)"></i><span>Fotografia</span><i style="--c:var(--acafrao)"></i><span>Escultura</span><i style="--c:var(--paprica)"></i><span>Colagem</span><i style="--c:var(--rosa)"></i>
+        </div>
+        <div class="faixa__grupo">
+          <span>Pintura</span><i style="--c:var(--acafrao)"></i><span>Ilustração digital</span><i style="--c:var(--paprica)"></i><span>Aquarela</span><i style="--c:var(--rosa)"></i><span>Gravura</span><i style="--c:var(--cardamomo)"></i><span>Fotografia</span><i style="--c:var(--acafrao)"></i><span>Escultura</span><i style="--c:var(--paprica)"></i><span>Colagem</span><i style="--c:var(--rosa)"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ CORREDOR (rolagem horizontal fixada) ============ -->
+    <section class="corredor" id="corredor" aria-labelledby="corredor-titulo">
+      <header class="corredor__cab envolve">
+        <div>
+          <p class="rotulo">Sala 01 · Destaques da semana</p>
+          <h2 class="corredor__titulo" id="corredor-titulo">O corredor</h2>
+        </div>
+        <p class="corredor__contador" aria-hidden="true"><b>01</b> / 06</p>
+      </header>
+      <p class="corredor__fundo" aria-hidden="true">Destaques</p>
+      <!-- PHP: foreach ($destaques as $obra): — as 6 obras com melhor média na semana -->
+      <ol class="corredor__trilho">
+        <li class="corredor__item">
+          <a href="obra.html" data-cursor="Ver obra">
+            <figure class="quadro quadro--ouro quadro--pendurado"><div class="quadro__passe"><img src="../assets/img/obras/jardim-de-cardamomo.webp" alt="Jardim de Cardamomo, de Bento Ayala" width="800" height="1200" loading="lazy"></div></figure>
+            <div class="placa"><span class="placa__num">Nº 0005 · 4,9 ★</span><h3 class="placa__titulo">Jardim de Cardamomo</h3><p class="placa__autor">Bento Ayala</p></div>
+          </a>
+        </li>
+        <li class="corredor__item">
+          <a href="obra.html" data-cursor="Ver obra">
+            <figure class="quadro quadro--pendurado"><div class="quadro__passe"><img src="../assets/img/obras/sol-de-acafrao.webp" alt="Sol de Açafrão, de Lia Moraes" width="800" height="1000" loading="lazy"></div></figure>
+            <div class="placa"><span class="placa__num">Nº 0001 · 4,8 ★</span><h3 class="placa__titulo">Sol de Açafrão</h3><p class="placa__autor">Lia Moraes</p></div>
+          </a>
+        </li>
+        <li class="corredor__item">
+          <a href="obra.html" data-cursor="Ver obra">
+            <figure class="quadro quadro--madeira quadro--pendurado"><div class="quadro__passe"><img src="../assets/img/obras/dunas-de-canela.webp" alt="Dunas de Canela, de Caio Ventura" width="800" height="1066" loading="lazy"></div></figure>
+            <div class="placa"><span class="placa__num">Nº 0002 · 4,5 ★</span><h3 class="placa__titulo">Dunas de Canela</h3><p class="placa__autor">Caio Ventura</p></div>
+          </a>
+        </li>
+        <li class="corredor__item">
+          <a href="obra.html" data-cursor="Ver obra">
+            <figure class="quadro quadro--fino quadro--pendurado"><div class="quadro__passe"><img src="../assets/img/obras/arcos-do-meio-dia.webp" alt="Arcos do Meio-dia, de Caio Ventura" width="800" height="800" loading="lazy"></div></figure>
+            <div class="placa"><span class="placa__num">Nº 0008 · 4,4 ★</span><h3 class="placa__titulo">Arcos do Meio-dia</h3><p class="placa__autor">Caio Ventura</p></div>
+          </a>
+        </li>
+        <li class="corredor__item">
+          <a href="leilao.html" data-cursor="Dar lance">
+            <figure class="quadro quadro--ouro quadro--pendurado"><div class="quadro__passe"><img src="../assets/img/obras/eclipse-doce.webp" alt="Eclipse Doce, de Nina Takeda" width="800" height="1000" loading="lazy"></div></figure>
+            <div class="placa"><span class="placa__num">Nº 0012 · 4,6 ★ · em leilão</span><h3 class="placa__titulo">Eclipse Doce</h3><p class="placa__autor">Nina Takeda</p></div>
+          </a>
+        </li>
+        <li class="corredor__item">
+          <a href="obra.html" data-cursor="Ver obra">
+            <figure class="quadro quadro--madeira quadro--pendurado"><div class="quadro__passe"><img src="../assets/img/obras/noite-de-cravo.webp" alt="Noite de Cravo, de Rafa Quintino" width="800" height="1200" loading="lazy"></div></figure>
+            <div class="placa"><span class="placa__num">Nº 0010 · 4,7 ★</span><h3 class="placa__titulo">Noite de Cravo</h3><p class="placa__autor">Rafa Quintino</p></div>
+          </a>
+        </li>
+      </ol>
+      <div class="corredor__barra" aria-hidden="true"><i></i></div>
+    </section>
+
+    <!-- ============ GALERIA ============ -->
+    <section class="secao envolve" id="galeria" aria-labelledby="galeria-titulo">
+      <header class="secao__cab">
+        <div>
+          <p class="rotulo">Sala 02 · Acervo aberto</p>
+          <h2 class="secao__titulo" id="galeria-titulo">Em exposição agora</h2>
+        </div>
+        <p class="secao__nota" data-revelar>Obras publicadas pela comunidade. Passe o mouse para endireitar um quadro, entre para avaliar.</p>
+      </header>
+
+      <div class="filtros" role="group" aria-label="Filtrar por categoria" data-revelar>
+        <button class="filtro" type="button" aria-pressed="true" data-filtro="todas">Todas</button>
+        <button class="filtro" type="button" aria-pressed="false" data-filtro="pintura">Pintura</button>
+        <button class="filtro" type="button" aria-pressed="false" data-filtro="digital">Digital</button>
+        <button class="filtro" type="button" aria-pressed="false" data-filtro="aquarela">Aquarela</button>
+        <button class="filtro" type="button" aria-pressed="false" data-filtro="gravura">Gravura</button>
+        <button class="filtro" type="button" aria-pressed="false" data-filtro="fotografia">Fotografia</button>
+      </div>
+
+      <div class="salao" data-salao>
+        <!-- PHP: foreach ($obras as $obra): — um <article class="obra"> por linha da tabela Obra -->
+        <article class="obra" data-categoria="digital">
+          <a class="obra__link" href="obra.html" data-cursor="Ver obra">
+            <figure class="quadro quadro--ouro"><div class="quadro__passe"><img src="../assets/img/obras/sol-de-acafrao.webp" alt="Sol de Açafrão, de Lia Moraes" width="800" height="1000" loading="lazy"></div></figure>
+            <div class="placa">
+              <span class="placa__num">Nº 0001</span>
+              <h3 class="placa__titulo">Sol de Açafrão</h3>
+              <p class="placa__autor">Lia Moraes</p>
+              <p class="placa__meta">Pintura digital · 2026</p>
+              <p class="placa__nota"><span class="estrelas" style="--nota:4.8" aria-hidden="true"></span><span>4,8</span><small>(31)</small><span class="sr-only">Nota 4,8 de 5 em 31 avaliações</span></p>
+            </div>
+          </a>
+        </article>
+        <article class="obra" data-categoria="pintura">
+          <a class="obra__link" href="obra.html" data-cursor="Ver obra">
+            <figure class="quadro"><div class="quadro__passe"><img src="../assets/img/obras/dunas-de-canela.webp" alt="Dunas de Canela, de Caio Ventura" width="800" height="1066" loading="lazy"></div></figure>
+            <div class="placa">
+              <span class="placa__num">Nº 0002</span>
+              <h3 class="placa__titulo">Dunas de Canela</h3>
+              <p class="placa__autor">Caio Ventura</p>
+              <p class="placa__meta">Acrílica sobre tela · 2026</p>
+              <p class="placa__nota"><span class="estrelas" style="--nota:4.5" aria-hidden="true"></span><span>4,5</span><small>(18)</small><span class="sr-only">Nota 4,5 de 5 em 18 avaliações</span></p>
+            </div>
+          </a>
+        </article>
+        <article class="obra" data-categoria="gravura">
+          <a class="obra__link" href="obra.html" data-cursor="Ver obra">
+            <figure class="quadro quadro--fino"><div class="quadro__passe"><img src="../assets/img/obras/orbitas-lentas.webp" alt="Órbitas Lentas, de Nina Takeda" width="800" height="800" loading="lazy"></div></figure>
+            <div class="placa">
+              <span class="placa__num">Nº 0003</span>
+              <h3 class="placa__titulo">Órbitas Lentas</h3>
+              <p class="placa__autor">Nina Takeda</p>
+              <p class="placa__meta">Gravura digital · 2026</p>
+              <p class="placa__nota"><span class="estrelas" style="--nota:4.7" aria-hidden="true"></span><span>4,7</span><small>(22)</small><span class="sr-only">Nota 4,7 de 5 em 22 avaliações</span></p>
+            </div>
+          </a>
+        </article>
+        <article class="obra" data-categoria="pintura">
+          <a class="obra__link" href="obra.html" data-cursor="Ver obra">
+            <figure class="quadro quadro--madeira"><div class="quadro__passe"><img src="../assets/img/obras/mercado-6h.webp" alt="Mercado, 6h, de Lia Moraes" width="800" height="600" loading="lazy"></div></figure>
+            <div class="placa">
+              <span class="placa__num">Nº 0004</span>
+              <h3 class="placa__titulo">Mercado, 6h</h3>
+              <p class="placa__autor">Lia Moraes</p>
+              <p class="placa__meta">Óleo sobre tela · 2025</p>
+              <p class="placa__nota"><span class="estrelas" style="--nota:4.3" aria-hidden="true"></span><span>4,3</span><small>(12)</small><span class="sr-only">Nota 4,3 de 5 em 12 avaliações</span></p>
+            </div>
+          </a>
+        </article>
+        <article class="obra" data-categoria="aquarela">
+          <a class="obra__link" href="obra.html" data-cursor="Ver obra">
+            <figure class="quadro quadro--ouro"><div class="quadro__passe"><img src="../assets/img/obras/jardim-de-cardamomo.webp" alt="Jardim de Cardamomo, de Bento Ayala" width="800" height="1200" loading="lazy"></div></figure>
+            <div class="placa">
+              <span class="placa__num">Nº 0005</span>
+              <h3 class="placa__titulo">Jardim de Cardamomo</h3>
+              <p class="placa__autor">Bento Ayala</p>
+              <p class="placa__meta">Aquarela · 2026</p>
+              <p class="placa__nota"><span class="estrelas" style="--nota:4.9" aria-hidden="true"></span><span>4,9</span><small>(40)</small><span class="sr-only">Nota 4,9 de 5 em 40 avaliações</span></p>
+            </div>
+          </a>
+        </article>
+        <article class="obra" data-categoria="pintura">
+          <span class="etiqueta">Em leilão</span>
+          <a class="obra__link" href="leilao.html" data-cursor="Dar lance">
+            <figure class="quadro"><div class="quadro__passe"><img src="../assets/img/obras/campo-vermelho.webp" alt="Campo Vermelho, de Rafa Quintino" width="800" height="1066" loading="lazy"></div></figure>
+            <div class="placa">
+              <span class="placa__num">Nº 0006</span>
+              <h3 class="placa__titulo">Campo Vermelho</h3>
+              <p class="placa__autor">Rafa Quintino</p>
+              <p class="placa__meta">Óleo sobre linho · 2026</p>
+              <p class="placa__nota"><span class="estrelas" style="--nota:4.6" aria-hidden="true"></span><span>4,6</span><small>(27)</small><span class="sr-only">Nota 4,6 de 5 em 27 avaliações</span></p>
+            </div>
+          </a>
+        </article>
+        <article class="obra" data-categoria="fotografia">
+          <a class="obra__link" href="obra.html" data-cursor="Ver obra">
+            <figure class="quadro quadro--fino"><div class="quadro__passe"><img src="../assets/img/obras/marmore-pimenta.webp" alt="Mármore Pimenta, de Nina Takeda" width="800" height="1000" loading="lazy"></div></figure>
+            <div class="placa">
+              <span class="placa__num">Nº 0007</span>
+              <h3 class="placa__titulo">Mármore Pimenta</h3>
+              <p class="placa__autor">Nina Takeda</p>
+              <p class="placa__meta">Fotografia · 2026</p>
+              <p class="placa__nota"><span class="estrelas" style="--nota:4.2" aria-hidden="true"></span><span>4,2</span><small>(9)</small><span class="sr-only">Nota 4,2 de 5 em 9 avaliações</span></p>
+            </div>
+          </a>
+        </article>
+        <article class="obra" data-categoria="gravura">
+          <a class="obra__link" href="obra.html" data-cursor="Ver obra">
+            <figure class="quadro quadro--madeira"><div class="quadro__passe"><img src="../assets/img/obras/arcos-do-meio-dia.webp" alt="Arcos do Meio-dia, de Caio Ventura" width="800" height="800" loading="lazy"></div></figure>
+            <div class="placa">
+              <span class="placa__num">Nº 0008</span>
+              <h3 class="placa__titulo">Arcos do Meio-dia</h3>
+              <p class="placa__autor">Caio Ventura</p>
+              <p class="placa__meta">Serigrafia · 2025</p>
+              <p class="placa__nota"><span class="estrelas" style="--nota:4.4" aria-hidden="true"></span><span>4,4</span><small>(15)</small><span class="sr-only">Nota 4,4 de 5 em 15 avaliações</span></p>
+            </div>
+          </a>
+        </article>
+        <article class="obra" data-categoria="digital">
+          <a class="obra__link" href="obra.html" data-cursor="Ver obra">
+            <figure class="quadro"><div class="quadro__passe"><img src="../assets/img/obras/polen.webp" alt="Pólen, de Bento Ayala" width="800" height="640" loading="lazy"></div></figure>
+            <div class="placa">
+              <span class="placa__num">Nº 0009</span>
+              <h3 class="placa__titulo">Pólen</h3>
+              <p class="placa__autor">Bento Ayala</p>
+              <p class="placa__meta">Ilustração digital · 2026</p>
+              <p class="placa__nota"><span class="estrelas" style="--nota:4.1" aria-hidden="true"></span><span>4,1</span><small>(7)</small><span class="sr-only">Nota 4,1 de 5 em 7 avaliações</span></p>
+            </div>
+          </a>
+        </article>
+        <article class="obra" data-categoria="pintura">
+          <span class="etiqueta etiqueta--breve">Leilão em breve</span>
+          <a class="obra__link" href="obra.html" data-cursor="Ver obra">
+            <figure class="quadro quadro--ouro"><div class="quadro__passe"><img src="../assets/img/obras/noite-de-cravo.webp" alt="Noite de Cravo, de Rafa Quintino" width="800" height="1200" loading="lazy"></div></figure>
+            <div class="placa">
+              <span class="placa__num">Nº 0010</span>
+              <h3 class="placa__titulo">Noite de Cravo</h3>
+              <p class="placa__autor">Rafa Quintino</p>
+              <p class="placa__meta">Óleo sobre tela · 2026</p>
+              <p class="placa__nota"><span class="estrelas" style="--nota:4.7" aria-hidden="true"></span><span>4,7</span><small>(19)</small><span class="sr-only">Nota 4,7 de 5 em 19 avaliações</span></p>
+            </div>
+          </a>
+        </article>
+        <article class="obra" data-categoria="digital">
+          <a class="obra__link" href="obra.html" data-cursor="Ver obra">
+            <figure class="quadro quadro--fino"><div class="quadro__passe"><img src="../assets/img/obras/mare-alta.webp" alt="Maré Alta, de Lia Moraes" width="800" height="600" loading="lazy"></div></figure>
+            <div class="placa">
+              <span class="placa__num">Nº 0011</span>
+              <h3 class="placa__titulo">Maré Alta</h3>
+              <p class="placa__autor">Lia Moraes</p>
+              <p class="placa__meta">Pintura digital · 2026</p>
+              <p class="placa__nota"><span class="estrelas" style="--nota:4.0" aria-hidden="true"></span><span>4,0</span><small>(6)</small><span class="sr-only">Nota 4,0 de 5 em 6 avaliações</span></p>
+            </div>
+          </a>
+        </article>
+        <article class="obra" data-categoria="gravura">
+          <span class="etiqueta">Em leilão</span>
+          <a class="obra__link" href="leilao.html" data-cursor="Dar lance">
+            <figure class="quadro quadro--madeira"><div class="quadro__passe"><img src="../assets/img/obras/eclipse-doce.webp" alt="Eclipse Doce, de Nina Takeda" width="800" height="1000" loading="lazy"></div></figure>
+            <div class="placa">
+              <span class="placa__num">Nº 0012</span>
+              <h3 class="placa__titulo">Eclipse Doce</h3>
+              <p class="placa__autor">Nina Takeda</p>
+              <p class="placa__meta">Gravura em metal · 2026</p>
+              <p class="placa__nota"><span class="estrelas" style="--nota:4.6" aria-hidden="true"></span><span>4,6</span><small>(21)</small><span class="sr-only">Nota 4,6 de 5 em 21 avaliações</span></p>
+            </div>
+          </a>
+        </article>
+        <!-- PHP: endforeach; -->
+      </div>
+      <p class="vazio" data-vazio hidden>Nenhuma obra nesta categoria ainda. Que tal ser a primeira?</p>
+    </section>
+
+    <!-- ============ VITRINE NOTURNA (leilão em destaque) ============ -->
+    <section class="secao vitrine noite" aria-labelledby="vitrine-titulo">
+      <canvas class="poeira" aria-hidden="true" data-tom="noite"></canvas>
+      <div class="envolve vitrine__grade">
+        <figure class="quadro quadro--ouro quadro--pendurado" style="--r:-1.5deg">
+          <div class="quadro__passe"><img src="../assets/img/obras/campo-vermelho.webp" alt="Campo Vermelho, de Rafa Quintino" width="800" height="1066" loading="lazy"></div>
+        </figure>
+        <div>
+          <p class="rotulo">Sala 03 · Leilão noturno · Lote 07</p>
+          <h2 class="vitrine__titulo" id="vitrine-titulo">Campo Vermelho <span>vai a martelo.</span></h2>
+          <p class="secao__nota" data-revelar>Óleo sobre linho de Rafa Quintino, 22 anos. Cada novo lance precisa superar o atual em pelo menos R$ 50.</p>
+          <dl class="lance-resumo" data-revelar>
+            <div><dt>Lance atual</dt><dd data-contar="1480" data-moeda>R$ 1.480</dd></div>
+            <div><dt>Lances</dt><dd data-contar="17">17</dd></div>
+          </dl>
+          <p class="legenda">Encerra em</p>
+          <div class="contagem" data-fim="2026-12-05T21:00:00-03:00" style="margin:12px 0 34px">5 de dezembro, 21h</div>
+          <a class="botao botao--acafrao" href="leilao.html" data-cursor="Dar lance">Entrar no leilão</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ REGRAS DA CASA ============ -->
+    <section class="secao envolve" id="regras" aria-labelledby="regras-titulo">
+      <header class="secao__cab">
+        <div>
+          <p class="rotulo">Sala 04 · Regras da casa</p>
+          <h2 class="secao__titulo" id="regras-titulo">Três gestos, um museu.</h2>
+        </div>
+        <p class="secao__nota" data-revelar>Visitantes passeiam à vontade. Para publicar, avaliar ou dar lances, basta criar uma conta de artista.</p>
+      </header>
+      <div class="regras">
+        <article class="regra">
+          <span class="regra__num" aria-hidden="true">I</span>
+          <h3>Publique</h3>
+          <p>Título, descrição, categoria e a imagem da obra. Você aceita os termos de direitos autorais e seu trabalho ganha uma parede.</p>
+        </article>
+        <article class="regra">
+          <span class="regra__num" aria-hidden="true">II</span>
+          <h3>Avalie</h3>
+          <p>De 1 a 5 estrelas, com comentário. Só não vale avaliar a própria obra, e você edita ou apaga apenas o que escreveu.</p>
+        </article>
+        <article class="regra">
+          <span class="regra__num" aria-hidden="true">III</span>
+          <h3>Arremate</h3>
+          <p>Obras aprovadas pela curadoria vão a leilão com início e fim fixos. Cada lance supera o anterior pelo incremento mínimo.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ CHAMADA ============ -->
+    <section class="chamada envolve" aria-labelledby="chamada-titulo">
+      <p class="rotulo">Sala 05 · Sua vez</p>
+      <h2 class="chamada__titulo" id="chamada-titulo">Sua parede está <em>vazia</em>.</h2>
+      <a class="botao botao--tinta" href="publicar.html" data-revelar>Pendurar minha primeira obra</a>
+    </section>
+  </main>
+
+  <!-- PHP: include 'views/partials/rodape.php' -->
+  <footer class="rodape">
+    <div class="envolve">
+      <div class="rodape__grade">
+        <div>
+          <h2>Um museu sem medo de julgamento.</h2>
+          <p>Spice Gallery é um museu online onde jovens artistas publicam, recebem avaliações e levam suas obras a leilão.</p>
+        </div>
+        <div>
+          <h3>Visitar</h3>
+          <ul><li><a href="index.html#galeria">Galeria</a></li><li><a href="artista.html">Artistas</a></li><li><a href="leiloes.html">Leilões</a></li></ul>
+        </div>
+        <div>
+          <h3>Criar</h3>
+          <ul><li><a href="publicar.html">Publicar arte</a></li><li><a href="entrar.html#cadastro">Criar conta</a></li><li><a href="entrar.html">Entrar</a></li></ul>
+        </div>
+        <div>
+          <h3>A casa</h3>
+          <ul><li><a href="index.html#regras">Regras da casa</a></li><li><a href="publicar.html#termos">Direitos autorais</a></li><li><a href="leiloes.html#como-funciona">Como funciona o leilão</a></li></ul>
+        </div>
+      </div>
+      <p class="rodape__marca" aria-hidden="true">Spice</p>
+      <div class="rodape__base"><span>© 2026 Spice Gallery · Projeto SA, SENAI Joinville</span><span>Miguel · Bruna · Uriel</span></div>
+    </div>
+  </footer>
+
+  <script src="../assets/js/vendor/gsap.min.js" defer></script>
+  <script src="../assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <script src="../assets/js/vendor/SplitText.min.js" defer></script>
+  <script src="../assets/js/vendor/Flip.min.js" defer></script>
+  <script src="../assets/js/vendor/ScrambleTextPlugin.min.js" defer></script>
+  <script src="../assets/js/vendor/lenis.min.js" defer></script>
+  <script src="../assets/js/movimento.js" defer></script>
+  <script src="../assets/js/app.js" defer></script>
+</body>
+</html>

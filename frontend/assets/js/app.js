@@ -29,6 +29,10 @@
      Devolve a função que desliga o que não morre junto com o HTML (o relógio).
      ========================================================= */
   function montar() {
+    /* ---------- mensagem do servidor (flash do PHP) ---------- */
+    const aviso = $('[data-aviso]');
+    if (aviso) setTimeout(() => avisar(aviso.dataset.aviso), 400);
+
     /* ---------- menu mobile ---------- */
     const menu = $('.topo__menu');
     const nav = $('#nav');
@@ -102,14 +106,12 @@
     if (formLance) {
       const campo = formLance.elements.valor;
       const erro = $('.campo__erro', formLance);
-      const atualEl = $('[data-lance-atual]');
-      const qtdEl = $('[data-qtd-lances]');
       const minimoEl = $('[data-minimo]');
-      const historico = $('.historico');
       const incremento = Number(formLance.dataset.incremento);
       const fim = Date.parse(formLance.dataset.fim);
-      let atual = Number(formLance.dataset.atual);
-      const minimo = () => atual + incremento;
+      const atual = Number(formLance.dataset.atual);
+      // data-lance-minimo vem do PHP: valor inicial (sem lances) ou lance atual + incremento
+      const minimo = () => Number(formLance.dataset.lanceMinimo) || atual + incremento;
       const sincronizar = () => {
         campo.min = minimo();
         if (Number(campo.value) < minimo()) campo.value = minimo();
@@ -119,36 +121,36 @@
 
       $$('.rapidos button', formLance).forEach((b) =>
         b.addEventListener('click', () => {
-          campo.value = atual + Number(b.dataset.soma);
+          campo.value = Math.max(minimo(), atual + Number(b.dataset.soma));
           erro.textContent = '';
         })
       );
 
-      // shortcut: o lance é simulado no navegador; o PHP precisa revalidar valor, prazo e autoria no servidor.
+      // Validação rápida no navegador; o PHP (Lance::registrar) valida de novo valor, prazo, autoria e créditos.
       formLance.addEventListener('submit', (e) => {
-        e.preventDefault();
         const valor = Math.round(Number(campo.value));
         if (Date.now() >= fim) {
+          e.preventDefault();
           erro.textContent = 'Este leilão já foi encerrado.';
           return;
         }
         if (!(valor >= minimo())) {
-          erro.textContent = `O lance mínimo é ${brl.format(minimo())} (lance atual + incremento de ${brl.format(incremento)}).`;
+          e.preventDefault();
+          erro.textContent = `O lance mínimo é ${brl.format(minimo())}.`;
+          campo.focus();
+          return;
+        }
+        // data-disponivel: créditos livres na carteira (o servidor confere de novo)
+        const disponivel = Number(formLance.dataset.disponivel);
+        if (formLance.dataset.disponivel !== undefined && valor > disponivel) {
+          e.preventDefault();
+          erro.textContent = `Você tem ${brl.format(disponivel)} disponíveis na carteira.`;
           campo.focus();
           return;
         }
         erro.textContent = '';
-        const antes = atual;
-        atual = valor;
-        mov().contar ? mov().contar(atualEl, antes, valor, 1.2) : (atualEl.textContent = brl.format(valor));
-        qtdEl.textContent = Number(qtdEl.textContent) + 1;
-        const li = document.createElement('li');
-        li.className = 'novo';
-        li.innerHTML = `<span class="avatar" style="--cor:var(--acafrao)">VC</span><span><strong>Você</strong><time>agora mesmo</time></span><b>${brl.format(valor)}</b>`;
-        historico.prepend(li);
         mov().faiscas?.(formLance.querySelector('[type="submit"]'));
-        sincronizar();
-        avisar(`Lance de ${brl.format(valor)} registrado. Boa sorte!`);
+        // sem preventDefault: o formulário segue para o servidor
       });
     }
 
@@ -370,13 +372,4 @@
       if (semHash(location.href) !== atual) ir(location.href, false, e.state?.y || 0);
     });
   }
-
-  /* ---------- PROTÓTIPO ----------
-     Ainda não há backend. Quando o PHP existir, apague este bloco:
-     os formulários passam a enviar para o "action" de cada um. */
-  document.addEventListener('submit', (e) => {
-    if (e.defaultPrevented) return;
-    e.preventDefault();
-    avisar(`Protótipo: este formulário vai para ${e.target.getAttribute('action')} quando o PHP estiver pronto.`);
-  });
 })();

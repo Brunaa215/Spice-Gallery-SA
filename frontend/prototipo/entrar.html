@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Entrar · Spice Gallery</title>
+  <meta name="description" content="Entre ou crie sua conta de artista no Spice Gallery.">
+  <link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Marcellus+SC&family=Pinyon+Script&display=swap">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  <div class="cortina" aria-hidden="true"><div class="cortina__painel"></div><div class="cortina__painel"></div><p class="cortina__marca">Spice</p><span class="cortina__contador">000</span></div>
+
+  <!-- PHP: include 'views/partials/topo.php' -->
+  <header class="topo">
+    <div class="topo__interno envolve">
+      <a class="marca" href="index.html" aria-label="Spice Gallery, início">
+        <span class="marca__nome">Spice<i>.</i></span>
+        <span class="marca__sub">Gallery<br>museu online</span>
+      </a>
+      <button class="topo__menu" type="button" aria-expanded="false" aria-controls="nav">Menu</button>
+      <nav class="nav" id="nav" aria-label="Principal">
+        <a href="index.html#galeria">Galeria</a>
+        <a href="artista.html">Artistas</a>
+        <a href="leiloes.html">Leilões<span class="ao-vivo" aria-hidden="true"></span></a>
+        <a href="entrar.html" aria-current="page">Entrar</a>
+        <a class="botao botao--tinta botao--sem-seta" href="publicar.html">Publicar arte</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="conteudo" class="porta">
+    <div class="porta__arte">
+      <blockquote>
+        <p>A primeira parede é a mais difícil de encontrar.</p>
+        <cite>Rafa Quintino, 22 · autor de Noite de Cravo</cite>
+      </blockquote>
+    </div>
+
+    <div class="porta__form">
+      <div class="porta__caixa" data-cascata>
+        <p class="rotulo">Entrada dos artistas</p>
+        <div class="abas" role="tablist" aria-label="Acesso">
+          <button class="aba" type="button" role="tab" id="aba-entrar" aria-selected="true" aria-controls="painel-entrar">Entrar</button>
+          <button class="aba" type="button" role="tab" id="aba-cadastro" aria-selected="false" aria-controls="painel-cadastro" tabindex="-1">Criar conta</button>
+        </div>
+
+        <!-- PHP: buscar Usuario por email e conferir password_verify(senha, senhaHash) -->
+        <form id="painel-entrar" role="tabpanel" aria-labelledby="aba-entrar" method="post" action="entrar.php">
+          <div class="campo">
+            <label for="login-email">E-mail</label>
+            <input id="login-email" name="email" type="email" autocomplete="email" required>
+          </div>
+          <div class="campo olho">
+            <label for="login-senha">Senha</label>
+            <input id="login-senha" name="senha" type="password" autocomplete="current-password" required>
+            <button type="button" aria-pressed="false" aria-label="Mostrar senha">Mostrar</button>
+          </div>
+          <button class="botao botao--tinta botao--largo" type="submit">Entrar</button>
+        </form>
+
+        <!-- PHP: INSERT em Usuario com senhaHash = password_hash(senha) e perfil = 'ARTISTA' (RN-01, RN-02) -->
+        <form id="painel-cadastro" role="tabpanel" aria-labelledby="aba-cadastro" method="post" action="cadastrar.php" hidden>
+          <div class="campo">
+            <label for="cad-nome">Nome artístico</label>
+            <input id="cad-nome" name="nome" type="text" maxlength="255" autocomplete="name" required>
+          </div>
+          <div class="campo">
+            <label for="cad-email">E-mail</label>
+            <input id="cad-email" name="email" type="email" maxlength="255" autocomplete="email" required>
+          </div>
+          <div class="campo olho">
+            <label for="cad-senha">Senha</label>
+            <input id="cad-senha" name="senha" type="password" minlength="8" autocomplete="new-password" required aria-describedby="cad-senha-ajuda">
+            <button type="button" aria-pressed="false" aria-label="Mostrar senha">Mostrar</button>
+          </div>
+          <p class="campo__ajuda" id="cad-senha-ajuda" style="margin:-12px 0 22px">Pelo menos 8 caracteres.</p>
+          <label class="marcar">
+            <input type="checkbox" name="aceiteTermos" value="1" required>
+            <span>Aceito os termos de uso e de direitos autorais.<small>Obrigatório para publicar obras.</small></span>
+          </label>
+          <button class="botao botao--tinta botao--largo" type="submit">Criar conta de artista</button>
+        </form>
+      </div>
+    </div>
+  </main>
+
+  <script src="../assets/js/vendor/gsap.min.js" defer></script>
+  <script src="../assets/js/vendor/ScrollTrigger.min.js" defer></script>
+  <script src="../assets/js/vendor/SplitText.min.js" defer></script>
+  <script src="../assets/js/vendor/Flip.min.js" defer></script>
+  <script src="../assets/js/vendor/ScrambleTextPlugin.min.js" defer></script>
+  <script src="../assets/js/vendor/lenis.min.js" defer></script>
+  <script src="../assets/js/movimento.js" defer></script>
+  <script src="../assets/js/app.js" defer></script>
+</body>
+</html>
