@@ -1,9 +1,11 @@
 <?php
 /**
  * Cartão de uma obra na parede (<article class="obra">). Usado na home, na sala do artista e na obra.
- * Variáveis: $obra (linha de Obra::SELECT), $mostrarAutor (bool, padrão true)
+ * Variáveis: $obra (linha de Obra::SELECT), $mostrarAutor (bool, padrão true),
+ *            $selo (opcional: frase embaixo da placa, ex. "Arrematada por R$ 340" na coleção)
  */
 $mostrarAutor = $mostrarAutor ?? true;
+$selo = $selo ?? null;
 $titulo = $obra['titulo'];
 $total = (int) $obra['avaliacoes'];
 ?>
@@ -20,6 +22,7 @@ $total = (int) $obra['avaliacoes'];
       <?php else: ?>
         <p class="placa__nota"><small>Ainda sem avaliações</small></p>
       <?php endif; ?>
+      <?php if ($selo): ?><p class="placa__selo"><?= e($selo) ?></p><?php endif; ?>
     </div>
   </a>
 </article>

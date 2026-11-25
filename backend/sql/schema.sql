@@ -20,6 +20,12 @@ CREATE TABLE IF NOT EXISTS Usuario (
     perfil         VARCHAR(50)  NOT NULL DEFAULT 'ARTISTA',
     ativo          TINYINT(1)   NOT NULL DEFAULT 1,                  -- [NOVO] curadoria pode desativar contas
     saldo          DECIMAL(10,2) NOT NULL DEFAULT 0.00,              -- [NOVO] créditos fictícios da carteira
+    apelido        VARCHAR(60)  NULL,                                -- [NOVO] perfil: apelido
+    especialidade  VARCHAR(80)  NULL,                                -- [NOVO] perfil: ex. "Pintura digital"
+    estilos        VARCHAR(255) NULL,                                -- [NOVO] perfil: estilos separados por vírgula
+    fotoPerfil     VARCHAR(255) NULL,                                -- [NOVO] perfil: caminho da foto (uploads/perfis)
+    molduraFoto    VARCHAR(20)  NOT NULL DEFAULT 'camafeu',          -- [NOVO] perfil: camafeu | ouro | rosa | verde | nenhuma
+    wallpaper      VARCHAR(255) NULL,                                -- [NOVO] perfil: fundo do cabeçalho da sala
     aceiteTermosEm DATETIME     NULL,                                -- [NOVO] RN-02: quando aceitou os termos
     criadoEm       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP   -- [NOVO] "membro desde"
 ) ENGINE=InnoDB;
@@ -44,10 +50,13 @@ CREATE TABLE IF NOT EXISTS Obra (
 -- status (EnumLeilao): 'AGUARDANDO_CURADORIA' | 'APROVADO' | 'REPROVADO'
 -- Um leilão APROVADO é "em breve", "ao vivo" ou "encerrado" conforme dataInicio/dataFim.
 -- Encerrado, ele é fechado uma vez só: o vencedor paga com créditos e o artista recebe.
+-- A duração (dataFim - dataInicio) pode ser de minutos a dias. Com abreNaAprovacao = 1, as datas
+-- são provisórias: quando a curadoria aprova, o leilão começa na hora, com a mesma duração.
 CREATE TABLE IF NOT EXISTS Leilao (
     id           BIGINT PRIMARY KEY AUTO_INCREMENT,
     dataInicio   DATETIME NOT NULL,
     dataFim      DATETIME NOT NULL,
+    abreNaAprovacao TINYINT(1) NOT NULL DEFAULT 0,                   -- [NOVO] começa quando a curadoria aprovar
     valorInicial DOUBLE   NOT NULL,
     incremento   DECIMAL(10,2) NOT NULL DEFAULT 1.00,                -- [NOVO] RN-08: incremento mínimo
     status       VARCHAR(50) NOT NULL,
@@ -96,6 +105,16 @@ CREATE TABLE IF NOT EXISTS Movimentacao (
     FOREIGN KEY (id_usuario) REFERENCES Usuario(id) ON DELETE CASCADE,
     FOREIGN KEY (id_leilao)  REFERENCES Leilao(id)  ON DELETE SET NULL,
     KEY idx_movimentacao_usuario (id_usuario, dataHora)
+) ENGINE=InnoDB;
+
+-- 7. REDESOCIAL [NOVO] links do perfil do artista (uma linha por rede)
+-- rede: 'instagram' | 'tiktok' | 'x' | 'youtube' | 'behance' | 'artstation' | 'pinterest' | 'site'
+CREATE TABLE IF NOT EXISTS RedeSocial (
+    id_usuario BIGINT       NOT NULL,
+    rede       VARCHAR(20)  NOT NULL,
+    url        VARCHAR(255) NOT NULL,
+    PRIMARY KEY (id_usuario, rede),
+    FOREIGN KEY (id_usuario) REFERENCES Usuario(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
 -- Curadoria inicial: admin@spice.com / Admin@12345!

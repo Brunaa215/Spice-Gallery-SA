@@ -12,7 +12,7 @@ use App\Models\Obra;
       <canvas class="poeira" aria-hidden="true"></canvas>
       <p class="rotulo">Sala noturna · as luzes baixam às 19h</p>
       <h1 id="leiloes-titulo">Leilão <span>noturno</span></h1>
-      <p data-revelar>Só entram aqui obras exclusivas que o artista marcou como disponíveis e que a curadoria aprovou. Início e fim são fixos. O maior lance válido leva.</p>
+      <p data-revelar>Só entram aqui obras exclusivas que o artista marcou como disponíveis e que a curadoria aprovou. Cada leilão dura o tempo que o artista escolheu, de minutos a dias. O maior lance válido leva.</p>
     </section>
 
     <section class="secao envolve" aria-label="Lotes" style="padding-top:clamp(30px,4vw,60px)">
@@ -88,7 +88,7 @@ use App\Models\Obra;
         <article class="regra">
           <span class="regra__num" aria-hidden="true">III</span>
           <h3>Martelo</h3>
-          <p>No horário final o leilão fecha. Vence o maior lance: o valor sai da carteira de quem venceu e entra na carteira do artista.</p>
+          <p>No horário final o leilão fecha (um lance no último minuto prorroga por mais 1 minuto). Vence o maior lance: o valor sai da carteira de quem venceu e entra na carteira do artista.</p>
         </article>
       </div>
     </section>

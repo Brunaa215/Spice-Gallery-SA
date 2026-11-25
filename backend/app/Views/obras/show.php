@@ -36,7 +36,7 @@ $arrematada = $leilao && $leilao['id_vencedor'];
           <p class="rotulo"><?= numeroObra($obra['id']) ?> · <?= e(Obra::categoria($obra['categoria'])) ?></p>
           <h1 class="ficha__titulo"><?= e($obra['titulo']) ?></h1>
           <a class="ficha__artista" href="<?= e($linkArtista) ?>">
-            <span class="avatar" style="--cor:var(--<?= corAvatar($obra['id_usuario']) ?>)"><?= e(iniciais($obra['autor'])) ?></span>
+            <?= avatar($obra['id_usuario'], $obra['autor'], $artista['fotoPerfil'] ?? null) ?>
             <span><strong><?= e($obra['autor']) ?></strong><small><?= (int) $artista['obras'] ?> <?= (int) $artista['obras'] === 1 ? 'obra' : 'obras' ?> na galeria</small></span>
           </a>
           <p class="ficha__texto"><?= nl2br(e($obra['descricao'])) ?></p>
@@ -50,17 +50,21 @@ $arrematada = $leilao && $leilao['id_vencedor'];
                 Sem avaliações
               <?php endif; ?>
             </dd></div>
-            <div><dt>Status</dt><dd><?php if ($arrematada): ?>Arrematada por <?= e($leilao['vencedor'] ?? 'outra conta') ?> (<?= brl($leilao['maiorLance']) ?>)<?php else: ?><?= $leilao ? e(Leilao::estado($leilao)) . ' (leilão)' : 'Publicada' ?><?php endif; ?></dd></div>
+            <div><dt>Status</dt><dd><?php if ($arrematada): ?>Arrematada por <a href="<?= e(url('artistas.show', ['id' => $leilao['id_vencedor']])) ?>#colecao"><?= e($leilao['vencedor'] ?? 'outra conta') ?></a> (<?= brl($leilao['maiorLance']) ?>)<?php else: ?><?= $leilao ? e(Leilao::estado($leilao)) . ' (leilão)' : 'Publicada' ?><?php endif; ?></dd></div>
           </dl>
           <div class="hero__acoes" style="margin-top:0">
-            <?php if ($leilao && ($leilao['status'] === Leilao::APROVADO || $ehAutor)): ?>
-              <a class="botao botao--acafrao" href="<?= e(url('leiloes.show', ['id' => $leilao['id']])) ?>">Ver leilão</a>
+            <?php if ($leilao && ($leilao['status'] === Leilao::APROVADO || $ehAutor || $isAdmin)): ?>
+              <a class="botao botao--acafrao" href="<?= e(url('leiloes.show', ['id' => $leilao['id']])) ?>"><?= $leilao['estado'] === 'AO_VIVO' ? 'Dar lance (ao vivo)' : 'Ver leilão' ?></a>
             <?php endif; ?>
             <?php if ($podeAvaliar): ?>
               <a class="botao botao--tinta" href="#avaliar"><?= $minha ? 'Editar minha avaliação' : 'Avaliar esta obra' ?></a>
             <?php endif; ?>
             <a class="botao" href="<?= e($linkArtista) ?>">Galeria do artista</a>
           </div>
+
+          <?php if ($isAdmin && $leilao && $leilao['status'] === Leilao::AGUARDANDO): ?>
+            <?php \App\Core\View::partial('leilao_decisao', ['leilao' => $leilao, 'voltar' => 'obra']); ?>
+          <?php endif; ?>
 
           <?php if ($ehAutor || $isAdmin): ?>
             <div class="comentario__acoes" style="margin-top:22px">
@@ -138,7 +142,7 @@ $arrematada = $leilao && $leilao['id_vencedor'];
               <?php foreach ($avaliacoes as $a): ?>
                 <?php $meu = $current && (int) $a['id_usuario'] === (int) $current['id']; ?>
                 <li class="comentario<?= $meu ? ' comentario--meu' : '' ?>">
-                  <span class="avatar" style="--cor:var(--<?= corAvatar($a['id_usuario']) ?>)"><?= e(iniciais($a['nome'])) ?></span>
+                  <?= avatar($a['id_usuario'], $a['nome'], $a['fotoPerfil'] ?? null) ?>
                   <div>
                     <div class="comentario__cab"><strong><?= $meu ? 'Você' : e($a['nome']) ?></strong><span class="estrelas" role="img" style="--nota:<?= (int) $a['nota'] ?>" aria-label="<?= (int) $a['nota'] ?> de 5"></span><time datetime="<?= dataIso($a['dataHora']) ?>"><?= quando($a['dataHora']) ?></time></div>
                     <p><?= e($a['comentario']) ?></p>

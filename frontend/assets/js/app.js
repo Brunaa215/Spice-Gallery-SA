@@ -23,10 +23,63 @@
     tToast = setTimeout(() => toast.classList.remove('visivel'), 4200);
   };
 
+  /* ---------- formulário de lance (RN-08) ----------
+     Fora do montar(): o painel do leilão ao vivo é trocado pelo servidor e o formulário novo
+     precisa ser ligado de novo. */
+  function ligarLance(formLance) {
+    if (!formLance) return;
+    const campo = formLance.elements.valor;
+    const erro = $('.campo__erro', formLance);
+    const minimoEl = $('[data-minimo]', formLance);
+    const incremento = Number(formLance.dataset.incremento);
+    const fim = Date.parse(formLance.dataset.fim);
+    const atual = Number(formLance.dataset.atual);
+    // data-lance-minimo vem do PHP: valor inicial (sem lances) ou lance atual + incremento
+    const minimo = () => Number(formLance.dataset.lanceMinimo) || atual + incremento;
+    campo.min = minimo();
+    if (Number(campo.value) < minimo()) campo.value = minimo();
+    minimoEl.textContent = brl.format(minimo());
+
+    $$('.rapidos button', formLance).forEach((b) =>
+      b.addEventListener('click', () => {
+        campo.value = Math.max(minimo(), atual + Number(b.dataset.soma));
+        erro.textContent = '';
+      })
+    );
+
+    // Validação rápida no navegador; o PHP (Lance::registrar) valida de novo valor, prazo, autoria e créditos.
+    formLance.addEventListener('submit', (e) => {
+      const valor = Math.round(Number(campo.value));
+      if (Date.now() >= fim) {
+        e.preventDefault();
+        erro.textContent = 'Este leilão já foi encerrado.';
+        return;
+      }
+      if (!(valor >= minimo())) {
+        e.preventDefault();
+        erro.textContent = `O lance mínimo é ${brl.format(minimo())}.`;
+        campo.focus();
+        return;
+      }
+      // data-disponivel: créditos livres na carteira (o servidor confere de novo)
+      const disponivel = Number(formLance.dataset.disponivel);
+      if (formLance.dataset.disponivel !== undefined && valor > disponivel) {
+        e.preventDefault();
+        erro.textContent = `Você tem ${brl.format(disponivel)} disponíveis na carteira.`;
+        campo.focus();
+        return;
+      }
+      erro.textContent = '';
+      formLance.dataset.enviando = ''; // o leilão ao vivo não troca o painel durante o envio
+      mov().faiscas?.(formLance.querySelector('[type="submit"]'));
+      // sem preventDefault: o formulário segue para o servidor
+    });
+  }
+
   /* =========================================================
      POR PÁGINA: tudo que se liga a elementos da página.
      Roda na carga e de novo a cada troca de página (navegação sem recarregar, no fim do arquivo).
-     Devolve a função que desliga o que não morre junto com o HTML (o relógio).
+     Devolve a função que desliga o que não morre junto com o HTML (o relógio e o leilão ao vivo).
      ========================================================= */
   function montar() {
     /* ---------- mensagem do servidor (flash do PHP) ---------- */
@@ -62,33 +115,33 @@
       })
     );
 
-    /* ---------- contagem regressiva de leilões ---------- */
+    /* ---------- contagem regressiva de leilões ----------
+       Os relógios são procurados a cada segundo (e não só ao montar): o painel do leilão ao vivo
+       é trocado pelo servidor e pode trazer um relógio novo ou um data-fim adiado (prorrogação). */
     const UNIDADES = [['dias', 86400], ['h', 3600], ['min', 60], ['s', 1]];
-    const contagens = $$('[data-fim]').filter((el) => !el.matches('form')).map((el) => ({
-      el,
-      fim: Date.parse(el.dataset.fim),
-      inicio: el.dataset.inicio ? Date.parse(el.dataset.inicio) : 0,
-      digitos: null,
-    }));
+    const relogios = new WeakMap(); // elemento -> os <b> dos dígitos já desenhados
     const tique = () => {
       const agora = Date.now();
-      contagens.forEach((c) => {
-        if (c.feito) return;
-        if (agora >= c.fim) {
-          c.feito = true;
-          c.el.classList.add('contagem--fim');
-          c.el.textContent = 'Leilão encerrado';
+      $$('[data-fim]:not(form)').forEach((el) => {
+        if (el.classList.contains('contagem--fim')) return;
+        const fim = Date.parse(el.dataset.fim);
+        const inicio = el.dataset.inicio ? Date.parse(el.dataset.inicio) : 0;
+        if (agora >= fim) {
+          el.classList.add('contagem--fim');
+          el.textContent = 'Leilão encerrado';
           return;
         }
-        if (!c.digitos) {
-          c.el.innerHTML = UNIDADES.map(([u]) => `<span><b>00</b><small>${u}</small></span>`).join('');
-          c.digitos = $$('b', c.el);
+        let digitos = relogios.get(el);
+        if (!digitos) {
+          el.innerHTML = UNIDADES.map(([u]) => `<span><b>00</b><small>${u}</small></span>`).join('');
+          digitos = $$('b', el);
+          relogios.set(el, digitos);
         }
-        let resto = Math.max(0, Math.floor(((agora < c.inicio ? c.inicio : c.fim) - agora) / 1000));
+        let resto = Math.max(0, Math.floor(((agora < inicio ? inicio : fim) - agora) / 1000));
         UNIDADES.forEach(([, seg], i) => {
           const v = String(Math.floor(resto / seg)).padStart(2, '0');
           resto %= seg;
-          const b = c.digitos[i];
+          const b = digitos[i];
           if (b.textContent === v) return;
           b.textContent = v;
           b.animate?.([{ transform: 'translateY(-45%)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 450, easing: 'cubic-bezier(.2,.7,.1,1)' });
@@ -96,63 +149,65 @@
       });
     };
     let relogio;
-    if (contagens.length) {
+    if ($('[data-fim]:not(form), [data-leilao-vivo]')) {
       tique();
       relogio = setInterval(tique, 1000);
     }
 
     /* ---------- lance (RN-08) ---------- */
-    const formLance = $('[data-lance]');
-    if (formLance) {
-      const campo = formLance.elements.valor;
-      const erro = $('.campo__erro', formLance);
-      const minimoEl = $('[data-minimo]');
-      const incremento = Number(formLance.dataset.incremento);
-      const fim = Date.parse(formLance.dataset.fim);
-      const atual = Number(formLance.dataset.atual);
-      // data-lance-minimo vem do PHP: valor inicial (sem lances) ou lance atual + incremento
-      const minimo = () => Number(formLance.dataset.lanceMinimo) || atual + incremento;
-      const sincronizar = () => {
-        campo.min = minimo();
-        if (Number(campo.value) < minimo()) campo.value = minimo();
-        minimoEl.textContent = brl.format(minimo());
-      };
-      sincronizar();
+    ligarLance($('[data-lance]'));
 
-      $$('.rapidos button', formLance).forEach((b) =>
-        b.addEventListener('click', () => {
-          campo.value = Math.max(minimo(), atual + Number(b.dataset.soma));
-          erro.textContent = '';
-        })
-      );
+    /* ---------- leilão ao vivo ----------
+       A cada 2 s (5 s antes de abrir) pergunta ao servidor se algo mudou, mandando a versão que tem.
+       Se mudou, o servidor devolve o painel e o histórico prontos (os mesmos partials do PHP) e só
+       esses pedaços são trocados: lance novo, prorrogação, abertura e martelo aparecem sem recarregar.
+       Perguntar também é o que faz o servidor fechar o leilão na hora certa. */
+    const painel = $('[data-leilao-vivo]');
+    const historico = $('[data-historico]');
+    let consulta;
+    const perguntar = async () => {
+      const estadoAntes = painel.dataset.estado;
+      if (estadoAntes === 'ENCERRADO' || estadoAntes === 'REPROVADO') return; // nada mais vai mudar
+      consulta = setTimeout(perguntar, estadoAntes === 'AO_VIVO' ? 2000 : 5000);
+      // aba escondida não pergunta; lance sendo enviado não pode ter o formulário trocado no meio
+      if (document.hidden || $('[data-lance][data-enviando]', painel)) return;
+      try {
+        const url = `${painel.dataset.leilaoVivo}&v=${encodeURIComponent(painel.dataset.versao)}`;
+        const r = await fetch(url, { headers: { Accept: 'application/json' }, cache: 'no-store' });
+        if (!r.ok) return;
+        const d = await r.json();
+        if (!painel.isConnected) return; // a pessoa já foi para outra página
+        const saldo = $('.nav__saldo');
+        if (saldo && d.saldo) saldo.textContent = d.saldo;
+        if (d.versao === painel.dataset.versao || !d.painel) return;
 
-      // Validação rápida no navegador; o PHP (Lance::registrar) valida de novo valor, prazo, autoria e créditos.
-      formLance.addEventListener('submit', (e) => {
-        const valor = Math.round(Number(campo.value));
-        if (Date.now() >= fim) {
-          e.preventDefault();
-          erro.textContent = 'Este leilão já foi encerrado.';
-          return;
+        // guarda o lance que a pessoa estava digitando
+        const campo = $('[data-lance] [name="valor"]', painel);
+        const digitado = campo ? campo.value : '';
+        const focado = campo && document.activeElement === campo;
+        const eraLider = painel.dataset.lider === '1';
+
+        painel.innerHTML = d.painel;
+        if (historico) historico.innerHTML = d.historico;
+        Object.assign(painel.dataset, { versao: d.versao, estado: d.estado, lider: d.souLider ? '1' : '0' });
+
+        const form = $('[data-lance]', painel);
+        ligarLance(form);
+        const campoNovo = form?.elements.valor;
+        if (campoNovo && digitado && Number(digitado) >= Number(campoNovo.min)) campoNovo.value = digitado;
+        if (campoNovo && focado) campoNovo.focus({ preventScroll: true });
+        $('[data-lance-atual]', painel)?.animate?.([{ transform: 'scale(1.1)' }, { transform: 'none' }], { duration: 600, easing: 'cubic-bezier(.2,.7,.1,1)' });
+
+        if (estadoAntes !== d.estado) {
+          avisar({ AO_VIVO: 'O leilão abriu! Já dá para dar lances.', ENCERRADO: 'Martelo batido: o leilão foi encerrado.' }[d.estado] || 'A situação do leilão mudou.');
+        } else if (eraLider && !d.souLider) {
+          avisar('Seu lance foi coberto! Dê um novo lance para voltar à frente.');
         }
-        if (!(valor >= minimo())) {
-          e.preventDefault();
-          erro.textContent = `O lance mínimo é ${brl.format(minimo())}.`;
-          campo.focus();
-          return;
-        }
-        // data-disponivel: créditos livres na carteira (o servidor confere de novo)
-        const disponivel = Number(formLance.dataset.disponivel);
-        if (formLance.dataset.disponivel !== undefined && valor > disponivel) {
-          e.preventDefault();
-          erro.textContent = `Você tem ${brl.format(disponivel)} disponíveis na carteira.`;
-          campo.focus();
-          return;
-        }
-        erro.textContent = '';
-        mov().faiscas?.(formLance.querySelector('[type="submit"]'));
-        // sem preventDefault: o formulário segue para o servidor
-      });
-    }
+      } catch {
+        /* rede instável: tenta de novo no próximo ciclo */
+      }
+    };
+    if (painel) consulta = setTimeout(perguntar, 2000);
 
     /* ---------- nota em estrelas ---------- */
     $$('.estrelas-input input').forEach((i) => i.addEventListener('change', () => mov().estrelas?.(i)));
@@ -216,16 +271,86 @@
         camposLeilao.hidden = camposLeilao.disabled = !querLeilao.checked;
         if (querLeilao.checked) mov().revelar?.(camposLeilao);
       });
-      const ini = camposLeilao.querySelector('[name="dataInicio"]');
-      const fim = camposLeilao.querySelector('[name="dataFim"]');
-      const agoraLocal = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-      ini.min = agoraLocal;
-      const checarDatas = () => {
-        fim.min = ini.value || agoraLocal;
-        fim.setCustomValidity(ini.value && fim.value && fim.value <= ini.value ? 'O término precisa ser depois do início.' : '');
+      // "Em data e hora marcadas" mostra o campo de início; "assim que a curadoria aprovar" o esconde
+      const blocoData = $('[data-inicio-data]', camposLeilao);
+      const ini = $('[name="dataInicio"]', camposLeilao);
+      // data e hora locais no formato do <input type="datetime-local"> (2026-11-24T21:30)
+      const local = (ms) => new Date(ms - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+      ini.min = local(Date.now());
+      $$('[name="inicioModo"]', camposLeilao).forEach((r) =>
+        r.addEventListener('change', () => {
+          const naData = r.value === 'data' && r.checked;
+          blocoData.hidden = ini.disabled = !naData;
+          if (!naData) return;
+          // nunca aparece vazio nem no passado: sugere daqui a 10 minutos
+          if (!ini.value || ini.value < ini.min) ini.value = local(Date.now() + 10 * 60000);
+          ini.focus();
+        })
+      );
+    }
+
+    /* ---------- meu perfil: prévia ao vivo ---------- */
+    const perfil = $('[data-perfil]');
+    if (perfil) {
+      const retratoPrevia = $('.perfil__previa [data-retrato]', perfil);
+      const molduras = $$('[name="molduraFoto"]', perfil);
+      const classesMoldura = molduras.map((r) => r.dataset.classe).filter(Boolean);
+      molduras.forEach((r) =>
+        r.addEventListener('change', () => {
+          retratoPrevia.classList.remove(...classesMoldura);
+          if (r.dataset.classe) retratoPrevia.classList.add(r.dataset.classe);
+        })
+      );
+      // mesma checagem do upload da obra; o PHP confere de novo pelo conteúdo do arquivo
+      const imagemValida = (campo) => {
+        const arq = campo.files[0];
+        if (!arq) return null;
+        if (!/^image\/(png|jpeg|webp)$/.test(arq.type)) {
+          campo.value = '';
+          avisar('Use uma imagem PNG, JPG ou WEBP.');
+          return null;
+        }
+        if (arq.size > 10 * 1024 * 1024) {
+          campo.value = '';
+          avisar('A imagem passa de 10 MB. Exporte em tamanho menor.');
+          return null;
+        }
+        return URL.createObjectURL(arq);
       };
-      ini.addEventListener('change', checarDatas);
-      fim.addEventListener('change', checarDatas);
+      // foto nova aparece na prévia e nas miniaturas de cada moldura
+      $('[data-previa-foto]', perfil)?.addEventListener('change', (e) => {
+        const url = imagemValida(e.target);
+        if (!url) return;
+        $$('[data-retrato] .quadro__passe', perfil).forEach((passe) => {
+          const img = new Image();
+          img.src = url;
+          img.alt = '';
+          passe.replaceChildren(img);
+        });
+        const remover = $('[data-remover-foto]', perfil);
+        if (remover) remover.checked = false;
+      });
+      const fundo = $('[data-previa-wallpaper]', perfil);
+      $('[data-previa-wallpaper-arquivo]', perfil)?.addEventListener('change', (e) => {
+        const url = imagemValida(e.target);
+        if (!url) return;
+        $('[data-previa-wallpaper-imagem]', fundo).style.backgroundImage = `url("${url}")`;
+        fundo.classList.add('perfil__fundo--imagem');
+        const remover = $('[data-remover-wallpaper]', perfil);
+        if (remover) remover.checked = false;
+      });
+      $('[data-remover-wallpaper]', perfil)?.addEventListener('change', (e) => fundo.classList.toggle('perfil__fundo--imagem', !e.target.checked));
+      // nome, especialidade e apelido escritos aparecem na prévia
+      $$('[data-previa]', perfil).forEach((campo) =>
+        campo.addEventListener('input', () => {
+          const alvo = $(`[data-previa-${campo.dataset.previa}]`, perfil);
+          const texto = campo.value.trim();
+          if (campo.dataset.previa === 'apelido') {
+            alvo.hidden = !texto;
+            $('span', alvo).textContent = texto;
+          } else alvo.textContent = texto;
+        })
+      );
     }
 
     /* ---------- abas entrar / criar conta ---------- */
@@ -261,7 +386,10 @@
       })
     );
 
-    return () => clearInterval(relogio);
+    return () => {
+      clearInterval(relogio);
+      clearTimeout(consulta);
+    };
   }
   let desmontar = montar();
 

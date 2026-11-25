@@ -13,6 +13,7 @@ use App\Controllers\CuradoriaController;
 use App\Controllers\HomeController;
 use App\Controllers\LeilaoController;
 use App\Controllers\ObraController;
+use App\Controllers\PerfilController;
 use App\Controllers\UsuarioController;
 use App\Models\Leilao;
 
@@ -38,12 +39,15 @@ $routes = [
 
     'artistas'          => ['GET',  ArtistaController::class,   'index'],
     'artistas.show'     => ['GET',  ArtistaController::class,   'show'],
+    'perfil'            => ['GET',  PerfilController::class,    'form'],
+    'perfil.save'       => ['POST', PerfilController::class,    'save'],
 
     'avaliacoes.save'   => ['POST', AvaliacaoController::class, 'save'],
     'avaliacoes.delete' => ['POST', AvaliacaoController::class, 'delete'],
 
     'leiloes'           => ['GET',  LeilaoController::class,    'index'],
     'leiloes.show'      => ['GET',  LeilaoController::class,    'show'],
+    'leiloes.estado'    => ['GET',  LeilaoController::class,    'estado'],   // JSON: leilão ao vivo
     'lances.save'       => ['POST', LeilaoController::class,    'bid'],
 
     'carteira'          => ['GET',  CarteiraController::class,  'index'],

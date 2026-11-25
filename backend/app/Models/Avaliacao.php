@@ -9,7 +9,7 @@ final class Avaliacao
     public function daObra(int $idObra): array
     {
         $s = Database::connection()->prepare(
-            'SELECT a.*, u.nome FROM Avaliacao a JOIN Usuario u ON u.id = a.id_usuario
+            'SELECT a.*, u.nome, u.fotoPerfil FROM Avaliacao a JOIN Usuario u ON u.id = a.id_usuario
               WHERE a.id_obra = ? AND u.ativo = 1 ORDER BY a.dataHora DESC, a.id DESC'
         );
         $s->execute([$idObra]);

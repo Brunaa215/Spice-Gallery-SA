@@ -120,6 +120,20 @@ function corAvatar(int|string $id): string
 {
     return CORES_AVATAR[(int) $id % count(CORES_AVATAR)];
 }
+// Caminho de imagem do próprio site (upload ou exemplo em assets/), ou null. Usado antes de pôr o
+// caminho num style="...url(...)": só letras, números e / _ . - passam, então nada escapa do CSS.
+function imagemLocal(?string $caminho): ?string
+{
+    return $caminho && preg_match('#^(uploads|assets)/[A-Za-z0-9/_.-]+\.(png|jpe?g|webp|svg)$#', $caminho) ? $caminho : null;
+}
+// Avatar: a foto de perfil, se houver; senão as iniciais no camafeu colorido.
+function avatar(int|string $id, string $nome, ?string $foto = null): string
+{
+    $foto = imagemLocal($foto);
+    if ($foto)
+        return '<span class="avatar avatar--foto"><img src="' . e($foto) . '" alt="" loading="lazy"></span>';
+    return '<span class="avatar" style="--cor:var(--' . corAvatar($id) . ')">' . e(iniciais($nome)) . '</span>';
+}
 // Moldura do quadro escolhida pelo id, para a parede não ficar repetitiva.
 function moldura(int|string $id): string
 {
@@ -135,6 +149,20 @@ function dataHora(string $data): string    // 5 dez, 21h  /  5 dez, 21h30
     $t = strtotime($data);
     $min = date('i', $t);
     return date('j', $t) . ' ' . MESES[(int) date('n', $t) - 1] . ', ' . date('G', $t) . 'h' . ($min !== '00' ? $min : '');
+}
+function duracao(int $minutos): string      // 10 minutos / 1 hora e 30 minutos / 2 dias
+{
+    $partes = [];
+    foreach ([[1440, 'dia', 'dias'], [60, 'hora', 'horas'], [1, 'minuto', 'minutos']] as [$tam, $um, $varios]) {
+        $n = intdiv($minutos, $tam);
+        $minutos %= $tam;
+        if ($n > 0)
+            $partes[] = $n . ' ' . ($n === 1 ? $um : $varios);
+    }
+    if (!$partes)
+        return 'menos de 1 minuto';
+    $ultima = array_pop($partes);
+    return $partes ? implode(', ', $partes) . ' e ' . $ultima : $ultima;
 }
 function dataIso(string $data): string     // 2026-12-05T21:00:00-03:00 (lido pelo app.js)
 {

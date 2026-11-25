@@ -1,3 +1,5 @@
 # Imagens enviadas pelos artistas (o backend grava aqui)
 /uploads/obras/*
 !/uploads/obras/.gitkeep
+/uploads/perfis/*
+!/uploads/perfis/.gitkeep

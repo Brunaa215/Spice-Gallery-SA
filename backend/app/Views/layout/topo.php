@@ -43,9 +43,10 @@ $marcar = fn(string $item): string => $menu === $item ? ' aria-current="page"' :
         <a href="<?= e(url('leiloes')) ?>"<?= $marcar('leiloes') ?>>Leilões<span class="ao-vivo" aria-hidden="true"></span></a>
         <?php if ($current): ?>
           <a href="<?= e(url('artistas.show', ['id' => $current['id']])) ?>"<?= $marcar('minha-sala') ?>>Minha sala</a>
+          <a href="<?= e(url('perfil')) ?>"<?= $marcar('perfil') ?>>Perfil</a>
           <a href="<?= e(url('carteira')) ?>"<?= $marcar('carteira') ?>>Carteira <span class="nav__saldo"><?= brl($current['saldo']) ?></span></a>
           <?php if ($isAdmin): ?>
-            <a href="<?= e(url('curadoria')) ?>"<?= $marcar('curadoria') ?>>Curadoria</a>
+            <a href="<?= e(url('curadoria')) ?>"<?= $marcar('curadoria') ?>>Curadoria<?php if (!empty($pendentesCuradoria)): ?> <span class="nav__aviso" title="Leilões esperando aprovação"><?= (int) $pendentesCuradoria ?></span><?php endif; ?></a>
           <?php endif; ?>
           <form class="nav__sair" method="post" action="<?= e(url('logout')) ?>">
             <?= \App\Core\Csrf::field() ?>

@@ -55,6 +55,20 @@ final class Obra
         return $s->fetchAll();
     }
 
+    // Coleção: obras que a pessoa arrematou em leilão, com o valor pago e a data, mais recentes primeiro.
+    public function arrematadasPor(int $idUsuario): array
+    {
+        $s = Database::connection()->prepare(
+            'SELECT t.*, lv.dataFim AS arrematadaEm,
+                    (SELECT MAX(la.valor) FROM Lance la WHERE la.id_leilao = lv.id) AS valorPago
+               FROM (' . self::SELECT . ') t
+               JOIN Leilao lv ON lv.id_obra = t.id AND lv.id_vencedor = ?
+              ORDER BY lv.dataFim DESC'
+        );
+        $s->execute([$idUsuario]);
+        return $s->fetchAll();
+    }
+
     public function find(int $id): ?array
     {
         $s = Database::connection()->prepare(self::SELECT . ' AND o.id = ?');

@@ -12,6 +12,14 @@ final class Leilao
     public const APROVADO = 'APROVADO';
     public const REPROVADO = 'REPROVADO';
 
+    // Duração escolhida pelo artista: número + unidade (o valor é quantos minutos cada unidade tem).
+    public const UNIDADES = ['minutos' => 1, 'horas' => 60, 'dias' => 1440];
+    public const DURACAO_MAXIMA = 30 * 1440; // 30 dias, em minutos
+
+    // Prorrogação ("dou-lhe uma, dou-lhe duas..."): um lance que chega quando falta menos que isto
+    // empurra o fim para este tempo depois do lance. 0 desliga.
+    public const PRORROGACAO_SEGUNDOS = 60;
+
     // "estado" é calculado: um leilão APROVADO vira EM_BREVE, AO_VIVO ou ENCERRADO pelo relógio.
     public const ESTADOS = [
         'AO_VIVO' => 'Ao vivo',
@@ -23,7 +31,7 @@ final class Leilao
 
     // Leilão + obra + autor + maior lance + quantidade de lances + estado + quem arrematou.
     private const SELECT = "
-        SELECT l.*, o.titulo, o.urlImagem, o.categoria, o.id_usuario AS idAutor, u.nome AS autor,
+        SELECT l.*, o.titulo, o.urlImagem, o.categoria, o.id_usuario AS idAutor, u.nome AS autor, u.fotoPerfil AS autorFoto,
                COALESCE(x.maior, 0) AS maiorLance, COALESCE(x.total, 0) AS lances, v.nome AS vencedor,
                CASE WHEN l.status <> 'APROVADO' THEN l.status
                     WHEN NOW() < l.dataInicio THEN 'EM_BREVE'
@@ -52,6 +60,21 @@ final class Leilao
     public static function estado(array $l): string
     {
         return self::ESTADOS[$l['estado']] ?? $l['estado'];
+    }
+
+    // Duração em minutos (para "começa quando aprovar", as datas guardadas são provisórias,
+    // mas a diferença entre elas é a duração escolhida).
+    public static function duracaoMinutos(array $l): int
+    {
+        return (int) round((strtotime($l['dataFim']) - strtotime($l['dataInicio'])) / 60);
+    }
+
+    // Leilão que não pode mais ser mexido nem substituído: aprovado e ainda não encerrado,
+    // ou encerrado com lances (a obra foi vendida). Reprovado ou encerrado sem lances libera
+    // a obra para um leilão novo; aguardando a curadoria ainda pode ser alterado ou cancelado.
+    public static function travado(array $l): bool
+    {
+        return $l['status'] === self::APROVADO && ($l['estado'] !== 'ENCERRADO' || (int) $l['lances'] > 0);
     }
 
     // Página "Leilões": só os aprovados; ao vivo primeiro, depois em breve, depois encerrados.
@@ -173,25 +196,60 @@ final class Leilao
         }
     }
 
+    // Quantos esperam a curadoria (o número que aparece no menu dela).
+    public function totalPendentes(): int
+    {
+        return (int) Database::connection()->query(
+            'SELECT COUNT(*) FROM (' . self::SELECT . " AND l.status = 'AGUARDANDO_CURADORIA') t"
+        )->fetchColumn();
+    }
+
     // Fila da curadoria (RN-07).
     public function pendentes(): array
     {
         return Database::connection()->query(self::SELECT . " AND l.status = 'AGUARDANDO_CURADORIA' ORDER BY l.dataInicio")->fetchAll();
     }
 
-    public function create(int $idObra, string $valorInicial, string $incremento, string $inicio, string $fim): void
+    // Com $abreNaAprovacao, $inicio/$fim são provisórios: só a duração entre eles importa.
+    public function create(int $idObra, string $valorInicial, string $incremento, string $inicio, string $fim, bool $abreNaAprovacao): void
     {
         $s = Database::connection()->prepare(
-            'INSERT INTO Leilao (dataInicio, dataFim, valorInicial, incremento, status, id_obra) VALUES (?, ?, ?, ?, ?, ?)'
+            'INSERT INTO Leilao (dataInicio, dataFim, abreNaAprovacao, valorInicial, incremento, status, id_obra) VALUES (?, ?, ?, ?, ?, ?, ?)'
         );
-        $s->execute([$inicio, $fim, $valorInicial, $incremento, self::AGUARDANDO, $idObra]);
+        $s->execute([$inicio, $fim, (int) $abreNaAprovacao, $valorInicial, $incremento, self::AGUARDANDO, $idObra]);
+    }
+
+    // Enquanto a curadoria não decide, o artista pode mudar valores, início e duração...
+    public function atualizarPendente(int $id, string $valorInicial, string $incremento, string $inicio, string $fim, bool $abreNaAprovacao): void
+    {
+        $s = Database::connection()->prepare(
+            "UPDATE Leilao SET dataInicio = ?, dataFim = ?, abreNaAprovacao = ?, valorInicial = ?, incremento = ?
+              WHERE id = ? AND status = 'AGUARDANDO_CURADORIA'"
+        );
+        $s->execute([$inicio, $fim, (int) $abreNaAprovacao, $valorInicial, $incremento, $id]);
+    }
+
+    // ...ou desistir dele (sem lances: ele nunca abriu).
+    public function cancelarPendente(int $id): void
+    {
+        $s = Database::connection()->prepare("DELETE FROM Leilao WHERE id = ? AND status = 'AGUARDANDO_CURADORIA'");
+        $s->execute([$id]);
     }
 
     // Aprova ou reprova; só muda quem ainda está aguardando.
+    // Aprovado com abreNaAprovacao, o leilão começa agora e termina daqui a (fim - início) da duração
+    // escolhida. dataFim vem antes de dataInicio no SET para ainda usar o início provisório.
     public function decidir(int $id, string $status): bool
     {
-        $s = Database::connection()->prepare("UPDATE Leilao SET status = ? WHERE id = ? AND status = 'AGUARDANDO_CURADORIA'");
-        $s->execute([$status, $id]);
+        $s = Database::connection()->prepare(
+            "UPDATE Leilao
+                SET status = ?,
+                    dataFim = IF(? = 'APROVADO' AND abreNaAprovacao = 1,
+                                 NOW() + INTERVAL TIMESTAMPDIFF(SECOND, dataInicio, dataFim) SECOND, dataFim),
+                    dataInicio = IF(? = 'APROVADO' AND abreNaAprovacao = 1, NOW(), dataInicio)
+              WHERE id = ? AND status = 'AGUARDANDO_CURADORIA'"
+        );
+        $s->execute([$status, $status, $status, $id]);
         return $s->rowCount() > 0;
     }
 }

@@ -15,6 +15,8 @@ final class View
         // Usuário logado, disponível em todas as views.
         $current = Auth::user();
         $isAdmin = Auth::isAdmin();
+        // Leilões esperando aprovação: o menu da curadoria mostra o número (só ela vê).
+        $pendentesCuradoria = $isAdmin ? (new \App\Models\Leilao())->totalPendentes() : 0;
         $flash = takeFlash();
         extract($data, EXTR_SKIP);
         require self::BASE . 'layout/topo.php';
@@ -27,6 +29,18 @@ final class View
     {
         extract($data, EXTR_SKIP);
         require self::BASE . 'partials/' . $template . '.php';
+    }
+
+    // O mesmo pedaço, devolvido como texto (ex.: o painel do leilão enviado ao navegador ao vivo).
+    public static function capturar(string $template, array $data = []): string
+    {
+        ob_start();
+        try {
+            self::partial($template, $data);
+            return (string) ob_get_contents();
+        } finally {
+            ob_end_clean();
+        }
     }
 
     // Página 404 com o cabeçalho e o rodapé do site.

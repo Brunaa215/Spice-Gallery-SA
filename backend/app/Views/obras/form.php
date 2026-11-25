@@ -2,7 +2,7 @@
 /**
  * Publicar / editar obra (era publicar.html). O mesmo formulário serve para os dois:
  * id vazio = nova obra; id preenchido = edição (a imagem passa a ser opcional).
- * Variáveis: $obra (valores do formulário), $editando, $leilao (?array, leilão já existente), $categorias
+ * Variáveis: $obra (valores do formulário), $editando, $leilao (?array, leilão já existente), $categorias, $unidades
  */
 use App\Core\Csrf;
 use App\Models\Leilao;
@@ -10,6 +10,9 @@ use App\Models\Leilao;
 $v = fn(string $campo): string => e((string) ($obra[$campo] ?? ''));
 $temImagem = !empty($obra['urlImagem']);
 $querLeilao = ($obra['disponivelLeilao'] ?? '') === '1';
+// Leilão aguardando a curadoria: os campos vêm preenchidos e podem ser alterados (ou o leilão cancelado).
+$pendente = $leilao && $leilao['status'] === Leilao::AGUARDANDO;
+$naData = ($obra['inicioModo'] ?? 'aprovacao') === 'data';
 ?>
   <main id="conteudo">
     <form class="atelie envolve" method="post" action="<?= e(url('obras.save')) ?>" enctype="multipart/form-data">
@@ -62,13 +65,18 @@ $querLeilao = ($obra['disponivelLeilao'] ?? '') === '1';
             <small>A obra continua sua. O Spice Gallery só exibe e, se você quiser, leiloa.</small></span>
         </label>
 
-        <?php if ($leilao): ?>
-          <p class="aviso">Esta obra já tem um leilão: <b><?= e(Leilao::estado($leilao)) ?></b>.</p>
+        <?php if ($leilao && Leilao::travado($leilao)): ?>
+          <p class="aviso">Esta obra já tem um leilão: <b><?= e($leilao['id_vencedor'] ? 'vendida' : Leilao::estado($leilao)) ?></b>. <a href="<?= e(url('leiloes.show', ['id' => $leilao['id']])) ?>">Ver leilão</a></p>
         <?php else: ?>
+          <?php if ($leilao && !$pendente): ?>
+            <p class="aviso">O último leilão desta obra fechou sem lances. Você pode colocá-la em leilão de novo.</p>
+          <?php endif; ?>
           <label class="marcar">
             <input type="checkbox" name="disponivelLeilao" value="1"<?= $querLeilao ? ' checked' : '' ?>>
-            <span>Disponível para leilão
-              <small>Só obras exclusivas. A curadoria aprova antes de o leilão abrir.</small></span>
+            <span><?= $pendente ? 'Em leilão (aguardando a curadoria)' : 'Disponível para leilão' ?>
+              <small><?= $pendente
+                ? 'A curadoria ainda não aprovou: altere o que quiser abaixo, ou desmarque para cancelar o leilão.'
+                : 'Só obras exclusivas. A curadoria aprova antes de o leilão abrir.' ?></small></span>
           </label>
 
           <fieldset class="leilao-campos"<?= $querLeilao ? '' : ' hidden disabled' ?>>
@@ -82,15 +90,40 @@ $querLeilao = ($obra['disponivelLeilao'] ?? '') === '1';
                 <label for="incremento">Incremento mínimo (R$)</label>
                 <input id="incremento" name="incremento" type="number" min="1" step="1" inputmode="numeric" required placeholder="50" value="<?= $v('incremento') ?>">
               </div>
-              <div class="campo">
+            </div>
+
+            <!-- .escolha e não .campo: dentro de .campo, todo <label> vira rótulo em maiúsculas -->
+            <fieldset class="escolha">
+              <legend class="legenda">Quando começa</legend>
+              <label class="marcar">
+                <input type="radio" name="inicioModo" value="aprovacao"<?= $naData ? '' : ' checked' ?>>
+                <span>Assim que a curadoria aprovar<small>O cronômetro começa na hora da aprovação.</small></span>
+              </label>
+              <label class="marcar">
+                <input type="radio" name="inicioModo" value="data"<?= $naData ? ' checked' : '' ?>>
+                <span>Em data e hora marcadas<small>Se a curadoria aprovar depois disso, o leilão abre com o tempo que sobrar.</small></span>
+              </label>
+              <div class="campo" data-inicio-data<?= $naData ? '' : ' hidden' ?> style="margin-bottom:0">
                 <label for="dataInicio">Início</label>
-                <input id="dataInicio" name="dataInicio" type="datetime-local" required value="<?= $v('dataInicio') ?>">
+                <input id="dataInicio" name="dataInicio" type="datetime-local" required value="<?= $v('dataInicio') ?>"<?= $naData ? '' : ' disabled' ?>>
+              </div>
+            </fieldset>
+
+            <div class="campos-dupla">
+              <div class="campo">
+                <label for="duracao">Duração</label>
+                <input id="duracao" name="duracao" type="number" min="1" step="1" inputmode="numeric" required placeholder="10" value="<?= $v('duracao') ?>">
               </div>
               <div class="campo">
-                <label for="dataFim">Término</label>
-                <input id="dataFim" name="dataFim" type="datetime-local" required value="<?= $v('dataFim') ?>">
+                <label for="unidade">Em</label>
+                <select id="unidade" name="unidade" required>
+                  <?php foreach (array_keys($unidades) as $unidade): ?>
+                    <option value="<?= e($unidade) ?>"<?= ($obra['unidade'] ?? 'minutos') === $unidade ? ' selected' : '' ?>><?= e($unidade) ?></option>
+                  <?php endforeach; ?>
+                </select>
               </div>
             </div>
+            <p class="campo__ajuda" style="margin:-8px 0 22px">De 1 minuto a <?= duracao(Leilao::DURACAO_MAXIMA) ?>. Um leilão de teste pode durar só alguns minutos.</p>
           </fieldset>
         <?php endif; ?>
 

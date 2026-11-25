@@ -975,10 +975,10 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
 .estrelas-input label:hover { transform: scale(1.15) rotate(-6deg); }
 .estrelas-input input:focus-visible + label { outline: 2px solid var(--paprica); outline-offset: 2px; }
 
+/* bloco comum (não flex): os avisos são frases com <b> e links no meio, e com flex cada pedaço
+   do texto virava uma coluna ("Você / tem / R$ 0 / disponíveis...") */
 .aviso {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
+  display: block;
   padding: 12px 14px;
   border-left: 3px solid var(--acafrao);
   border-radius: 0 10px 10px 0;
@@ -1627,3 +1627,134 @@ html:not(.presas) .mergulho__quadro { width: min(52vw, 300px); }
 .tabela .credito { color: var(--salvia-escura); }
 .tabela .debito { color: var(--paprica); }
 .noite .tabela .credito { color: var(--menta); }
+
+/* leilão ao vivo: quem está na frente no histórico */
+.historico__lider b { color: var(--paprica); }
+.historico__lider strong::after { content: " · na frente"; font: 500 0.66rem/1 var(--fonte-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--tinta-suave); }
+/* .campo tem display: grid, que venceria o atributo hidden (ex.: data de início escondida) */
+.campo[hidden] { display: none; }
+
+/* sala do artista: nome com palavra comprida encolhe para caber na coluna (--letras vem do PHP);
+   overflow-wrap é a rede de segurança se o navegador não conhecer a unidade cqi */
+.cartaz > div:first-child { container-type: inline-size; }
+.cartaz__nome { overflow-wrap: anywhere; }
+.cartaz__nome[style*="--letras"] { font-size: min(clamp(4.2rem, 13vw, 12rem), calc(210cqi / var(--letras))); }
+
+/* "Editar" e "Excluir" (um link e um botão dentro de form) na mesma linha de base */
+.comentario__acoes { align-items: baseline; }
+
+/* formulário do leilão: "Quando começa" (rádios com o texto normal, não em maiúsculas como os rótulos) */
+.escolha { margin: 0 0 22px; }
+.escolha > .legenda { margin-bottom: 12px; padding: 0; }
+.escolha .marcar { margin-bottom: 10px; }
+
+/* curadoria decide o leilão ali mesmo (página do leilão e da obra) */
+.decisao-curadoria { margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--linha); }
+.decisao-curadoria .legenda { margin-bottom: 12px; }
+.decisao-curadoria form { margin: 0 0 12px; }
+
+/* menu da curadoria: quantos leilões esperam aprovação */
+.nav__aviso { display: inline-grid; place-items: center; min-width: 1.5em; height: 1.5em; padding: 0 0.4em; margin-left: 4px; border-radius: 999px; background: var(--paprica); color: #fff; font: 600 0.7rem/1 var(--fonte-mono); font-style: normal; vertical-align: 3px; }
+.noite .nav__aviso { color: #3b2a32; }
+
+/* ---------- perfil do artista ---------- */
+/* avatar pequeno (obras, leilões, comentários) com a foto de perfil no lugar das iniciais */
+.avatar--foto { padding: 0; overflow: hidden; background: var(--papel); }
+.avatar--foto img { width: 100%; height: 100%; object-fit: cover; }
+
+/* retrato: a foto de perfil pendurada na moldura escolhida (as mesmas molduras das obras) */
+.retrato { width: clamp(132px, 13vw, 184px); flex: none; }
+.retrato .quadro__passe img,
+.retrato__iniciais { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; }
+.retrato__iniciais {
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 40% 30%, color-mix(in srgb, var(--cor) 45%, #fff), var(--cor) 75%);
+  color: #fffaf3;
+  font: italic 600 clamp(2.2rem, 3.6vw, 3.2rem)/1 var(--fonte-display);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+.retrato__iniciais[style*="--rosa"] { color: #3b2a32; text-shadow: none; }
+.retrato.quadro--fino .quadro__passe { --pad: 0px; }                  /* camafeu: a foto ocupa o oval */
+.retrato.quadro--nu .quadro__passe { border-radius: 14px; overflow: hidden; }
+/* moldura e passe-partout mais finos que os das obras: num retrato pequeno a foto precisa aparecer */
+.retrato:not(.quadro--fino):not(.quadro--nu) { --f: clamp(12px, 1.2vw, 17px); }
+.retrato:not(.quadro--fino) .quadro__passe { --pad: clamp(4px, 0.5vw, 7px); }
+/* miniaturas da escolha de moldura (seletores tão fortes quanto os de cima, e depois deles) */
+.quadro.retrato.retrato--mini { --f: 8px; width: 58px; }
+.quadro--fino.retrato.retrato--mini { padding: 5px; }
+.retrato.retrato--mini .quadro__passe { --pad: 2px; }
+.retrato--mini::after { display: none; }                               /* sem crista na miniatura */
+.retrato--mini .retrato__iniciais { font-size: 1.1rem; }
+.quadro.retrato--previa { width: clamp(130px, 16vw, 190px); }
+
+/* cabeçalho da sala: retrato + especialidade + apelido, estilos e redes */
+.cartaz__perfil { display: flex; align-items: flex-end; gap: clamp(16px, 2.4vw, 34px); margin-top: 44px; }
+.cartaz__perfil .rotulo { margin-bottom: 10px; }
+.cartaz__especialidade { margin: 0 0 4px; font: italic 500 1.35rem/1.25 var(--fonte-display); }
+.cartaz__apelido { margin: 0; font: 400 1.75rem/1.1 var(--fonte-script); color: var(--paprica); }
+.cartaz__apelido small { margin-right: 6px; font: 500 0.62rem/1 var(--fonte-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--tinta-suave); vertical-align: 5px; }
+.estilos, .redes { list-style: none; display: flex; flex-wrap: wrap; margin: 0 0 24px; padding: 0; }
+.estilos { gap: 8px; }
+.estilos li { padding: 4px 13px; border: 1px solid color-mix(in srgb, var(--acafrao) 70%, transparent); border-radius: 999px; background: color-mix(in srgb, var(--papel) 70%, transparent); font: italic 500 0.98rem/1.3 var(--fonte-display); }
+.redes { gap: 8px 18px; }
+.redes a { font: 500 0.72rem/1 var(--fonte-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--tinta); text-decoration: underline; text-underline-offset: 4px; }
+.redes a::after { content: " ↗"; }
+.redes a:hover { color: var(--paprica); }
+@media (max-width: 560px) { .cartaz__perfil { align-items: flex-start; flex-direction: column; } }
+
+/* papel de parede da sala: atrás do cabeçalho, com véu claro (o nome continua legível) e
+   desbotando embaixo até sumir no papel listrado do museu. A imagem vem no style do HTML
+   (background-image): um url() relativo guardado numa variável CSS seria resolvido a partir da
+   pasta do style.css, e não da página, e a imagem não apareceria. */
+.sala-topo { position: relative; isolation: isolate; }
+.sala-topo__fundo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  -webkit-mask-image: linear-gradient(to bottom, #000 62%, transparent);
+  mask-image: linear-gradient(to bottom, #000 62%, transparent);
+}
+.sala-topo__fundo::after { content: ""; position: absolute; inset: 0; background: color-mix(in srgb, var(--parede) 55%, transparent); }
+
+/* obra da coleção: selo "arrematada" embaixo da placa */
+.placa__selo { margin: 8px 0 0; font: 500 0.68rem/1.4 var(--fonte-mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ouro-escuro); }
+
+/* página "Meu perfil": prévia fixa à esquerda, campos à direita */
+.perfil { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(30px, 5vw, 80px); align-items: start; padding-bottom: clamp(60px, 8vw, 110px); }
+.perfil__previa { position: sticky; top: 110px; text-align: center; }
+.perfil__fundo { position: relative; isolation: isolate; display: grid; place-items: center; margin: 12px 0 18px; padding: 70px 20px 30px; border: 1px solid color-mix(in srgb, var(--acafrao) 50%, transparent); border-radius: 8px; background: color-mix(in srgb, var(--papel) 45%, transparent); overflow: hidden; }
+.perfil__fundo-imagem { position: absolute; inset: 0; z-index: -1; display: none; background-position: center; background-size: cover; background-repeat: no-repeat; }
+.perfil__fundo--imagem .perfil__fundo-imagem { display: block; }
+.perfil__fundo-imagem::after { content: ""; position: absolute; inset: 0; background: color-mix(in srgb, var(--parede) 40%, transparent); }
+.perfil__nome { margin: 0 0 6px; font: 500 clamp(2rem, 3.4vw, 2.8rem)/1.05 var(--fonte-display); overflow-wrap: anywhere; }
+.perfil__previa .cartaz__apelido { margin-bottom: 16px; }
+.perfil__campos { display: grid; gap: 26px; }
+/* legenda dentro do cartão, e não em cima da borda */
+fieldset.cartao-form > legend { float: left; width: 100%; margin: 0 0 18px; padding: 0; }
+fieldset.cartao-form > legend + * { clear: both; }
+.molduras { display: grid; grid-template-columns: repeat(auto-fill, minmax(98px, 1fr)); gap: 12px; }
+.moldura-opcao { position: relative; display: grid; justify-items: center; align-content: start; gap: 10px; padding: 16px 8px 12px; border: 1px solid var(--linha); border-radius: 8px; cursor: pointer; text-align: center; font: italic 500 0.95rem/1.2 var(--fonte-display); transition: border-color 0.2s, background 0.2s; }
+.moldura-opcao input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.moldura-opcao:hover { border-color: var(--linha-forte); }
+.moldura-opcao:has(input:checked) { border-color: var(--paprica); background: color-mix(in srgb, var(--rosa) 22%, transparent); box-shadow: 0 0 0 1px var(--paprica); }
+.moldura-opcao:has(input:focus-visible) { outline: 2px solid var(--paprica); outline-offset: 2px; }
+@media (max-width: 860px) { .perfil { grid-template-columns: 1fr; } .perfil__previa { position: static; } }
+/* "Escolher arquivo" no estilo dos botões do museu, e não o botão cinza do navegador */
+.perfil input[type="file"] { padding: 6px 0; border-bottom: 0; font-size: 0.95rem; }
+.perfil input[type="file"]::file-selector-button { margin-right: 12px; padding: 0.55em 1.2em; border: 1px solid color-mix(in srgb, var(--acafrao) 80%, transparent); border-radius: 999px; background: var(--papel); color: var(--tinta); font: italic 600 1rem/1 var(--fonte-display); cursor: pointer; transition: background 0.2s; }
+.perfil input[type="file"]::file-selector-button:hover { background: var(--rosa); }
+
+/* menu entre o celular e a tela grande: com Perfil, Carteira e Curadoria ele não cabia e os itens
+   quebravam em duas linhas ("Minha / sala"). Nessa faixa ele fica compacto, sem o saldo e sem o
+   subtítulo da marca (os dois voltam acima de 1180px; no celular o menu vira lista) */
+.nav a, .nav__sair button { white-space: nowrap; }
+@media (min-width: 881px) and (max-width: 1180px) {
+  .nav { gap: clamp(10px, 1.3vw, 16px); }
+  .nav a:not(.botao), .nav__sair button { font-size: 1.02rem; }
+  .nav .botao { padding: 0.5em 0.95em; font-size: 0.92rem; }
+  .nav .nav__saldo, .marca__sub { display: none; }
+}

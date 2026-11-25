@@ -5,6 +5,7 @@ use App\Core\Auth;
 use App\Core\View;
 use App\Models\Leilao;
 use App\Models\Obra;
+use App\Models\RedeSocial;
 use App\Models\Usuario;
 
 final class ArtistaController
@@ -38,6 +39,9 @@ final class ArtistaController
             'obras' => (new Obra())->doAutor($id),
             'ehDono' => $ehDono,
             'leiloes' => $ehDono ? (new Leilao())->doArtista($id) : [],
+            // Coleção: obras de outros artistas que esta pessoa arrematou em leilão.
+            'colecao' => (new Obra())->arrematadasPor($id),
+            'redes' => (new RedeSocial())->doUsuario($id),
         ]);
     }
 }

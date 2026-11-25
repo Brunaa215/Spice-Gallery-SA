@@ -19,7 +19,7 @@ final class Lance
     public function doLeilao(int $idLeilao): array
     {
         $s = Database::connection()->prepare(
-            'SELECT la.*, u.nome FROM Lance la JOIN Usuario u ON u.id = la.id_usuario
+            'SELECT la.*, u.nome, u.fotoPerfil FROM Lance la JOIN Usuario u ON u.id = la.id_usuario
               WHERE la.id_leilao = ? ORDER BY la.valor DESC, la.id DESC'
         );
         $s->execute([$idLeilao]);
@@ -47,7 +47,8 @@ final class Lance
 
     // RN-05 e RN-08 validados no servidor, dentro de uma transação:
     // o FOR UPDATE trava o leilão para dois lances simultâneos não passarem com o mesmo mínimo.
-    public function registrar(int $idLeilao, int $idUsuario, string $valor): void
+    // Devolve true quando o lance prorrogou o leilão (chegou no último minuto).
+    public function registrar(int $idLeilao, int $idUsuario, string $valor): bool
     {
         $pdo = Database::connection();
         $pdo->beginTransaction();
@@ -92,7 +93,20 @@ final class Lance
 
             $s = $pdo->prepare('INSERT INTO Lance (valor, dataHora, id_usuario, id_leilao) VALUES (?, NOW(), ?, ?)');
             $s->execute([$valor, $idUsuario, $idLeilao]);
+
+            // Prorrogação: lance no último minuto empurra o fim para 1 minuto depois dele,
+            // assim ninguém ganha no último segundo sem os outros terem chance de responder.
+            $prorrogou = false;
+            if (Leilao::PRORROGACAO_SEGUNDOS > 0) {
+                $s = $pdo->prepare(
+                    'UPDATE Leilao SET dataFim = NOW() + INTERVAL ? SECOND
+                      WHERE id = ? AND dataFim < NOW() + INTERVAL ? SECOND'
+                );
+                $s->execute([Leilao::PRORROGACAO_SEGUNDOS, $idLeilao, Leilao::PRORROGACAO_SEGUNDOS]);
+                $prorrogou = $s->rowCount() > 0;
+            }
             $pdo->commit();
+            return $prorrogou;
         } catch (Throwable $e) {
             if ($pdo->inTransaction())
                 $pdo->rollBack();
