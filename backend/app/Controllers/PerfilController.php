@@ -21,7 +21,7 @@ final class PerfilController
         $redes = (new RedeSocial())->doUsuario((int) $u['id']);
         // Depois de um erro de validação, o formulário volta com o que foi digitado (menos os arquivos).
         $old = takeOld();
-        $campos = ['nome', 'apelido', 'especialidade', 'estilos', 'molduraFoto'];
+        $campos = ['nome', 'apelido', 'especialidade', 'estilos', 'molduraFoto', 'contatoVenda'];
         $perfil = array_merge($u, array_intersect_key($old, array_flip($campos)));
         foreach (array_keys(RedeSocial::REDES) as $rede)
             $redes[$rede] = $old['rede'][$rede] ?? ($redes[$rede] ?? '');
@@ -41,7 +41,7 @@ final class PerfilController
         // POST maior que o post_max_size do PHP chega vazio (sem token e sem arquivo).
         if (empty($_POST) && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
             flash('danger', 'O envio passou do limite do servidor. Use imagens menores.');
-            go('perfil');
+            go('perfil.editar');
         }
         $u = Auth::requireLogin();
         Csrf::verify();
@@ -51,6 +51,7 @@ final class PerfilController
         $apelido = trim((string) ($_POST['apelido'] ?? ''));
         $especialidade = trim((string) ($_POST['especialidade'] ?? ''));
         $moldura = (string) ($_POST['molduraFoto'] ?? '');
+        $contatoVenda = trim(preg_replace('/\s+/', ' ', (string) ($_POST['contatoVenda'] ?? '')));
         $foto = $_FILES['foto'] ?? null;
         $wallpaper = $_FILES['wallpaper'] ?? null;
 
@@ -63,6 +64,10 @@ final class PerfilController
             $erros[] = 'A especialidade pode ter no máximo 80 letras.';
         if (!isset(Usuario::MOLDURAS[$moldura]))
             $erros[] = 'Escolha uma das molduras.';
+        // WhatsApp/telefone (opcional): só números e + ( ) - . espaço, com 8 a 15 dígitos.
+        $digitos = strlen(preg_replace('/\D/', '', $contatoVenda));
+        if ($contatoVenda !== '' && (!preg_match('/^[0-9+()\s.-]{8,40}$/', $contatoVenda) || $digitos < 8 || $digitos > 15))
+            $erros[] = 'Informe o WhatsApp ou telefone só com números, como (47) 99999-1234.';
         try {
             $estilos = Usuario::normalizarEstilos((string) ($_POST['estilos'] ?? ''));
         } catch (RuntimeException $e) {
@@ -98,6 +103,7 @@ final class PerfilController
             'especialidade' => $especialidade,
             'estilos' => $estilos,
             'molduraFoto' => $moldura,
+            'contatoVenda' => $contatoVenda,
             // nova imagem > "remover" marcado (vira null) > a que já estava
             'fotoPerfil' => $novas['fotoPerfil'] ?? (($_POST['removerFoto'] ?? '') === '1' ? null : $u['fotoPerfil']),
             'wallpaper' => $novas['wallpaper'] ?? (($_POST['removerWallpaper'] ?? '') === '1' ? null : $u['wallpaper']),
@@ -121,7 +127,7 @@ final class PerfilController
                 Upload::remover($u[$campo]);
 
         flash('success', 'Perfil atualizado.');
-        go('artistas.show', ['id' => $id]);
+        go('perfil');
     }
 
     private function voltar(string $mensagem): never
@@ -130,6 +136,6 @@ final class PerfilController
         unset($dados['csrf']);
         remember($dados);
         flash('danger', $mensagem);
-        go('perfil');
+        go('perfil.editar');
     }
 }

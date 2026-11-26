@@ -25,7 +25,7 @@ UPDATE Usuario SET especialidade = 'Pintura digital', estilos = 'Cores quentes, 
        apelido = 'Lia do Açafrão', molduraFoto = 'ouro', wallpaper = 'assets/img/obras/mare-alta.webp' WHERE id = @lia;
 UPDATE Usuario SET especialidade = 'Pintura a óleo', estilos = 'Paisagem, Arquitetura', molduraFoto = 'rosa' WHERE id = @caio;
 UPDATE Usuario SET especialidade = 'Gravura e fotografia', estilos = 'Minimalismo, Geometria',
-       apelido = 'Nina T.', wallpaper = 'assets/img/obras/orbitas-lentas.webp' WHERE id = @nina;
+       apelido = 'Nina T.', wallpaper = 'assets/img/obras/orbitas-lentas.webp', contatoVenda = '(47) 99999-0303' WHERE id = @nina;
 UPDATE Usuario SET especialidade = 'Pintura a óleo', estilos = 'Campos de cor, Abstração', molduraFoto = 'verde' WHERE id = @rafa;
 UPDATE Usuario SET especialidade = 'Aquarela e ilustração', estilos = 'Botânica, Natureza' WHERE id = @bento;
 INSERT INTO RedeSocial (id_usuario, rede, url) VALUES
@@ -82,13 +82,13 @@ INSERT INTO Avaliacao (nota, comentario, dataHora, id_usuario, id_obra) VALUES
 
 -- Leilões: ao vivo, em breve, encerrado e um esperando a curadoria.
 -- O encerrado (Mármore Pimenta) é fechado no primeiro acesso ao site: Rafa paga R$ 2.150 e Nina recebe.
--- O de Pólen começa quando a curadoria aprovar e dura 10 minutos.
+-- O de Pólen abre sozinho daqui a 2 minutos e dura 10 (leilões não passam mais pela curadoria).
 INSERT INTO Leilao (dataInicio, dataFim, abreNaAprovacao, valorInicial, incremento, status, id_obra) VALUES
 (NOW() - INTERVAL 3 DAY,  NOW() + INTERVAL 12 DAY,    0, 600, 50, 'APROVADO', @campo),
 (NOW() - INTERVAL 1 DAY,  NOW() + INTERVAL 20 DAY,    0, 400, 20, 'APROVADO', @eclipse),
 (NOW() + INTERVAL 15 DAY, NOW() + INTERVAL 20 DAY,    0, 600, 30, 'APROVADO', @noite),
 (NOW() - INTERVAL 30 DAY, NOW() - INTERVAL 10 DAY,    0, 900, 50, 'APROVADO', @marmore),
-(NOW(),                   NOW() + INTERVAL 10 MINUTE, 1, 300, 10, 'AGUARDANDO_CURADORIA', @polen);
+(NOW() + INTERVAL 2 MINUTE, NOW() + INTERVAL 12 MINUTE, 0, 300, 10, 'APROVADO', @polen);
 
 SET @l_campo   = (SELECT id FROM Leilao WHERE id_obra = @campo);
 SET @l_eclipse = (SELECT id FROM Leilao WHERE id_obra = @eclipse);

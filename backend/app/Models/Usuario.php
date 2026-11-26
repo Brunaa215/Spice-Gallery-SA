@@ -130,18 +130,19 @@ final class Usuario
         }
     }
 
-    // Perfil: $dados com nome, apelido, especialidade, estilos, fotoPerfil, molduraFoto, wallpaper
+    // Perfil: $dados com nome, apelido, especialidade, estilos, fotoPerfil, molduraFoto, wallpaper, contatoVenda
     // (vazio vira NULL). Chame dentro de uma transação, junto com RedeSocial::salvar().
     public static function atualizarPerfil(\PDO $pdo, int $id, array $dados): void
     {
         $nulo = fn(?string $v): ?string => $v === null || $v === '' ? null : $v;
         $s = $pdo->prepare(
-            'UPDATE Usuario SET nome = ?, apelido = ?, especialidade = ?, estilos = ?, fotoPerfil = ?, molduraFoto = ?, wallpaper = ?
+            'UPDATE Usuario SET nome = ?, apelido = ?, especialidade = ?, estilos = ?, fotoPerfil = ?, molduraFoto = ?, wallpaper = ?,
+                    contatoVenda = ?
               WHERE id = ?'
         );
         $s->execute([
             $dados['nome'], $nulo($dados['apelido']), $nulo($dados['especialidade']), $nulo($dados['estilos']),
-            $nulo($dados['fotoPerfil']), $dados['molduraFoto'], $nulo($dados['wallpaper']), $id,
+            $nulo($dados['fotoPerfil']), $dados['molduraFoto'], $nulo($dados['wallpaper']), $nulo($dados['contatoVenda']), $id,
         ]);
     }
 

@@ -28,6 +28,14 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 
 /* ---------- requisição e resposta ---------- */
 
+// "assets/css/style.css" -> "assets/css/style.css?v=1764198698" (data da última alteração do arquivo).
+// Quando o arquivo muda, o endereço muda: o navegador baixa o novo em vez de usar a cópia guardada,
+// e a navegação sem recarregar do app.js percebe a atualização e recarrega a página inteira.
+function asset(string $caminho): string
+{
+    $arquivo = dirname(__DIR__, 2) . '/frontend/' . $caminho;
+    return is_file($arquivo) ? $caminho . '?v=' . filemtime($arquivo) : $caminho;
+}
 function e(?string $v): string
 {
     return htmlspecialchars((string) $v, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
@@ -133,6 +141,14 @@ function avatar(int|string $id, string $nome, ?string $foto = null): string
     if ($foto)
         return '<span class="avatar avatar--foto"><img src="' . e($foto) . '" alt="" loading="lazy"></span>';
     return '<span class="avatar" style="--cor:var(--' . corAvatar($id) . ')">' . e(iniciais($nome)) . '</span>';
+}
+// "(47) 99999-1234" -> https://wa.me/5547999991234 (sem o 55, número brasileiro ganha o código do país).
+function whatsapp(?string $telefone): ?string
+{
+    $digitos = preg_replace('/\D/', '', (string) $telefone);
+    if (strlen($digitos) === 10 || strlen($digitos) === 11)
+        $digitos = '55' . $digitos;
+    return strlen($digitos) >= 12 && strlen($digitos) <= 15 ? 'https://wa.me/' . $digitos : null;
 }
 // Moldura do quadro escolhida pelo id, para a parede não ficar repetitiva.
 function moldura(int|string $id): string

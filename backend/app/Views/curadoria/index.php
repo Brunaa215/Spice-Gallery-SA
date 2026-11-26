@@ -9,7 +9,7 @@ use App\Core\Csrf;
     <section class="leiloes-cab envolve" aria-labelledby="curadoria-titulo">
       <p class="rotulo">Bastidores</p>
       <h1 id="curadoria-titulo">Cura<span>doria</span></h1>
-      <p>Leilões esperando aprovação. Os marcados "ao aprovar" começam na hora em que você aprova; os outros abrem sozinhos na data de início.</p>
+      <p>Os leilões começam sem precisar de aprovação: o artista escolhe começar na hora ou numa data. Aqui só aparecem leilões antigos que ainda esperavam a curadoria.</p>
       <p><a class="link-seta" href="<?= e(url('usuarios')) ?>">Gerenciar contas</a></p>
     </section>
 

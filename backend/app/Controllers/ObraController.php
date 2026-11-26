@@ -51,13 +51,13 @@ final class ObraController
         // dataInicio já vem sugerida (daqui a 10 minutos): se a pessoa escolher "data marcada",
         // o campo não aparece vazio.
         $obra = ['id' => '', 'titulo' => '', 'descricao' => '', 'categoria' => '', 'urlImagem' => '',
-                 'inicioModo' => 'aprovacao', 'unidade' => 'minutos', 'dataInicio' => date('Y-m-d\TH:i', time() + 600)];
+                 'inicioModo' => 'agora', 'unidade' => 'minutos', 'dataInicio' => date('Y-m-d\TH:i', time() + 600)];
         $leilao = null;
         if ($id) {
             $obra = array_merge($obra, $this->doDono($id, $u));
             $leilao = (new Leilao())->daObra($id);
-            // Leilão que ainda espera a curadoria: o formulário já vem com os dados dele, para alterar.
-            if ($leilao && $leilao['status'] === Leilao::AGUARDANDO)
+            // Leilão que ainda não começou: o formulário já vem com os dados dele, para alterar.
+            if ($leilao && Leilao::editavel($leilao))
                 $obra = array_merge($obra, $this->camposDoLeilao($leilao));
         }
         // Depois de um erro de validação, o formulário volta com o que foi digitado.
@@ -96,9 +96,9 @@ final class ObraController
         }
         $atual = $id ? $this->doDono($id, $u) : null;
         $leilaoExistente = $id ? (new Leilao())->daObra($id) : null;
-        // Aguardando a curadoria: pode ser alterado ou cancelado. Aprovado e em andamento, ou vendido:
-        // fica como está. Reprovado ou encerrado sem lances: a obra pode ir a um leilão novo.
-        $pendente = $leilaoExistente && $leilaoExistente['status'] === Leilao::AGUARDANDO;
+        // Ainda não começou: pode ser alterado ou cancelado. Ao vivo ou vendido: fica como está.
+        // Encerrado sem lances: a obra pode ir a um leilão novo.
+        $agendado = $leilaoExistente && Leilao::editavel($leilaoExistente);
         $travado = $leilaoExistente && Leilao::travado($leilaoExistente);
 
         $titulo = trim((string) ($_POST['titulo'] ?? ''));
@@ -106,7 +106,12 @@ final class ObraController
         $categoria = (string) ($_POST['categoria'] ?? '');
         $marcouLeilao = ($_POST['disponivelLeilao'] ?? '') === '1';
         $querLeilao = $marcouLeilao && !$travado;
-        $cancelarPendente = $pendente && !$marcouLeilao;
+        $cancelarAgendado = $agendado && !$marcouLeilao;
+        // O formulário foi aberto com o leilão ainda marcado (campo leilaoAgendado) e ele começou antes de
+        // salvar: avisa, em vez de ignorar em silêncio a alteração ou o cancelamento.
+        $abertoComoAgendado = positiveId($_POST['leilaoAgendado'] ?? null);
+        if ($abertoComoAgendado && $leilaoExistente && (int) $leilaoExistente['id'] === $abertoComoAgendado && !$agendado)
+            $this->voltar($id, 'Este leilão começou enquanto você editava e não pode mais ser alterado nem cancelado.');
         $arquivo = $_FILES['imagem'] ?? null;
 
         $erros = [];
@@ -121,18 +126,18 @@ final class ObraController
         if (!$id && !Upload::enviado($arquivo))
             $erros[] = 'Escolha a imagem da obra.';
 
-        // RN-07/RN-08: dados do leilão. Ele dura de 1 minuto a 30 dias e começa quando a curadoria
-        // aprovar (as datas gravadas são provisórias, só a duração vale) ou numa data marcada.
+        // RN-08: dados do leilão. Sem aprovação da curadoria (o grupo mudou a RN-07): ele começa agora,
+        // ao salvar, ou numa data marcada, e dura de 1 minuto a 30 dias.
         $valorInicial = $incremento = $inicio = $fim = null;
-        $abreNaAprovacao = false;
+        $comecaAgora = false;
         if ($querLeilao) {
             $valorInicial = money((string) ($_POST['valorInicial'] ?? ''));
             $incremento = money((string) ($_POST['incremento'] ?? ''));
-            $abreNaAprovacao = ($_POST['inicioModo'] ?? '') !== 'data';
+            $comecaAgora = ($_POST['inicioModo'] ?? '') !== 'data';
             $duracao = filter_var($_POST['duracao'] ?? '', FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
             $unidade = (string) ($_POST['unidade'] ?? '');
             $minutos = $duracao !== false && isset(Leilao::UNIDADES[$unidade]) ? $duracao * Leilao::UNIDADES[$unidade] : null;
-            $inicio = $abreNaAprovacao ? date('Y-m-d H:i:s') : localDateTime((string) ($_POST['dataInicio'] ?? ''));
+            $inicio = $comecaAgora ? date('Y-m-d H:i:s') : localDateTime((string) ($_POST['dataInicio'] ?? ''));
 
             if ($valorInicial === null || (float) $valorInicial < 1)
                 $erros[] = 'O lance inicial precisa ser de pelo menos R$ 1.';
@@ -144,7 +149,7 @@ final class ObraController
                 $erros[] = 'O leilão pode durar no máximo ' . duracao(Leilao::DURACAO_MAXIMA) . '.';
             if (!$inicio)
                 $erros[] = 'Informe a data e a hora de início do leilão.';
-            elseif (!$abreNaAprovacao && strtotime($inicio) < time() - 60)
+            elseif (!$comecaAgora && strtotime($inicio) < time() - 60)
                 $erros[] = 'O início do leilão precisa ser no futuro.';
             if ($inicio && $minutos !== null)
                 $fim = date('Y-m-d H:i:s', strtotime($inicio) + $minutos * 60);
@@ -169,17 +174,21 @@ final class ObraController
             else
                 $id = $obras->create((int) $u['id'], $titulo, $descricao, $categoria, $novaImagem);
             $leiloes = new Leilao();
-            if ($querLeilao && $pendente)
-                $leiloes->atualizarPendente((int) $leilaoExistente['id'], $valorInicial, $incremento, $inicio, $fim, $abreNaAprovacao);
-            elseif ($querLeilao)
-                $leiloes->create($id, $valorInicial, $incremento, $inicio, $fim, $abreNaAprovacao);
-            elseif ($cancelarPendente)
-                $leiloes->cancelarPendente((int) $leilaoExistente['id']);
+            // Entre abrir o formulário e salvar, o leilão marcado pode ter começado: aí ele não muda mais.
+            $comecou = new RuntimeException('Este leilão começou enquanto você editava e não pode mais ser alterado nem cancelado.');
+            if ($querLeilao && $agendado && !$leiloes->atualizarAgendado((int) $leilaoExistente['id'], $valorInicial, $incremento, $inicio, $fim))
+                throw $comecou;
+            if ($querLeilao && !$agendado)
+                $leiloes->create($id, $valorInicial, $incremento, $inicio, $fim);
+            if ($cancelarAgendado && !$leiloes->cancelarAgendado((int) $leilaoExistente['id']))
+                throw $comecou;
             $pdo->commit();
         } catch (Throwable $e) {
             if ($pdo->inTransaction())
                 $pdo->rollBack();
             Upload::remover($novaImagem);
+            if (isset($comecou) && $e === $comecou)
+                $this->voltar($id, $e->getMessage());
             throw $e;
         }
         if ($atual && $novaImagem)
@@ -187,9 +196,10 @@ final class ObraController
 
         $msg = $atual ? 'Obra atualizada.' : 'Obra publicada! Ela já está na parede.';
         $msg .= match (true) {
-            $querLeilao && $pendente => ' O leilão (ainda com a curadoria) foi alterado.',
-            $querLeilao => ' O leilão foi enviado para a curadoria.',
-            $cancelarPendente => ' O leilão que esperava a curadoria foi cancelado.',
+            $querLeilao && $comecaAgora => ' O leilão começou: termina ' . dataHora($fim) . '.',
+            $querLeilao && $agendado => ' O leilão marcado foi alterado: abre ' . dataHora($inicio) . '.',
+            $querLeilao => ' O leilão foi marcado: abre ' . dataHora($inicio) . '.',
+            $cancelarAgendado => ' O leilão marcado foi cancelado.',
             default => '',
         };
         flash('success', $msg);
@@ -211,11 +221,11 @@ final class ObraController
             'disponivelLeilao' => '1',
             'valorInicial' => $inteiro((string) $leilao['valorInicial']),
             'incremento' => $inteiro((string) $leilao['incremento']),
-            'inicioModo' => (int) $leilao['abreNaAprovacao'] ? 'aprovacao' : 'data',
+            'inicioModo' => (int) $leilao['abreNaAprovacao'] ? 'agora' : 'data',
             'duracao' => (string) intdiv($minutos, Leilao::UNIDADES[$unidade]),
             'unidade' => $unidade,
         ];
-        // Com "na aprovação" a data gravada é provisória: fica a sugestão padrão do formulário.
+        // Leilão antigo "na aprovação": a data gravada era provisória; fica a sugestão padrão do formulário.
         if (!(int) $leilao['abreNaAprovacao'])
             $campos['dataInicio'] = date('Y-m-d\TH:i', strtotime($leilao['dataInicio']));
         return $campos;

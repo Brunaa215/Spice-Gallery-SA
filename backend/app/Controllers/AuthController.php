@@ -84,7 +84,7 @@ final class AuthController
     public function passwordForm(): void
     {
         Auth::requireLogin();
-        View::render('auth/senha', ['title' => 'Minha senha', 'menu' => 'minha-sala']);
+        View::render('auth/senha', ['title' => 'Minha senha', 'menu' => 'perfil']);
     }
 
     public function changePassword(): void
@@ -99,6 +99,6 @@ final class AuthController
         }
         (new Usuario())->changePassword((int) $u['id'], $nova);
         flash('success', 'Senha alterada.');
-        go('artistas.show', ['id' => $u['id']]);
+        go('perfil');
     }
 }

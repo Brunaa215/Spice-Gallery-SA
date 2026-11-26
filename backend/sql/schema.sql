@@ -26,6 +26,7 @@ CREATE TABLE IF NOT EXISTS Usuario (
     fotoPerfil     VARCHAR(255) NULL,                                -- [NOVO] perfil: caminho da foto (uploads/perfis)
     molduraFoto    VARCHAR(20)  NOT NULL DEFAULT 'camafeu',          -- [NOVO] perfil: camafeu | ouro | rosa | verde | nenhuma
     wallpaper      VARCHAR(255) NULL,                                -- [NOVO] perfil: fundo do cabeçalho da sala
+    contatoVenda   VARCHAR(40)  NULL,                                -- [NOVO] WhatsApp/telefone: só aparece nas notificações de venda
     aceiteTermosEm DATETIME     NULL,                                -- [NOVO] RN-02: quando aceitou os termos
     criadoEm       DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP   -- [NOVO] "membro desde"
 ) ENGINE=InnoDB;
@@ -47,10 +48,11 @@ CREATE TABLE IF NOT EXISTS Obra (
 ) ENGINE=InnoDB;
 
 -- 3. LEILAO
--- status (EnumLeilao): 'AGUARDANDO_CURADORIA' | 'APROVADO' | 'REPROVADO'
+-- status (EnumLeilao): 'APROVADO' (todo leilão novo: não há mais aprovação da curadoria, o grupo mudou a RN-07)
+--   'AGUARDANDO_CURADORIA' e 'REPROVADO' só existem em dados antigos.
 -- Um leilão APROVADO é "em breve", "ao vivo" ou "encerrado" conforme dataInicio/dataFim.
 -- Encerrado, ele é fechado uma vez só: o vencedor paga com créditos e o artista recebe.
--- A duração (dataFim - dataInicio) pode ser de minutos a dias. Com abreNaAprovacao = 1, as datas
+-- A duração (dataFim - dataInicio) pode ser de minutos a dias. abreNaAprovacao (dados antigos): as datas
 -- são provisórias: quando a curadoria aprova, o leilão começa na hora, com a mesma duração.
 CREATE TABLE IF NOT EXISTS Leilao (
     id           BIGINT PRIMARY KEY AUTO_INCREMENT,
@@ -117,8 +119,30 @@ CREATE TABLE IF NOT EXISTS RedeSocial (
     FOREIGN KEY (id_usuario) REFERENCES Usuario(id) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
+-- 8. NOTIFICACAO [NOVO] avisos que chegam quando um leilão termina
+-- tipo: 'ARREMATE' (você venceu) | 'VENDA' (sua obra foi arrematada) | 'NAO_VENCEU' (outro lance venceu)
+--       'SEM_LANCES' (seu leilão terminou sem lances)
+-- O texto é montado pelo PHP a partir do tipo e dos valores; o contato vem de id_contato (a outra parte
+-- da venda) na hora de mostrar, então aparece sempre o contato atual.
+CREATE TABLE IF NOT EXISTS Notificacao (
+    id         BIGINT PRIMARY KEY AUTO_INCREMENT,
+    id_usuario BIGINT        NOT NULL,                -- quem recebe
+    tipo       VARCHAR(20)   NOT NULL,
+    id_leilao  BIGINT        NULL,
+    obra       VARCHAR(255)  NOT NULL,                -- título da obra quando o martelo bateu
+    valor      DECIMAL(10,2) NULL,                    -- lance vencedor
+    seuLance   DECIMAL(10,2) NULL,                    -- NAO_VENCEU: o maior lance de quem recebe
+    id_contato BIGINT        NULL,                    -- ARREMATE: o artista · VENDA: quem arrematou
+    criadaEm   DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    lidaEm     DATETIME      NULL,
+    FOREIGN KEY (id_usuario) REFERENCES Usuario(id) ON DELETE CASCADE,
+    FOREIGN KEY (id_leilao)  REFERENCES Leilao(id)  ON DELETE SET NULL,
+    FOREIGN KEY (id_contato) REFERENCES Usuario(id) ON DELETE SET NULL,
+    KEY idx_notificacao_usuario (id_usuario, lidaEm)
+) ENGINE=InnoDB;
+
 -- Curadoria inicial: admin@spice.com / Admin@12345!
--- TROQUE a senha no primeiro acesso (menu "Minha senha").
+-- TROQUE a senha no primeiro acesso (Perfil → Editar perfil → Trocar minha senha).
 INSERT INTO Usuario (nome, email, senhaHash, perfil, aceiteTermosEm)
 VALUES ('Curadoria Spice', 'admin@spice.com', '$2y$10$sPZuRpNwm/YnuSH1l85ZnuNOfYO7poKiw.7bCCSvStY3Fw6suo7Ye', 'ADMIN', NOW())
 ON DUPLICATE KEY UPDATE id = id;

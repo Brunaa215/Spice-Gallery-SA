@@ -179,6 +179,16 @@
         if (!painel.isConnected) return; // a pessoa já foi para outra página
         const saldo = $('.nav__saldo');
         if (saldo && d.saldo) saldo.textContent = d.saldo;
+        // sino: o aviso de quem venceu (ou vendeu) chega quando o martelo bate
+        const sino = $('.nav__sino');
+        if (sino && typeof d.notificacoes === 'number') {
+          let numero = $('.nav__aviso', sino);
+          if (d.notificacoes > 0) {
+            if (!numero) ($('.nav__icone', sino) || sino).append((numero = Object.assign(document.createElement('span'), { className: 'nav__aviso' })));
+            numero.textContent = d.notificacoes;
+          } else numero?.remove();
+          sino.setAttribute('aria-label', 'Notificações' + (d.notificacoes ? ` (${d.notificacoes} novas)` : ''));
+        }
         if (d.versao === painel.dataset.versao || !d.painel) return;
 
         // guarda o lance que a pessoa estava digitando
@@ -454,6 +464,14 @@
       if (minha !== vez) return; // outro clique chegou depois deste
       const doc = new DOMParser().parseFromString(pagina.html, 'text/html');
       const hash = new URL(url).hash;
+      // Site atualizado enquanto a aba estava aberta (style.css/app.js com outro ?v=)? Carrega a página
+      // inteira: trocar só o conteúdo traria o HTML novo com o estilo velho (foi o que deixou o sino gigante).
+      const versoes = (d) => [...d.querySelectorAll('link[rel="stylesheet"][href*="assets/css/"], script[src*="assets/js/"]')]
+        .map((el) => el.getAttribute('href') || el.getAttribute('src')).join(' ');
+      if (versoes(doc) !== versoes(document)) {
+        location.href = pagina.url + hash;
+        return;
+      }
       if (empurrar) history.pushState({ y: 0 }, '', pagina.url + hash);
       desmontar();
       mov().desmontar?.();

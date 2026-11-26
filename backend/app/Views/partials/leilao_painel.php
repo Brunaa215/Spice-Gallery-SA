@@ -77,14 +77,16 @@ $prorrogacao = duracao(intdiv(Leilao::PRORROGACAO_SEGUNDOS, 60));
             <a class="botao botao--acafrao botao--largo" href="<?= e(url('login')) ?>" style="margin-top:26px">Entrar para dar lances</a>
           <?php elseif ($estado === 'ENCERRADO' && $leilao['id_vencedor']): ?>
             <?php if ($venci): ?>
-              <p class="aviso" style="margin-top:26px">Você arrematou esta obra! <b><?= brl($atual) ?></b> saiu da sua carteira e foi para o artista.</p>
+              <p class="aviso" style="margin-top:26px">Você arrematou esta obra! <b><?= brl($atual) ?></b> saiu da sua carteira e foi para o artista. <a href="<?= e(url('notificacoes')) ?>">Ver o contato do artista</a> para combinar a entrega.</p>
             <?php elseif ($ehAutor): ?>
-              <p class="aviso" style="margin-top:26px">Obra vendida para <?= e($leilao['vencedor'] ?? 'outra conta') ?>: <b><?= brl($atual) ?></b> entrou na sua carteira.</p>
+              <p class="aviso" style="margin-top:26px">Obra vendida para <?= e($leilao['vencedor'] ?? 'outra conta') ?>: <b><?= brl($atual) ?></b> entrou na sua carteira. <a href="<?= e(url('notificacoes')) ?>">Ver o contato de quem arrematou</a> para combinar a entrega.</p>
             <?php else: ?>
               <p class="aviso" style="margin-top:26px">Arrematada por <?= e($leilao['vencedor'] ?? 'outra conta') ?>.</p>
             <?php endif; ?>
           <?php elseif ($estado === 'ENCERRADO' && !$qtd): ?>
             <p class="aviso" style="margin-top:26px">O leilão fechou sem lances.<?= $ehAutor ? ' Você pode colocar a obra em leilão de novo ao editá-la.' : '' ?></p>
+          <?php elseif ($estado === 'EM_BREVE' && $ehAutor): ?>
+            <p class="aviso" style="margin-top:26px">O leilão abre sozinho <?= dataHora($leilao['dataInicio']) ?>. Até lá, dá para mudar valores, início e duração, ou cancelar, editando a obra.</p>
           <?php elseif ($estado === Leilao::AGUARDANDO && $isAdmin): ?>
             <?php View::partial('leilao_decisao', ['leilao' => $leilao, 'voltar' => 'leilao']); ?>
           <?php elseif ($estado === Leilao::AGUARDANDO): ?>
@@ -97,6 +99,7 @@ $prorrogacao = duracao(intdiv(Leilao::PRORROGACAO_SEGUNDOS, 60));
             <p class="aviso" style="margin-top:26px">A curadoria não aprovou este leilão. Você pode marcar a obra para leilão de novo ao editá-la.</p>
           <?php endif; ?>
           <p class="campo__ajuda" style="margin-top:14px"><?= $ehAutor
-            ? 'Esta obra é sua: artistas não dão lances nas próprias obras.'
+            ? 'Esta obra é sua: artistas não dão lances nas próprias obras. Se ela for arrematada, você e quem arrematou recebem uma notificação com o contato um do outro (e-mail e o WhatsApp do perfil, se houver).'
             : 'Os lances usam os créditos fictícios da sua carteira e não podem ser cancelados.'
-              . (Leilao::PRORROGACAO_SEGUNDOS > 0 ? ' Lance no último minuto prorroga o leilão por mais ' . $prorrogacao . '.' : '') ?></p>
+              . (Leilao::PRORROGACAO_SEGUNDOS > 0 ? ' Lance no último minuto prorroga o leilão por mais ' . $prorrogacao . '.' : '')
+              . ' Se você vencer, você e o artista recebem uma notificação com o contato um do outro (e-mail e o WhatsApp do perfil, se houver).' ?></p>

@@ -7,6 +7,7 @@ use App\Core\View;
 use App\Models\Lance;
 use App\Models\Leilao;
 use App\Models\Movimentacao;
+use App\Models\Notificacao;
 use RuntimeException;
 
 final class LeilaoController
@@ -55,6 +56,8 @@ final class LeilaoController
             'souLider' => $dados['souLider'],
             // Saldo do menu "Carteira" (muda quando o leilão fecha e a pessoa arremata ou vende).
             'saldo' => $u ? brl($u['saldo']) : null,
+            // Número do sino (o aviso de quem venceu chega na hora em que o martelo bate).
+            'notificacoes' => $u ? (new Notificacao())->naoLidas((int) $u['id']) : null,
         ];
         if (($_GET['v'] ?? '') !== $dados['versao']) {
             $resposta['painel'] = $dados['painel'];

@@ -10,9 +10,9 @@ use App\Models\Leilao;
 $v = fn(string $campo): string => e((string) ($obra[$campo] ?? ''));
 $temImagem = !empty($obra['urlImagem']);
 $querLeilao = ($obra['disponivelLeilao'] ?? '') === '1';
-// Leilão aguardando a curadoria: os campos vêm preenchidos e podem ser alterados (ou o leilão cancelado).
-$pendente = $leilao && $leilao['status'] === Leilao::AGUARDANDO;
-$naData = ($obra['inicioModo'] ?? 'aprovacao') === 'data';
+// Leilão que ainda não começou (marcado para depois): os campos vêm preenchidos e podem ser alterados (ou o leilão cancelado).
+$pendente = $leilao && Leilao::editavel($leilao);
+$naData = ($obra['inicioModo'] ?? 'agora') === 'data';
 ?>
   <main id="conteudo">
     <form class="atelie envolve" method="post" action="<?= e(url('obras.save')) ?>" enctype="multipart/form-data">
@@ -72,11 +72,12 @@ $naData = ($obra['inicioModo'] ?? 'aprovacao') === 'data';
             <p class="aviso">O último leilão desta obra fechou sem lances. Você pode colocá-la em leilão de novo.</p>
           <?php endif; ?>
           <label class="marcar">
+            <?php if ($pendente): ?><input type="hidden" name="leilaoAgendado" value="<?= (int) $leilao['id'] ?>"><?php endif; ?>
             <input type="checkbox" name="disponivelLeilao" value="1"<?= $querLeilao ? ' checked' : '' ?>>
-            <span><?= $pendente ? 'Em leilão (aguardando a curadoria)' : 'Disponível para leilão' ?>
+            <span><?= $pendente ? 'Leilão marcado (ainda não começou)' : 'Disponível para leilão' ?>
               <small><?= $pendente
-                ? 'A curadoria ainda não aprovou: altere o que quiser abaixo, ou desmarque para cancelar o leilão.'
-                : 'Só obras exclusivas. A curadoria aprova antes de o leilão abrir.' ?></small></span>
+                ? 'Enquanto ele não começa, dá para alterar o que quiser abaixo, ou desmarcar para cancelar o leilão.'
+                : 'Só obras exclusivas. O leilão começa ao salvar ou na data que você marcar.' ?></small></span>
           </label>
 
           <fieldset class="leilao-campos"<?= $querLeilao ? '' : ' hidden disabled' ?>>
@@ -96,12 +97,12 @@ $naData = ($obra['inicioModo'] ?? 'aprovacao') === 'data';
             <fieldset class="escolha">
               <legend class="legenda">Quando começa</legend>
               <label class="marcar">
-                <input type="radio" name="inicioModo" value="aprovacao"<?= $naData ? '' : ' checked' ?>>
-                <span>Assim que a curadoria aprovar<small>O cronômetro começa na hora da aprovação.</small></span>
+                <input type="radio" name="inicioModo" value="agora"<?= $naData ? '' : ' checked' ?>>
+                <span>Começar agora<small>O leilão abre assim que você salvar e o cronômetro começa na hora.</small></span>
               </label>
               <label class="marcar">
                 <input type="radio" name="inicioModo" value="data"<?= $naData ? ' checked' : '' ?>>
-                <span>Em data e hora marcadas<small>Se a curadoria aprovar depois disso, o leilão abre com o tempo que sobrar.</small></span>
+                <span>Em data e hora marcadas<small>O leilão abre sozinho na data e hora escolhidas. Até lá, dá para alterar ou cancelar.</small></span>
               </label>
               <div class="campo" data-inicio-data<?= $naData ? '' : ' hidden' ?> style="margin-bottom:0">
                 <label for="dataInicio">Início</label>
@@ -123,7 +124,7 @@ $naData = ($obra['inicioModo'] ?? 'aprovacao') === 'data';
                 </select>
               </div>
             </div>
-            <p class="campo__ajuda" style="margin:-8px 0 22px">De 1 minuto a <?= duracao(Leilao::DURACAO_MAXIMA) ?>. Um leilão de teste pode durar só alguns minutos.</p>
+            <p class="campo__ajuda" style="margin:-8px 0 22px">De 1 minuto a <?= duracao(Leilao::DURACAO_MAXIMA) ?>. Um leilão de teste pode durar só alguns minutos. Se a obra for arrematada, você e quem arrematou recebem uma notificação com o e-mail e o WhatsApp (do perfil, se houver) um do outro.</p>
           </fieldset>
         <?php endif; ?>
 

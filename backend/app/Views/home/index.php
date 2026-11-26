@@ -175,7 +175,7 @@ use App\Models\Leilao;
         <article class="regra">
           <span class="regra__num" aria-hidden="true">III</span>
           <h3>Arremate</h3>
-          <p>Obras aprovadas pela curadoria vão a leilão pelo tempo que o artista escolheu, de minutos a dias. Cada lance supera o anterior pelo incremento mínimo.</p>
+          <p>Obras exclusivas vão a leilão pelo tempo que o artista escolheu, de minutos a dias. Cada lance supera o anterior pelo incremento mínimo.</p>
         </article>
       </div>
     </section>

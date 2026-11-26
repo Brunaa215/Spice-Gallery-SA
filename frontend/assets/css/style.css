@@ -1758,3 +1758,43 @@ fieldset.cartao-form > legend + * { clear: both; }
   .nav .botao { padding: 0.5em 0.95em; font-size: 0.92rem; }
   .nav .nav__saldo, .marca__sub { display: none; }
 }
+
+/* ---------- notificações ---------- */
+/* sino no menu: no menu largo só o ícone, do tamanho das letras do menu e da mesma cor delas, com o
+   número no canto (como o selo da Curadoria); no celular aparece também a palavra */
+.nav__sino { display: inline-flex; align-items: center; gap: 10px; }
+.nav__icone { position: relative; display: inline-grid; place-items: center; }
+.nav__sino svg { display: block; width: 1.05em; height: 1.05em; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.3s var(--ease); transform-origin: 50% 15%; }
+.nav__sino:hover svg { transform: rotate(-12deg); }
+.nav__icone .nav__aviso { position: absolute; top: -0.55em; right: -0.75em; min-width: 1.45em; height: 1.45em; margin: 0; padding: 0 0.32em; font-size: 0.58rem; vertical-align: 0; box-shadow: 0 0 0 2px var(--parede); }
+.nav__rotulo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (max-width: 880px) { .nav__rotulo { position: static; width: auto; height: auto; overflow: visible; clip: auto; } }
+
+.avisos { list-style: none; display: grid; gap: 22px; max-width: 860px; margin: 0 auto; padding: 0; }
+.aviso-leilao {
+  padding: clamp(22px, 3vw, 34px);
+  border: 1px solid color-mix(in srgb, var(--acafrao) 55%, transparent);
+  border-left: 4px solid var(--acafrao);
+  border-radius: 0 10px 10px 0;
+  background: color-mix(in srgb, var(--papel) 85%, transparent);
+  box-shadow: 0 20px 40px -34px rgba(74, 46, 58, 0.55);
+}
+.aviso-leilao--arremate { border-left-color: var(--salvia-escura); }
+.aviso-leilao--venda { border-left-color: var(--ouro-escuro); }
+.aviso-leilao--nao_venceu, .aviso-leilao--sem_lances { border-left-color: var(--linha-forte); }
+.aviso-leilao--nova { background: color-mix(in srgb, var(--rosa) 16%, var(--papel)); }
+.aviso-leilao__cab { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-bottom: 10px; font: 500 0.7rem/1.3 var(--fonte-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--tinta-suave); }
+.aviso-leilao__nova { padding: 3px 9px; border-radius: 999px; background: var(--paprica); color: #fff; }
+.aviso-leilao__cab time { margin-left: auto; letter-spacing: 0.04em; text-transform: none; }
+.aviso-leilao__titulo { margin: 0 0 8px; font: 500 clamp(1.5rem, 2.6vw, 2rem)/1.15 var(--fonte-display); }
+.aviso-leilao__texto { margin: 0 0 18px; color: var(--tinta-suave); }
+.aviso-leilao__links { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 0; }
+/* contato da outra parte da venda */
+.contato { margin: 0 0 18px; padding: 18px 20px; border: 1px dashed color-mix(in srgb, var(--acafrao) 60%, transparent); border-radius: 8px; background: color-mix(in srgb, var(--parede) 60%, transparent); }
+.contato .legenda { margin: 0 0 12px; }
+.contato .ficha__artista { margin-bottom: 12px; }
+.contato__lista { display: grid; gap: 6px; margin: 0; }
+.contato__lista div { display: grid; grid-template-columns: minmax(130px, 0.35fr) 1fr; gap: 10px; }
+.contato__lista dt { font: 500 0.68rem/1.9 var(--fonte-mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--tinta-suave); }
+.contato__lista dd { margin: 0; overflow-wrap: anywhere; }
+@media (max-width: 560px) { .contato__lista div { grid-template-columns: 1fr; gap: 0; } }

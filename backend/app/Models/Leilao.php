@@ -69,12 +69,18 @@ final class Leilao
         return (int) round((strtotime($l['dataFim']) - strtotime($l['dataInicio'])) / 60);
     }
 
-    // Leilão que não pode mais ser mexido nem substituído: aprovado e ainda não encerrado,
-    // ou encerrado com lances (a obra foi vendida). Reprovado ou encerrado sem lances libera
-    // a obra para um leilão novo; aguardando a curadoria ainda pode ser alterado ou cancelado.
+    // Leilão que ainda não começou (marcado para depois, ou um antigo que esperava a curadoria):
+    // o artista pode alterar ou cancelar editando a obra.
+    public static function editavel(array $l): bool
+    {
+        return $l['status'] === self::AGUARDANDO || ($l['status'] === self::APROVADO && $l['estado'] === 'EM_BREVE');
+    }
+
+    // Leilão que não pode mais ser mexido nem substituído: ao vivo, ou encerrado com lances (a obra
+    // foi vendida). Encerrado sem lances (ou reprovado, nos dados antigos) libera a obra para um novo.
     public static function travado(array $l): bool
     {
-        return $l['status'] === self::APROVADO && ($l['estado'] !== 'ENCERRADO' || (int) $l['lances'] > 0);
+        return $l['status'] === self::APROVADO && !self::editavel($l) && ($l['estado'] !== 'ENCERRADO' || (int) $l['lances'] > 0);
     }
 
     // Página "Leilões": só os aprovados; ao vivo primeiro, depois em breve, depois encerrados.
@@ -188,6 +194,9 @@ final class Leilao
             }
             $s = $pdo->prepare('UPDATE Leilao SET liquidadoEm = NOW(), id_vencedor = ? WHERE id = ?');
             $s->execute([$vencedor ? (int) $vencedor['id_usuario'] : null, $id]);
+            // Avisos: quem venceu (com o contato do artista), o artista (com o de quem arrematou),
+            // quem deu lance e não venceu, ou o artista se ninguém deu lance.
+            Notificacao::avisarFechamento($pdo, $id, $leilao['titulo'], (int) $leilao['idAutor'], $vencedor ?: null, $leilao['dataFim']);
             $pdo->commit();
         } catch (Throwable $e) {
             if ($pdo->inTransaction())
@@ -210,30 +219,37 @@ final class Leilao
         return Database::connection()->query(self::SELECT . " AND l.status = 'AGUARDANDO_CURADORIA' ORDER BY l.dataInicio")->fetchAll();
     }
 
-    // Com $abreNaAprovacao, $inicio/$fim são provisórios: só a duração entre eles importa.
-    public function create(int $idObra, string $valorInicial, string $incremento, string $inicio, string $fim, bool $abreNaAprovacao): void
+    // Sem aprovação da curadoria (decisão do grupo, mudou a RN-07): o leilão já nasce APROVADO e
+    // começa em $inicio (agora ou na data marcada pelo artista).
+    public function create(int $idObra, string $valorInicial, string $incremento, string $inicio, string $fim): void
     {
         $s = Database::connection()->prepare(
-            'INSERT INTO Leilao (dataInicio, dataFim, abreNaAprovacao, valorInicial, incremento, status, id_obra) VALUES (?, ?, ?, ?, ?, ?, ?)'
+            'INSERT INTO Leilao (dataInicio, dataFim, abreNaAprovacao, valorInicial, incremento, status, id_obra) VALUES (?, ?, 0, ?, ?, ?, ?)'
         );
-        $s->execute([$inicio, $fim, (int) $abreNaAprovacao, $valorInicial, $incremento, self::AGUARDANDO, $idObra]);
+        $s->execute([$inicio, $fim, $valorInicial, $incremento, self::APROVADO, $idObra]);
     }
 
-    // Enquanto a curadoria não decide, o artista pode mudar valores, início e duração...
-    public function atualizarPendente(int $id, string $valorInicial, string $incremento, string $inicio, string $fim, bool $abreNaAprovacao): void
+    // Enquanto o leilão não começou, o artista pode mudar valores, início e duração...
+    // (também vale para um leilão antigo que ainda esperava a curadoria). Devolve false se ele já começou.
+    public function atualizarAgendado(int $id, string $valorInicial, string $incremento, string $inicio, string $fim): bool
     {
         $s = Database::connection()->prepare(
-            "UPDATE Leilao SET dataInicio = ?, dataFim = ?, abreNaAprovacao = ?, valorInicial = ?, incremento = ?
-              WHERE id = ? AND status = 'AGUARDANDO_CURADORIA'"
+            "UPDATE Leilao SET dataInicio = ?, dataFim = ?, abreNaAprovacao = 0, valorInicial = ?, incremento = ?, status = 'APROVADO'
+              WHERE id = ? AND (status = 'AGUARDANDO_CURADORIA' OR (status = 'APROVADO' AND dataInicio > NOW()))"
         );
-        $s->execute([$inicio, $fim, (int) $abreNaAprovacao, $valorInicial, $incremento, $id]);
+        $s->execute([$inicio, $fim, $valorInicial, $incremento, $id]);
+        return $s->rowCount() > 0;
     }
 
-    // ...ou desistir dele (sem lances: ele nunca abriu).
-    public function cancelarPendente(int $id): void
+    // ...ou desistir dele (não começou, então não tem lances). Devolve false se ele já começou.
+    public function cancelarAgendado(int $id): bool
     {
-        $s = Database::connection()->prepare("DELETE FROM Leilao WHERE id = ? AND status = 'AGUARDANDO_CURADORIA'");
-        $s->execute([$id]);
+        $s = Database::connection()->prepare(
+            "DELETE FROM Leilao WHERE id = ? AND (status = 'AGUARDANDO_CURADORIA' OR (status = 'APROVADO' AND dataInicio > NOW()))
+               AND NOT EXISTS (SELECT 1 FROM Lance WHERE id_leilao = ?)"
+        );
+        $s->execute([$id, $id]);
+        return $s->rowCount() > 0;
     }
 
     // Aprova ou reprova; só muda quem ainda está aguardando.

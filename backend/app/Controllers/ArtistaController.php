@@ -26,6 +26,19 @@ final class ArtistaController
         $id = positiveId($_GET['id'] ?? null) ?? ($u ? (int) $u['id'] : null);
         if (!$id)
             go('artistas');
+        $this->exibir($id, $u);
+    }
+
+    // Aba "Perfil": a própria sala (retrato, informações, obras, coleção). O formulário de edição
+    // fica em perfil.editar, pelo botão "Editar perfil".
+    public function meu(): void
+    {
+        $u = Auth::requireLogin('Entre na sua conta para ver o seu perfil.');
+        $this->exibir((int) $u['id'], $u);
+    }
+
+    private function exibir(int $id, ?array $u): void
+    {
         $artista = (new Usuario())->artista($id);
         if (!$artista)
             View::notFound('Artista não encontrado.');
@@ -34,7 +47,7 @@ final class ArtistaController
         View::render('artistas/show', [
             'title' => $artista['nome'],
             'description' => 'Galeria individual de ' . $artista['nome'] . ' no Spice Gallery.',
-            'menu' => $ehDono ? 'minha-sala' : 'artistas',
+            'menu' => $ehDono ? 'perfil' : 'artistas',
             'artista' => $artista,
             'obras' => (new Obra())->doAutor($id),
             'ehDono' => $ehDono,

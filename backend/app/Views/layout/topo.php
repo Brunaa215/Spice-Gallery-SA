@@ -17,7 +17,7 @@ $marcar = fn(string $item): string => $menu === $item ? ' aria-current="page"' :
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Marcellus+SC&family=Pinyon+Script&display=swap">
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="<?= e(asset('assets/css/style.css')) ?>">
   <script>document.documentElement.classList.add('js')</script>
 </head>
 <body>
@@ -42,9 +42,12 @@ $marcar = fn(string $item): string => $menu === $item ? ' aria-current="page"' :
         <a href="<?= e(url('artistas')) ?>"<?= $marcar('artistas') ?>>Artistas</a>
         <a href="<?= e(url('leiloes')) ?>"<?= $marcar('leiloes') ?>>Leilões<span class="ao-vivo" aria-hidden="true"></span></a>
         <?php if ($current): ?>
-          <a href="<?= e(url('artistas.show', ['id' => $current['id']])) ?>"<?= $marcar('minha-sala') ?>>Minha sala</a>
+          <!-- Perfil = a própria sala (retrato, informações, obras e coleção); editar fica no botão de lá -->
           <a href="<?= e(url('perfil')) ?>"<?= $marcar('perfil') ?>>Perfil</a>
           <a href="<?= e(url('carteira')) ?>"<?= $marcar('carteira') ?>>Carteira <span class="nav__saldo"><?= brl($current['saldo']) ?></span></a>
+          <!-- sino: no menu largo só o ícone, com o número no canto; no celular aparece também a palavra.
+               Tamanho e contorno ficam também no próprio <svg>: sem o CSS ele não vira um bloco preto gigante. -->
+          <a class="nav__sino" href="<?= e(url('notificacoes')) ?>"<?= $marcar('notificacoes') ?> aria-label="Notificações<?= $notificacoesNovas ? ' (' . (int) $notificacoesNovas . ' novas)' : '' ?>"><span class="nav__icone"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.2v1.3"/><path d="M6.2 16.3V11a5.8 5.8 0 0 1 11.6 0v5.3l1.7 2.2h-15z"/><path d="M10 20.6a2.1 2.1 0 0 0 4 0"/></svg><?php if ($notificacoesNovas): ?><span class="nav__aviso"><?= (int) $notificacoesNovas ?></span><?php endif; ?></span><span class="nav__rotulo">Notificações</span></a>
           <?php if ($isAdmin): ?>
             <a href="<?= e(url('curadoria')) ?>"<?= $marcar('curadoria') ?>>Curadoria<?php if (!empty($pendentesCuradoria)): ?> <span class="nav__aviso" title="Leilões esperando aprovação"><?= (int) $pendentesCuradoria ?></span><?php endif; ?></a>
           <?php endif; ?>

@@ -12,6 +12,7 @@ use App\Controllers\CarteiraController;
 use App\Controllers\CuradoriaController;
 use App\Controllers\HomeController;
 use App\Controllers\LeilaoController;
+use App\Controllers\NotificacaoController;
 use App\Controllers\ObraController;
 use App\Controllers\PerfilController;
 use App\Controllers\UsuarioController;
@@ -39,7 +40,8 @@ $routes = [
 
     'artistas'          => ['GET',  ArtistaController::class,   'index'],
     'artistas.show'     => ['GET',  ArtistaController::class,   'show'],
-    'perfil'            => ['GET',  PerfilController::class,    'form'],
+    'perfil'            => ['GET',  ArtistaController::class,   'meu'],     // a própria sala (aba Perfil)
+    'perfil.editar'     => ['GET',  PerfilController::class,    'form'],
     'perfil.save'       => ['POST', PerfilController::class,    'save'],
 
     'avaliacoes.save'   => ['POST', AvaliacaoController::class, 'save'],
@@ -49,6 +51,8 @@ $routes = [
     'leiloes.show'      => ['GET',  LeilaoController::class,    'show'],
     'leiloes.estado'    => ['GET',  LeilaoController::class,    'estado'],   // JSON: leilão ao vivo
     'lances.save'       => ['POST', LeilaoController::class,    'bid'],
+
+    'notificacoes'      => ['GET',  NotificacaoController::class, 'index'],
 
     'carteira'          => ['GET',  CarteiraController::class,  'index'],
     'carteira.comprar'  => ['POST', CarteiraController::class,  'comprar'],

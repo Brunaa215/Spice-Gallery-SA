@@ -28,6 +28,7 @@ Com o PHP nada muda: cada rota continua devolvendo HTML completo, como devolveri
 - Código que liga coisas em elementos da página vai dentro de `montar()` no `app.js` (ou da montagem no `movimento.js`), não solto no topo do arquivo, senão só roda na primeira página.
 - `<script>` dentro do `<body>` de uma página não roda na troca. Comportamento novo vai para o `app.js`.
 - Resposta que não é HTML, erro 404/500 ou falha de rede viram navegação normal automaticamente. Formulários continuam enviando normalmente (recarregam).
+- O `style.css`, o `app.js` e o `movimento.js` são incluídos com `asset()` no PHP (`style.css?v=<data do arquivo>`). Se o site for atualizado com uma aba aberta, a próxima troca de página percebe a versão nova e recarrega a página inteira. Sem isso, o HTML novo chegava com o estilo antigo (foi o que deixou o sino das notificações gigante).
 
 ## Celular, tablet e zoom
 

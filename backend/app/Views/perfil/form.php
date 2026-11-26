@@ -36,7 +36,7 @@ $wallpaper = imagemLocal($perfil['wallpaper'] ?? null);
           <p class="perfil__nome" data-previa-nome><?= $v('nome') ?></p>
           <p class="cartaz__especialidade" data-previa-especialidade><?= $v('especialidade') ?></p>
           <p class="cartaz__apelido" data-previa-apelido<?= ($perfil['apelido'] ?? '') === '' ? ' hidden' : '' ?>><small>apelido</small> “<span><?= $v('apelido') ?></span>”</p>
-          <p class="campo__ajuda"><a href="<?= e(url('artistas.show', ['id' => $perfil['id']])) ?>">Ver minha sala</a> · <a href="<?= e(url('password')) ?>">Trocar minha senha</a></p>
+          <p class="campo__ajuda"><a href="<?= e(url('perfil')) ?>">Ver meu perfil</a> · <a href="<?= e(url('password')) ?>">Trocar minha senha</a></p>
         </aside>
 
         <div class="perfil__campos">
@@ -105,6 +105,15 @@ $wallpaper = imagemLocal($perfil['wallpaper'] ?? null);
                 <span>Remover o papel de parede atual<small>A sala volta ao papel de parede listrado do museu.</small></span>
               </label>
             <?php endif; ?>
+          </fieldset>
+
+          <fieldset class="cartao-form perfil__bloco">
+            <legend class="legenda">Contato para vendas</legend>
+            <div class="campo" style="margin-bottom:10px">
+              <label for="contatoVenda">WhatsApp ou telefone (opcional)</label>
+              <input id="contatoVenda" name="contatoVenda" type="tel" maxlength="40" inputmode="tel" autocomplete="tel" placeholder="(47) 99999-1234" value="<?= $v('contatoVenda') ?>" aria-describedby="contato-ajuda">
+            </div>
+            <p class="campo__ajuda" id="contato-ajuda" style="margin:0">Nunca fica público. Quando um leilão termina, quem arrematou e quem vendeu recebem uma notificação com o <b>e-mail da conta</b>, este número e as redes um do outro, para combinarem a entrega.</p>
           </fieldset>
 
           <fieldset class="cartao-form perfil__bloco">

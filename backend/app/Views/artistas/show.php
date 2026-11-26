@@ -69,7 +69,7 @@ $wallpaper = imagemLocal($artista['wallpaper']);
         <div class="hero__acoes" style="margin-top:0">
           <?php if ($ehDono): ?>
             <a class="botao botao--tinta" href="<?= e(url('obras.create')) ?>">Publicar nova obra</a>
-            <a class="botao" href="<?= e(url('perfil')) ?>">Editar perfil</a>
+            <a class="botao" href="<?= e(url('perfil.editar')) ?>">Editar perfil</a>
             <a class="botao" href="<?= e(url('carteira')) ?>">Minha carteira</a>
           <?php else: ?>
             <a class="botao botao--tinta" href="#obras">Ver as obras</a>
@@ -131,7 +131,7 @@ $wallpaper = imagemLocal($artista['wallpaper']);
           <p class="rotulo">Só você vê</p>
           <h2 class="secao__titulo" id="meus-leiloes">Seus leilões</h2>
         </div>
-        <p class="secao__nota">A curadoria aprova cada leilão antes de ele abrir. Enquanto ela não aprova, você pode alterar o leilão editando a obra.</p>
+        <p class="secao__nota">Leilões que ainda não começaram podem ser alterados ou cancelados editando a obra.</p>
       </header>
       <div class="tabela-rolagem">
         <table class="tabela">

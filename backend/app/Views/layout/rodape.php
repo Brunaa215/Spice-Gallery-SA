@@ -29,7 +29,7 @@
   <script src="assets/js/vendor/Flip.min.js" defer></script>
   <script src="assets/js/vendor/ScrambleTextPlugin.min.js" defer></script>
   <script src="assets/js/vendor/lenis.min.js" defer></script>
-  <script src="assets/js/movimento.js" defer></script>
-  <script src="assets/js/app.js" defer></script>
+  <script src="<?= e(asset('assets/js/movimento.js')) ?>" defer></script>
+  <script src="<?= e(asset('assets/js/app.js')) ?>" defer></script>
 </body>
 </html>

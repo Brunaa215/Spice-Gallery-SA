@@ -17,6 +17,8 @@ final class View
         $isAdmin = Auth::isAdmin();
         // Leilões esperando aprovação: o menu da curadoria mostra o número (só ela vê).
         $pendentesCuradoria = $isAdmin ? (new \App\Models\Leilao())->totalPendentes() : 0;
+        // Avisos ainda não lidos: o número no sino de notificações do menu.
+        $notificacoesNovas = $current ? (new \App\Models\Notificacao())->naoLidas((int) $current['id']) : 0;
         $flash = takeFlash();
         extract($data, EXTR_SKIP);
         require self::BASE . 'layout/topo.php';
