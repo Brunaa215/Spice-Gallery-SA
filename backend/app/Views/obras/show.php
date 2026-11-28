@@ -26,7 +26,7 @@ $arrematada = $leilao && $leilao['id_vencedor'];
       </nav>
 
       <div class="exposicao">
-        <div class="parede-luz" data-holofote>
+        <div class="parede-luz" data-obra-3d>
           <figure class="quadro quadro--ouro quadro--pendurado">
             <div class="quadro__passe"><img src="<?= e($obra['urlImagem']) ?>" alt="<?= e($alt) ?>"></div>
           </figure>

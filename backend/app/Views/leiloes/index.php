@@ -9,7 +9,6 @@ use App\Models\Obra;
 ?>
   <main id="conteudo">
     <section class="leiloes-cab envolve" aria-labelledby="leiloes-titulo">
-      <canvas class="poeira" aria-hidden="true"></canvas>
       <p class="rotulo">Sala noturna · as luzes baixam às 19h</p>
       <h1 id="leiloes-titulo">Leilão <span>noturno</span></h1>
       <p data-revelar>Só entram aqui obras exclusivas que o artista marcou como disponíveis. Cada leilão dura o tempo que o artista escolheu, de minutos a dias. O maior lance válido leva.</p>
@@ -25,7 +24,7 @@ use App\Models\Obra;
               $estado = $l['estado'];
               $lances = (int) $l['lances'];
             ?>
-            <a class="lote<?= $estado === 'ENCERRADO' ? ' lote--encerrado' : '' ?>" href="<?= e(url('leiloes.show', ['id' => $l['id']])) ?>" data-cursor="<?= $estado === 'AO_VIVO' ? 'Dar lance' : 'Ver lote' ?>">
+            <a class="lote<?= $estado === 'ENCERRADO' ? ' lote--encerrado' : '' ?>" href="<?= e(url('leiloes.show', ['id' => $l['id']])) ?>">
               <?php if ($estado === 'AO_VIVO'): ?>
                 <span class="estado"><span class="ao-vivo"></span> Ao vivo</span>
               <?php elseif ($estado === 'EM_BREVE'): ?>

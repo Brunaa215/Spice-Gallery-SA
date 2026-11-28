@@ -8,7 +8,7 @@ use App\Core\Csrf;
   <main id="conteudo">
     <section class="leiloes-cab envolve" aria-labelledby="curadoria-titulo">
       <p class="rotulo">Bastidores</p>
-      <h1 id="curadoria-titulo">Cura<span>doria</span></h1>
+      <h1 id="curadoria-titulo">Sala da <span>curadoria</span></h1>
       <p>Os leilões começam sem precisar de aprovação: o artista escolhe começar na hora ou numa data. Aqui só aparecem leilões antigos que ainda esperavam a curadoria.</p>
       <p><a class="link-seta" href="<?= e(url('usuarios')) ?>">Gerenciar contas</a></p>
     </section>

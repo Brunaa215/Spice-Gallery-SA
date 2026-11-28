@@ -8,7 +8,6 @@ use App\Models\Leilao;
   <main id="conteudo">
     <!-- ============ HERO ============ -->
     <section class="hero envolve" aria-labelledby="hero-titulo">
-      <canvas class="poeira" aria-hidden="true"></canvas>
       <div class="hero__texto">
         <p class="rotulo">Sala de entrada · Nº 000</p>
         <h1 class="hero__titulo" id="hero-titulo">Toda arte merece uma <em>parede</em>.</h1>
@@ -25,6 +24,7 @@ use App\Models\Leilao;
       </div>
 
 
+      <!-- três quadros lado a lado, retos e sem se cobrir: a obra aparece inteira -->
       <div class="hero__parede" aria-hidden="true">
         <figure class="quadro quadro--ouro quadro--pendurado q-a">
           <div class="quadro__passe"><img src="assets/img/obras/sol-de-acafrao.webp" alt="" width="800" height="1000"></div>
@@ -35,60 +35,24 @@ use App\Models\Leilao;
         <figure class="quadro quadro--madeira q-c">
           <div class="quadro__passe"><img src="assets/img/obras/mercado-6h.webp" alt="" width="800" height="600"></div>
         </figure>
-        <div class="selo" data-magnetico>
-          <div class="selo__giro"><svg viewBox="0 0 200 200"><defs><path id="circulo" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0"/></defs><text font-family="DM Mono, monospace" font-size="13" letter-spacing="3.4" fill="currentColor"><textPath href="#circulo">SPICE GALLERY • MUSEU ONLINE • DESDE 2026 • </textPath></text></svg></div>
-          <span class="selo__miolo">S</span>
-        </div>
       </div>
     </section>
-
-    <!-- ============ MERGULHO (sequência fixada no scroll) ============ -->
-    <section class="mergulho" aria-labelledby="mergulho-titulo">
-      <!-- invólucro e miolo: a entrada anima um, o mergulho anima o outro (nunca os dois no mesmo elemento) -->
-      <p class="mergulho__frase mergulho__frase--a" aria-hidden="true"><span class="mergulho__miolo">Cada quadro</span></p>
-      <p class="mergulho__frase mergulho__frase--b" aria-hidden="true"><span class="mergulho__miolo">é uma porta.</span></p>
-      <div class="mergulho__moldura">
-      <figure class="quadro quadro--ouro mergulho__quadro" aria-hidden="true">
-        <!-- SVG embutido: no zoom o navegador desenha só a área visível, em vetor -->
-        <div class="quadro__passe"><svg class="mergulho__obra" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" focusable="false"><rect width="800" height="1000" fill="#FBF1EC"/><rect x="0" y="620" width="800" height="380" fill="#9DB6D3"/><circle cx="464" cy="400" r="240" fill="#E2C070"/><path d="M 64 620 A 176 176 0 0 1 416 620 Z" fill="#C9647F"/><rect x="560" y="500" width="96" height="360" fill="#7F9A7C"/><line x1="80" y1="120" x2="256" y2="120" stroke="#A07A34" stroke-width="3"/><line x1="80" y1="150" x2="256" y2="150" stroke="#A07A34" stroke-width="3"/><line x1="80" y1="180" x2="256" y2="180" stroke="#A07A34" stroke-width="3"/><line x1="80" y1="210" x2="256" y2="210" stroke="#A07A34" stroke-width="3"/><line x1="80" y1="240" x2="256" y2="240" stroke="#A07A34" stroke-width="3"/><line x1="80" y1="270" x2="256" y2="270" stroke="#A07A34" stroke-width="3"/><line x1="80" y1="300" x2="256" y2="300" stroke="#A07A34" stroke-width="3"/><circle cx="688" cy="140" r="40" fill="none" stroke="#A07A34" stroke-width="4"/></svg></div>
-      </figure>
-      </div>
-      <div class="mergulho__alem">
-        <p class="mergulho__sobre">Do outro lado da moldura</p>
-        <h2 class="mergulho__titulo" id="mergulho-titulo"><?= number_format($totais['obras'], 0, ',', '.') ?> <?= $totais['obras'] === 1 ? 'obra esperando' : 'obras esperando' ?> seus olhos.</h2>
-        <a class="botao botao--tinta" href="#corredor">Começar a visita</a>
-      </div>
-    </section>
-
-    <!-- ============ FAIXA ============ -->
-    <div class="faixa" aria-hidden="true">
-      <div class="faixa__trilho">
-        <div class="faixa__grupo">
-          <span>Pintura</span><i style="--c:var(--acafrao)"></i><span>Ilustração digital</span><i style="--c:var(--paprica)"></i><span>Aquarela</span><i style="--c:var(--rosa)"></i><span>Gravura</span><i style="--c:var(--cardamomo)"></i><span>Fotografia</span><i style="--c:var(--acafrao)"></i><span>Escultura</span><i style="--c:var(--paprica)"></i><span>Colagem</span><i style="--c:var(--rosa)"></i>
-        </div>
-        <div class="faixa__grupo">
-          <span>Pintura</span><i style="--c:var(--acafrao)"></i><span>Ilustração digital</span><i style="--c:var(--paprica)"></i><span>Aquarela</span><i style="--c:var(--rosa)"></i><span>Gravura</span><i style="--c:var(--cardamomo)"></i><span>Fotografia</span><i style="--c:var(--acafrao)"></i><span>Escultura</span><i style="--c:var(--paprica)"></i><span>Colagem</span><i style="--c:var(--rosa)"></i>
-        </div>
-      </div>
-    </div>
-
 
     <?php if ($destaques): ?>
-    <!-- ============ CORREDOR (rolagem horizontal fixada) ============ -->
-    <section class="corredor" id="corredor" aria-labelledby="corredor-titulo">
-      <header class="corredor__cab envolve">
+    <!-- ============ DESTAQUES (parede parada; era o corredor com rolagem lateral presa) ============ -->
+    <section class="secao envolve destaques" id="destaques" aria-labelledby="destaques-titulo">
+      <header class="secao__cab">
         <div>
           <p class="rotulo">Sala 01 · Destaques</p>
-          <h2 class="corredor__titulo" id="corredor-titulo">O corredor</h2>
+          <h2 class="secao__titulo" id="destaques-titulo">As mais bem avaliadas</h2>
         </div>
-        <p class="corredor__contador" aria-hidden="true"><b>01</b> / <?= str_pad((string) count($destaques), 2, '0', STR_PAD_LEFT) ?></p>
+        <p class="secao__nota">As obras com as melhores notas da comunidade. Clique numa delas para ver de perto.</p>
       </header>
-      <p class="corredor__fundo" aria-hidden="true">Destaques</p>
-      <ol class="corredor__trilho">
+      <ol class="destaques__parede">
         <?php foreach ($destaques as $obra): ?>
           <?php $emLeilao = !empty($obra['leilaoAoVivo']); ?>
-          <li class="corredor__item">
-            <a href="<?= e($emLeilao ? url('leiloes.show', ['id' => $obra['leilaoAoVivo']]) : url('obras.show', ['id' => $obra['id']])) ?>" data-cursor="<?= $emLeilao ? 'Dar lance' : 'Ver obra' ?>">
+          <li class="destaques__item">
+            <a href="<?= e($emLeilao ? url('leiloes.show', ['id' => $obra['leilaoAoVivo']]) : url('obras.show', ['id' => $obra['id']])) ?>">
               <figure class="quadro <?= moldura($obra['id']) ?> quadro--pendurado"><div class="quadro__passe"><img src="<?= e($obra['urlImagem']) ?>" alt="<?= e($obra['titulo'] . ', de ' . $obra['autor']) ?>" loading="lazy"></div></figure>
               <div class="placa">
                 <span class="placa__num"><?= numeroObra($obra['id']) ?><?= (int) $obra['avaliacoes'] > 0 ? ' · ' . nota($obra['media']) . ' ★' : '' ?><?= $emLeilao ? ' · em leilão' : '' ?></span>
@@ -99,7 +63,6 @@ use App\Models\Leilao;
           </li>
         <?php endforeach; ?>
       </ol>
-      <div class="corredor__barra" aria-hidden="true"><i></i></div>
     </section>
     <?php endif; ?>
 
@@ -110,7 +73,7 @@ use App\Models\Leilao;
           <p class="rotulo">Sala 02 · Acervo aberto</p>
           <h2 class="secao__titulo" id="galeria-titulo">Em exposição agora</h2>
         </div>
-        <p class="secao__nota" data-revelar>Obras publicadas pela comunidade. Passe o mouse para endireitar um quadro, entre para avaliar.</p>
+        <p class="secao__nota">Obras publicadas pela comunidade. Clique numa obra para ver de perto e avaliar.</p>
       </header>
 
       <div class="filtros" role="group" aria-label="Filtrar por categoria" data-revelar>
@@ -131,9 +94,8 @@ use App\Models\Leilao;
     <?php if ($vitrine): ?>
     <!-- ============ VITRINE NOTURNA (leilão em destaque) ============ -->
     <section class="secao vitrine noite" aria-labelledby="vitrine-titulo">
-      <canvas class="poeira" aria-hidden="true" data-tom="noite"></canvas>
       <div class="envolve vitrine__grade">
-        <figure class="quadro quadro--ouro quadro--pendurado" style="--r:-1.5deg">
+        <figure class="quadro quadro--ouro quadro--pendurado">
           <div class="quadro__passe"><img src="<?= e($vitrine['urlImagem']) ?>" alt="<?= e($vitrine['titulo'] . ', de ' . $vitrine['autor']) ?>" loading="lazy"></div>
         </figure>
         <div>
@@ -146,7 +108,7 @@ use App\Models\Leilao;
           </dl>
           <p class="legenda">Encerra em</p>
           <div class="contagem" data-fim="<?= dataIso($vitrine['dataFim']) ?>" style="margin:12px 0 34px"><?= dataHora($vitrine['dataFim']) ?></div>
-          <a class="botao botao--acafrao" href="<?= e(url('leiloes.show', ['id' => $vitrine['id']])) ?>" data-cursor="Dar lance">Entrar no leilão</a>
+          <a class="botao botao--acafrao" href="<?= e(url('leiloes.show', ['id' => $vitrine['id']])) ?>">Entrar no leilão</a>
         </div>
       </div>
     </section>

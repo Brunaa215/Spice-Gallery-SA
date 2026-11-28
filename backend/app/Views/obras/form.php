@@ -20,7 +20,7 @@ $naData = ($obra['inicioModo'] ?? 'agora') === 'data';
       <input type="hidden" name="id" value="<?= $v('id') ?>">
       <input type="hidden" name="MAX_FILE_SIZE" value="<?= \App\Core\Upload::LIMITE ?>">
 
-      <label class="soltar<?= $temImagem ? ' tem-imagem' : '' ?>" data-soltar data-cursor="Escolher">
+      <label class="soltar<?= $temImagem ? ' tem-imagem' : '' ?>" data-soltar>
         <input type="file" name="imagem" accept="image/png,image/jpeg,image/webp"<?= $editando ? '' : ' required' ?>>
         <span class="soltar__vazio"<?= $temImagem ? ' hidden' : '' ?>>
           <svg viewBox="0 0 80 80" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="8" y="14" width="64" height="52"/><rect x="16" y="22" width="48" height="36" stroke-dasharray="4 4"/><path d="M40 50V30M32 37l8-8 8 8"/><circle cx="40" cy="6" r="2.5" fill="currentColor"/><path d="M40 8l-14 6M40 8l14 6"/></svg>

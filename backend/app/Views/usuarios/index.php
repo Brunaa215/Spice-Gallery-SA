@@ -9,7 +9,7 @@ use App\Core\Csrf;
   <main id="conteudo">
     <section class="leiloes-cab envolve" aria-labelledby="contas-titulo">
       <p class="rotulo">Bastidores</p>
-      <h1 id="contas-titulo">Con<span>tas</span></h1>
+      <h1 id="contas-titulo">Todas as <span>contas</span></h1>
       <p><a class="link-seta" href="<?= e(url('curadoria')) ?>">Voltar para a curadoria</a></p>
     </section>
 

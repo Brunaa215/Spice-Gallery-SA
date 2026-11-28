@@ -5,6 +5,7 @@ use App\Core\Auth;
 use App\Core\Csrf;
 use App\Core\View;
 use App\Models\Movimentacao;
+use App\Models\Obra;
 use App\Models\Usuario;
 use PDOException;
 
@@ -14,7 +15,9 @@ final class AuthController
     {
         if (Auth::user())
             go('home');
-        View::render('auth/login', ['title' => 'Entrar', 'menu' => 'entrar', 'old' => takeOld(),
+        // passarela do painel da esquerda: as obras publicadas mais novas (até 8)
+        $passarela = array_slice(array_values(array_filter((new Obra())->publicadas(), fn(array $o): bool => !empty($o['urlImagem']))), 0, 8);
+        View::render('auth/login', ['title' => 'Entrar', 'menu' => 'entrar', 'old' => takeOld(), 'passarela' => $passarela,
             'description' => 'Entre ou crie sua conta de artista no Spice Gallery.']);
     }
 
@@ -78,7 +81,12 @@ final class AuthController
         Auth::requireLogin();
         Csrf::verify();
         Auth::logout();
-        go('home');
+        // Sair leva direto para a tela de login. A sessão antiga foi destruída; uma nova e vazia
+        // (id novo, mesmas opções de cookie do bootstrap) só carrega o aviso até lá.
+        session_start();
+        session_regenerate_id(true);
+        flash('success', 'Você saiu da sua conta. Até a próxima!');
+        go('login');
     }
 
     public function passwordForm(): void

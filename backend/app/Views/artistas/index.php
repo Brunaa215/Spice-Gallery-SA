@@ -18,7 +18,7 @@
       <?php else: ?>
         <div class="lotes">
           <?php foreach ($artistas as $a): ?>
-            <a class="lote" href="<?= e(url('artistas.show', ['id' => $a['id']])) ?>" data-cursor="Visitar">
+            <a class="lote" href="<?= e(url('artistas.show', ['id' => $a['id']])) ?>">
               <figure class="quadro <?= moldura($a['id']) ?>"><div class="quadro__passe"><img src="<?= e($a['capa']) ?>" alt="Obra mais recente de <?= e($a['nome']) ?>" loading="lazy"></div></figure>
               <span class="lote__num"><?= (int) $a['obras'] ?> <?= (int) $a['obras'] === 1 ? 'obra' : 'obras' ?></span>
               <h2><?= e($a['nome']) ?></h2>

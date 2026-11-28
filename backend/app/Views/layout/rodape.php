@@ -23,13 +23,8 @@
     </div>
   </footer>
 
-  <script src="assets/js/vendor/gsap.min.js" defer></script>
-  <script src="assets/js/vendor/ScrollTrigger.min.js" defer></script>
-  <script src="assets/js/vendor/SplitText.min.js" defer></script>
-  <script src="assets/js/vendor/Flip.min.js" defer></script>
-  <script src="assets/js/vendor/ScrambleTextPlugin.min.js" defer></script>
-  <script src="assets/js/vendor/lenis.min.js" defer></script>
-  <script src="<?= e(asset('assets/js/movimento.js')) ?>" defer></script>
+  <!-- Sem a camada de animação (GSAP, Lenis, movimento.js): o site fica parado e a atenção vai para as obras.
+       Os arquivos continuam em assets/js porque o protótipo estático (frontend/prototipo) ainda usa. -->
   <script src="<?= e(asset('assets/js/app.js')) ?>" defer></script>
 </body>
 </html>

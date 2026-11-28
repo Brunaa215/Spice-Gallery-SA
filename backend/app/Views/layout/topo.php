@@ -7,7 +7,7 @@ $menu = $menu ?? '';
 $marcar = fn(string $item): string => $menu === $item ? ' aria-current="page"' : '';
 ?>
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="calmo"><!-- calmo: só animações essenciais (bloco "site calmo" no style.css) -->
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,7 +22,6 @@ $marcar = fn(string $item): string => $menu === $item ? ' aria-current="page"' :
 </head>
 <body>
   <a class="pular" href="#conteudo">Pular para o conteúdo</a>
-  <div class="cortina" aria-hidden="true"><div class="cortina__painel"></div><div class="cortina__painel"></div><p class="cortina__marca">Spice</p><span class="cortina__contador">000</span></div>
 
   <?php if ($flash): ?>
     <!-- Mensagem do servidor: o app.js mostra no aviso flutuante (toast) -->

@@ -20,7 +20,7 @@ $prorrogacao = duracao(intdiv(Leilao::PRORROGACAO_SEGUNDOS, 60));
       </nav>
 
       <div class="exposicao">
-        <div class="parede-luz" data-holofote>
+        <div class="parede-luz">
           <figure class="quadro quadro--ouro quadro--pendurado">
             <div class="quadro__passe"><img src="<?= e($leilao['urlImagem']) ?>" alt="<?= e($leilao['titulo'] . ', de ' . $leilao['autor']) ?>"></div>
           </figure>

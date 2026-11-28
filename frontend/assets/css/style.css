@@ -1,11 +1,16 @@
 /* =========================================================
    SPICE GALLERY — "Salão Rococó"
-   Salão de dia (papel de parede listrado, pastéis e ouro) · baile noturno nos leilões (.noite)
+   Salão de dia (parede lisa, pastéis e ouro) · baile noturno nos leilões (.noite)
+   Parede calma e quase nada se mexendo: o foco é a obra.
    ========================================================= */
 
 :root {
-  --parede: #fcedf1;
-  --parede-2: #f8dbe3;
+  /* paredes em marfim quente com só um toque de rosa (eram #fcedf1 / #f8dbe3, bem rosadas);
+     o rosa fica para os detalhes: botões, nomes, ponto de "ao vivo" */
+  --parede: #f8f2ec;
+  --parede-2: #f1e6df;
+  --topo-1: #fcf2f2;  /* cabeçalho: marfim com um toque de rosa em cima... (já foi #fdeef2, rosa demais) */
+  --topo-2: #f8e8e9;  /* ...e um pouco mais rosado embaixo (também o fundo do menu aberto no celular) */
   --papel: #fffaf4;
   --tinta: #3b2a32;
   --tinta-suave: #7a5d66;
@@ -88,43 +93,19 @@ body {
   overflow-x: hidden;
 }
 
-/* papel de parede francês: listras de sálvia com filete dourado, raminhos de rosa e miosótis,
-   granulação de papel por cima (textura fixa no fundo, sem camada extra sobre a página) */
+/* papel de parede de peônias e volutas (assets/img/papel-de-parede.webp), bem apagado por um véu
+   da cor da parede: dá o clima do salão sem disputar atenção com as obras.
+   Mais visível ou mais apagado: mude o 0.8 do véu (0 = papel inteiro, 1 = parede lisa).
+   A imagem é um ladrilho de 436x737 feito da foto enviada: as bordas foram misturadas
+   (a de baixo com a de cima, a da direita com a da esquerda) para repetir sem deixar emenda. */
 body {
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.3 0 0 0 0 0.15 0 0 0 0 0.2 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cg fill-opacity='.8'%3E%3Cg transform='translate(11 34)'%3E%3Cellipse cx='-4.5' cy='4' rx='4.5' ry='1.8' transform='rotate(-35 -4.5 4)' fill='%23a9bba6'/%3E%3Cellipse cx='4.5' cy='4' rx='4.5' ry='1.8' transform='rotate(35 4.5 4)' fill='%23a9bba6'/%3E%3Ccircle r='3.6' fill='%23ebb9c2'/%3E%3Ccircle r='1.5' fill='%23c98597'/%3E%3C/g%3E%3Cg transform='translate(11 104)'%3E%3Ccircle cx='-2.4' r='1.9' fill='%23b9cde3'/%3E%3Ccircle cx='2.4' r='1.9' fill='%23b9cde3'/%3E%3Ccircle cy='-2.4' r='1.9' fill='%23b9cde3'/%3E%3Ccircle cy='2.4' r='1.9' fill='%23b9cde3'/%3E%3Ccircle r='1' fill='%23e3c77a'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"),
-    linear-gradient(90deg, rgba(201, 162, 74, 0.42) 0 1px, rgba(244, 185, 200, 0.3) 1px 21px, rgba(201, 162, 74, 0.42) 21px 22px, transparent 22px 65px, rgba(126, 176, 112, 0.3) 65px 75px, transparent 75px);
-  background-size: 180px 180px, 140px 140px, 140px 100%;
+  --veu-parede: rgba(248, 242, 236, 0.8); /* = --parede com 80% */
+  background-image: linear-gradient(var(--veu-parede), var(--veu-parede)), url("../img/papel-de-parede.webp");
+  background-size: auto, 436px 737px;
 }
 body.noite {
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(90deg, rgba(217, 178, 94, 0.18) 0 1px, rgba(217, 178, 94, 0.035) 1px 21px, rgba(217, 178, 94, 0.18) 21px 22px, transparent 22px);
-  background-size: 180px 180px, 140px 100%;
-}
-
-/* moldura do site: filete dourado duplo com arabescos nos cantos, fixa na janela.
-   Camada própria (não repinta ao rolar) e transparente ao mouse. */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 8px;
-  z-index: 120;
-  pointer-events: none;
-  border: 1px solid rgba(201, 162, 74, 0.5);
-  outline: 1px solid rgba(201, 162, 74, 0.28);
-  outline-offset: -5px;
-  background:
-    var(--canto-1) left -3px top -3px / 48px no-repeat,
-    var(--canto-2) right -3px top -3px / 48px no-repeat,
-    var(--canto-3) left -3px bottom -3px / 48px no-repeat,
-    var(--canto-4) right -3px bottom -3px / 48px no-repeat;
-  opacity: 0.85;
-  will-change: transform;
-}
-@media (max-width: 600px), (max-height: 500px) {
-  body::before { inset: 4px; background-size: 30px, 30px, 30px, 30px; outline: 0; }
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
 }
 
 img { max-width: 100%; height: auto; display: block; }
@@ -197,8 +178,7 @@ main[tabindex="-1"]:focus { outline: none; }
   transition: background 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease);
 }
 .botao:focus-visible { outline: 2px solid var(--paprica); outline-offset: 3px; }
-.botao::after { content: "❧"; font: normal 400 1.05em/1 var(--fonte-texto); color: var(--acafrao); transition: transform 0.35s var(--ease), color 0.3s; }
-.botao:hover::after { transform: translateX(5px); }
+.botao::after { content: "❧"; font: normal 400 1.05em/1 var(--fonte-texto); color: var(--acafrao); transition: color 0.3s; }
 .botao:hover { --b-fundo: var(--menta); --b-texto: #3b2a32; }
 .botao:hover::after { color: inherit; }
 .botao--tinta { --b-fundo: linear-gradient(180deg, #fde4ea, #f6c3d0); --b-texto: #3b2a32; --b-borda: #c99b45; }
@@ -227,9 +207,10 @@ main[tabindex="-1"]:focus { outline: none; }
   position: sticky;
   top: 0;
   z-index: 50;
-  background: var(--parede);
   border-bottom: 1.5px solid var(--acafrao);
-  background: linear-gradient(180deg, var(--rosa-bb-claro), var(--parede));
+  /* faixa rosa-pétala (as paredes são marfim; o cabeçalho guarda o rosa do salão) */
+  background: linear-gradient(180deg, var(--topo-1), var(--topo-2));
+  view-transition-name: topo; /* na troca de página o cabeçalho fica parado (ver "troca de página") */
 }
 .noite .topo { background: var(--parede); }
 /* colar de pérolas pendurado sob o cabeçalho */
@@ -249,11 +230,11 @@ main[tabindex="-1"]:focus { outline: none; }
   min-height: 74px;
 }
 .marca { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; }
-.marca__nome { font: 400 2.5rem/1.15 var(--fonte-script); letter-spacing: 0; padding-right: 0.1em; }
+.marca__nome { font: 400 3rem/1.1 var(--fonte-script); letter-spacing: 0; padding-right: 0.1em; } /* era 2.5rem */
 .marca__nome i { font-style: normal; color: var(--paprica); }
 .noite .marca__nome i { color: var(--acafrao); }
 .marca__sub {
-  font: 500 0.6rem/1.25 var(--fonte-mono);
+  font: 500 0.66rem/1.25 var(--fonte-mono);
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--tinta-suave);
@@ -291,17 +272,9 @@ main[tabindex="-1"]:focus { outline: none; }
   background: var(--paprica);
   margin-left: 5px;
   vertical-align: 2px;
+  /* ponto parado com um aro claro (antes pulsava sem parar no menu) */
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--paprica) 25%, transparent);
 }
-/* pulso só com transform/opacity: roda na GPU, sem repintar o cabeçalho */
-.ao-vivo::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: inherit;
-  animation: pulsar 1.8s ease-out infinite;
-}
-@keyframes pulsar { from { transform: scale(1); opacity: 0.6; } 70%, to { transform: scale(3.4); opacity: 0; } }
 
 .topo__menu {
   display: none;
@@ -324,7 +297,7 @@ main[tabindex="-1"]:focus { outline: none; }
     align-items: flex-start;
     gap: 6px;
     padding: 20px var(--gutter) 30px;
-    background: var(--parede);
+    background: var(--topo-2);
     border-bottom: 1px solid var(--linha);
     display: none;
   }
@@ -345,15 +318,18 @@ main[tabindex="-1"]:focus { outline: none; }
   padding: 0;
   border: var(--f) solid transparent;
   border-image: url("../img/moldura-verde.svg") 50 / calc(var(--f) * 1.25) / calc(var(--f) * 0.25) round;
-  background: var(--papel);
-  background-clip: padding-box;
+  /* O navegador desenha cada peça repetida da moldura separada, e a borda antisserrilhada de cada
+     uma deixava a parede vazar em fios finos (no fundo escuro da vitrine virava uma grade).
+     Por baixo da faixa da moldura (que é opaca dentro da caixa) vai a cor dela: as emendas somem. */
+  --veio: #a9c89e;
+  background: linear-gradient(var(--papel), var(--papel)) padding-box, linear-gradient(var(--veio), var(--veio)) border-box;
   box-shadow: var(--sombra-quadro);
   transform: rotate(var(--r));
   transform-origin: 50% 0;
   /* camada própria: sem ela, o Chrome desenha um fio claro na borda do border-image quando o quadro gira */
   backface-visibility: hidden;
 }
-/* crista em concha no alto (nos pendurados, o laço da fita faz esse papel) */
+/* crista em concha no alto (nos pendurados, o prego e o arame fazem esse papel) */
 .quadro:not(.quadro--pendurado):not(.quadro--nu)::after {
   content: "";
   position: absolute;
@@ -386,9 +362,9 @@ main[tabindex="-1"]:focus { outline: none; }
 .quadro__passe img { width: 100%; box-shadow: 0 0 0 1px rgba(156, 118, 48, 0.65), 0 0 0 5px var(--papel), 0 0 0 6px rgba(156, 118, 48, 0.35); }
 .noite .quadro__passe img { box-shadow: 0 0 0 1px rgba(156, 118, 48, 0.65), 0 0 0 5px #fbf3ee, 0 0 0 6px rgba(156, 118, 48, 0.35); }
 /* sem modificador: laca verde-sálvia · --ouro: dourada e mais encorpada */
-.quadro--ouro { --f: clamp(18px, 2.3vw, 32px); border-image-source: url("../img/moldura-ouro.svg"); }
+.quadro--ouro { --f: clamp(18px, 2.3vw, 32px); --veio: #c99b45; border-image-source: url("../img/moldura-ouro.svg"); }
 /* laca rosa-bebê com entalhes dourados e pérolas */
-.quadro--madeira { border-image-source: url("../img/moldura-rosa.svg"); }
+.quadro--madeira { --veio: #f2c4d0; border-image-source: url("../img/moldura-rosa.svg"); }
 /* camafeu oval: aro de gomos dourados entre filetes, com fio rosa-bebê por fora */
 .quadro--fino {
   --f: 0px;
@@ -408,29 +384,55 @@ main[tabindex="-1"]:focus { outline: none; }
 .parede-luz .quadro, .vitrine .quadro:not(.quadro--fino) { --f: clamp(22px, 2.8vw, 38px); }
 .lote .quadro:not(.quadro--fino) { --f: clamp(16px, 1.7vw, 24px); }
 
-/* fita de cetim rosa e laço para quadros pendurados */
+/* quadros pendurados num prego: arame fino de latão saindo de trás da moldura até um prego na parede
+   (era uma fita rosa com laço). O arame é desenhado com duas diagonais (::before); o prego é a
+   cabeça redonda de latão com a sombra dele na parede (::after). */
 .quadro--pendurado::before {
   content: "";
   position: absolute;
   left: 50%;
   top: calc(-1 * var(--f) - 40px);
-  width: 56%;
+  width: 50%;
   height: 40px;
   transform: translateX(-50%);
   background:
-    linear-gradient(to top right, transparent calc(50% - 1.3px), #d98fa0 calc(50% - 0.6px), #e9b4c0 50%, #d98fa0 calc(50% + 0.6px), transparent calc(50% + 1.3px)) left / 50% 100% no-repeat,
-    linear-gradient(to top left, transparent calc(50% - 1.3px), #d98fa0 calc(50% - 0.6px), #e9b4c0 50%, #d98fa0 calc(50% + 0.6px), transparent calc(50% + 1.3px)) right / 50% 100% no-repeat;
+    linear-gradient(to top right, transparent calc(50% - 1.1px), #5a4329 calc(50% - 0.5px), #b8975e 50%, #5a4329 calc(50% + 0.5px), transparent calc(50% + 1.1px)) left / 50% 100% no-repeat,
+    linear-gradient(to top left, transparent calc(50% - 1.1px), #5a4329 calc(50% - 0.5px), #b8975e 50%, #5a4329 calc(50% + 0.5px), transparent calc(50% + 1.1px)) right / 50% 100% no-repeat;
 }
 .quadro--pendurado::after {
   content: "";
   position: absolute;
   left: 50%;
-  top: calc(-1 * var(--f) - 53px);
-  width: 42px; height: 30px;
-  margin-left: -21px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 28'%3E%3Cg stroke='%23b8667a' stroke-width='.9' stroke-linejoin='round'%3E%3Cpath d='M18 13l-6 13 4-1.5 3 2.5 1-13Z' fill='%23d68fa0'/%3E%3Cpath d='M22 13l6 13-4-1.5-3 2.5-1-13Z' fill='%23d68fa0'/%3E%3Cpath d='M20 12C14 2 3 2 3 9s11 8 17 3Z' fill='%23eab3c0'/%3E%3Cpath d='M20 12C26 2 37 2 37 9s-11 8-17 3Z' fill='%23eab3c0'/%3E%3Cpath d='M8 7c3-1 7 0 10 4M32 7c-3-1-7 0-10 4' fill='none' stroke='%23fff' stroke-opacity='.6'/%3E%3Ccircle cx='20' cy='12' r='3.3' fill='%23d68fa0'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
-  filter: drop-shadow(0 2px 2px rgba(74, 46, 58, 0.3));
+  top: calc(-1 * var(--f) - 47px);
+  width: 13px;
+  height: 13px;
+  margin-left: -6.5px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #fff4d2 0 14%, #d9b469 34%, #9a7431 66%, #5a4119 100%);
+  box-shadow: 0 0 0 1px rgba(70, 48, 20, 0.55), 2px 4px 4px -1px rgba(60, 40, 30, 0.45);
 }
+.noite .quadro--pendurado::after { box-shadow: 0 0 0 1px rgba(20, 10, 4, 0.7), 2px 4px 5px -1px rgba(0, 0, 0, 0.6); }
+/* camafeu oval: o arame é mais estreito e desce um pouco, para encostar na borda curva */
+.quadro--fino.quadro--pendurado::before { width: 26%; height: 44px; }
+
+/* balanço no prego: ao passar o mouse (ou tocar), o quadro balança como um pêndulo em volta do prego
+   (o centro do prego fica 40px acima da moldura) e vai parando. --lado vem do app.js: o quadro é
+   "empurrado" para o lado contrário de onde o mouse entrou. Usa a propriedade rotate, que soma com
+   o transform que o quadro já tiver (o da passarela do login, por exemplo). A obra em 3D da página
+   da obra não balança: ela já segue o mouse. */
+.quadro--pendurado { transform-origin: 50% -40px; }
+.em-3d .quadro { transform-origin: 50% 50%; }
+@keyframes balancar {
+  0% { rotate: 0deg; }
+  13% { rotate: calc(var(--lado, 1) * 5deg); }
+  31% { rotate: calc(var(--lado, 1) * -3.6deg); }
+  49% { rotate: calc(var(--lado, 1) * 2.3deg); }
+  66% { rotate: calc(var(--lado, 1) * -1.3deg); }
+  83% { rotate: calc(var(--lado, 1) * 0.5deg); }
+  100% { rotate: 0deg; }
+}
+.quadro--pendurado.balancando,
+.calmo .quadro--pendurado.balancando { animation: balancar 2.1s ease-in-out both !important; }
 
 /* ---------- estrelas ---------- */
 .estrelas {
@@ -469,31 +471,6 @@ main[tabindex="-1"]:focus { outline: none; }
   padding: 0 0.12em 0.08em 0.04em;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'%3E%3Cpath d='M3 9 C 40 2, 78 13, 118 6 S 178 3, 197 8' fill='none' stroke='%23c9a24a' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") bottom / 100% 0.16em no-repeat;
 }
-/* folhas de acanto atrás da parede do hero: rosa no alto, sálvia embaixo */
-.hero::after {
-  content: "";
-  position: absolute;
-  right: 36%;
-  bottom: 2%;
-  width: clamp(120px, 13vw, 190px);
-  aspect-ratio: 200 / 320;
-  background: var(--acanto-verde) center / contain no-repeat;
-  transform: rotate(-24deg) scaleX(-1);
-  opacity: 0.45;
-  pointer-events: none;
-}
-@media (max-width: 900px) { .hero::after { display: none; } }
-.hero::before {
-  content: "";
-  position: absolute;
-  right: -2%;
-  top: 4%;
-  width: clamp(200px, 26vw, 380px);
-  aspect-ratio: 200 / 320;
-  background: var(--acanto) center / contain no-repeat;
-  opacity: 0.42;
-  pointer-events: none;
-}
 .hero__lead { font-size: clamp(1.05rem, 1.4vw, 1.22rem); max-width: 34em; color: var(--tinta-suave); }
 .hero__acoes { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
 .hero__numeros {
@@ -508,11 +485,20 @@ main[tabindex="-1"]:focus { outline: none; }
 .hero__numeros dt { font: 500 0.7rem/1.4 var(--fonte-mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--tinta-suave); }
 .hero__numeros dd { margin: 0; font: italic 500 2.4rem/1.1 var(--fonte-display); }
 
-.hero__parede { position: relative; min-height: clamp(440px, 46vw, 660px); }
-.hero__parede .quadro { position: absolute; }
-.hero__parede .q-a { --r: -2.5deg; left: 2%; top: 13%; width: 47%; z-index: 2; }
-.hero__parede .q-b { --r: 2deg; right: 3%; top: 6%; width: 38%; }
-.hero__parede .q-c { --r: -1deg; right: 9%; bottom: 0; width: 46%; z-index: 3; }
+/* parede do hero: três quadros retos, lado a lado, sem um cobrir o outro.
+   O alto da coluna da esquerda guarda espaço para a fita do quadro pendurado; a da direita, para a crista. */
+.hero__parede {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  gap: clamp(56px, 5vw, 72px) clamp(24px, 3vw, 44px);
+  align-items: center;
+  padding-top: 56px;
+}
+.hero__parede .q-a { grid-row: 1 / span 2; }
+.hero__parede .q-b { width: 72%; justify-self: center; align-self: end; }
+.hero__parede .q-c { align-self: start; }
 
 .selo {
   position: absolute;
@@ -605,7 +591,8 @@ main[tabindex="-1"]:focus { outline: none; }
 .filtro[aria-pressed="true"] { background: linear-gradient(180deg, #fde4ea, #f6c3d0); color: #3b2a32; border-color: #c99b45; outline: 1px solid var(--acafrao); outline-offset: 2px; }
 
 /* ---------- salão (galeria em alvenaria) ---------- */
-.salao { columns: 4 250px; column-gap: clamp(22px, 3vw, 46px); }
+/* três colunas (eram quatro): cada obra aparece maior */
+.salao { columns: 3 300px; column-gap: clamp(28px, 3.4vw, 56px); }
 .obra {
   break-inside: avoid;
   margin-bottom: clamp(40px, 5vw, 64px);
@@ -616,16 +603,13 @@ main[tabindex="-1"]:focus { outline: none; }
 .salao .obra { padding-top: 42px; }
 .salao .etiqueta { top: 42px; }
 .obra__link { display: block; text-decoration: none; }
-.obra .quadro { transition: transform 0.6s var(--ease), box-shadow 0.6s var(--ease); }
-.obra:nth-child(3n + 1) .quadro { --r: -0.7deg; }
-.obra:nth-child(3n + 2) .quadro { --r: 0.5deg; }
-.obra:nth-child(4n) .quadro { --r: -0.3deg; }
-/* passar o mouse "endireita" o quadro */
+/* quadros retos e parados; o mouse em cima só aprofunda a sombra (sem subir nem girar) */
+.obra .quadro { transition: box-shadow 0.4s var(--ease); }
 .obra__link:hover .quadro,
 .obra__link:focus-visible .quadro {
-  transform: rotate(0deg) translateY(-6px);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 46px 50px -26px rgba(74, 46, 58, 0.65), 0 14px 18px -10px rgba(74, 46, 58, 0.35);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 40px 46px -26px rgba(74, 46, 58, 0.6), 0 12px 16px -10px rgba(74, 46, 58, 0.32);
 }
+.obra__link:hover .placa__titulo { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
 
 /* cartela: cartucho de marfim com filete dourado duplo, texto centrado */
 .placa {
@@ -678,6 +662,24 @@ main[tabindex="-1"]:focus { outline: none; }
 .etiqueta--fim { background: var(--tinta-suave); }
 
 .vazio { text-align: center; color: var(--tinta-suave); padding: 40px 0; font-family: var(--fonte-mono); }
+
+/* ---------- destaques da home: parede parada (o corredor com rolagem lateral presa saiu) ----------
+   Grade de quadros pendurados alinhados pela base, como numa sala de museu.
+   O espaço entre as linhas guarda lugar para a fita e o laço de cada quadro. */
+.destaques__parede {
+  list-style: none;
+  margin: 0;
+  padding: 56px 0 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 96px clamp(28px, 3.4vw, 56px);
+  align-items: end;
+}
+.destaques__item > a { display: block; text-decoration: none; }
+.destaques__item .quadro { transition: box-shadow 0.4s var(--ease); }
+.destaques__item > a:hover .quadro,
+.destaques__item > a:focus-visible .quadro { box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset, 0 40px 46px -26px rgba(74, 46, 58, 0.6), 0 12px 16px -10px rgba(74, 46, 58, 0.32); }
+.destaques__item > a:hover .placa__titulo { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 0.18em; }
 
 /* ---------- vitrine noturna (chamada de leilão na home) ---------- */
 .vitrine {
@@ -828,8 +830,35 @@ main[tabindex="-1"]:focus { outline: none; }
 }
 /* boiserie: painel de parede com moldura dourada */
 .parede-luz { box-shadow: inset 0 0 0 clamp(10px, 1.6vw, 22px) var(--parede-2), inset 0 0 0 calc(clamp(10px, 1.6vw, 22px) + 1px) rgba(201, 162, 74, 0.75), inset 0 0 0 calc(clamp(10px, 1.6vw, 22px) + 5px) var(--parede-2), inset 0 0 0 calc(clamp(10px, 1.6vw, 22px) + 6px) rgba(201, 162, 74, 0.4); }
-.parede-luz .quadro { width: min(100%, 540px); }
-.parede-luz .quadro__passe img { max-height: 62vh; width: auto; margin-inline: auto; }
+/* a obra é a protagonista da página: maior que antes (540px / 62vh) */
+.parede-luz .quadro { width: min(100%, 680px); }
+.parede-luz .quadro__passe img { max-height: 72vh; width: auto; margin-inline: auto; }
+
+/* obra em 3D (página da obra): o app.js gira o quadro seguindo o mouse (ligarObra3d).
+   preserve-3d deixa a obra e o reflexo em camadas à frente do passe-partout: ao inclinar, a obra
+   desliza um pouco sobre ele, como uma tela de verdade dentro da moldura. */
+.em-3d .quadro { transform-style: preserve-3d; will-change: transform; }
+.em-3d .quadro__passe { transform-style: preserve-3d; }
+.em-3d .quadro__passe img { transform: translateZ(14px); }
+.reflexo {
+  position: absolute;
+  inset: var(--pad);
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateZ(16px);
+}
+/* reflexo de vidro: um disco de luz que anda (por transform) conforme o quadro inclina */
+.reflexo::before {
+  content: "";
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 150%;
+  aspect-ratio: 1;
+  margin: -75% 0 0 -75%;
+  background: radial-gradient(circle closest-side, rgba(255, 251, 242, 0.5), rgba(255, 251, 242, 0.12) 55%, rgba(255, 251, 242, 0) 72%);
+  transform: translate(var(--lx, 0%), var(--ly, 0%));
+}
 
 .ficha { position: sticky; top: 100px; }
 .ficha__titulo { font-size: clamp(2.6rem, 5vw, 4.4rem); line-height: 0.92; letter-spacing: -0.01em; margin: 14px 0 20px; }
@@ -966,13 +995,12 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
   line-height: 1;
   color: var(--linha-forte);
   cursor: pointer;
-  transition: color 0.15s, transform 0.2s var(--ease);
+  transition: color 0.15s;
   padding: 0 2px;
 }
 .estrelas-input label:hover,
 .estrelas-input label:hover ~ label,
 .estrelas-input input:checked ~ label { color: var(--acafrao); }
-.estrelas-input label:hover { transform: scale(1.15) rotate(-6deg); }
 .estrelas-input input:focus-visible + label { outline: 2px solid var(--paprica); outline-offset: 2px; }
 
 /* bloco comum (não flex): os avisos são frases com <b> e links no meio, e com flex cada pedaço
@@ -1030,9 +1058,9 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
   border-radius: 200px 200px 8px 8px / 110px 110px 8px 8px;
   padding: 64px clamp(20px, 3vw, 34px) 30px;
   text-decoration: none;
-  transition: border-color 0.4s, transform 0.5s var(--ease);
+  transition: border-color 0.3s;
 }
-.lote:hover { border-color: var(--acafrao); transform: translateY(-4px); }
+.lote:hover { border-color: var(--acafrao); }
 .lote .quadro { width: 74%; margin: 0 auto 34px; }
 .lote__num { font: 500 0.68rem/1 var(--fonte-mono); letter-spacing: 0.16em; color: var(--tinta-suave); }
 .lote h2 { font-size: 2rem; font-style: italic; margin: 8px 0 4px; }
@@ -1182,24 +1210,65 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
   bottom: 24px;
   z-index: 150;
   max-width: calc(100% - 32px);
-  transform: translate(-50%, 150%);
   background: #34202c;
   color: #f7ebe3;
   padding: 14px 24px;
   font: italic 500 1.05rem/1.4 var(--fonte-display);
   box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.6), inset 0 0 0 1px #c9a24a, inset 0 0 0 4px #34202c, inset 0 0 0 5px rgba(201, 162, 74, 0.5);
   border-radius: 999px;
-  transition: transform 0.5s var(--ease);
+  /* aparece e some no lugar (antes subia da borda da tela) */
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.25s;
 }
-.toast.visivel { transform: translate(-50%, 0); }
+.toast.visivel { opacity: 1; }
 
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
 
+/* ---------- site calmo: só as animações essenciais ----------
+   <html class="calmo"> vem do layout PHP (o protótipo não tem). Hover, foco e menu mudam na hora,
+   sem transição; a rolagem pula direto para a âncora. Ficam só dois movimentos que avisam algo:
+   o aviso flutuante (toast) aparecendo e o lance novo piscando no histórico do leilão ao vivo. */
+html.calmo { scroll-behavior: auto; }
+/* âncoras e scrollIntoView param abaixo do cabeçalho fixo (74px + colar de pérolas), não escondidas atrás dele */
+html { scroll-padding-top: 96px; }
+@media (max-height: 420px) { html { scroll-padding-top: 0; } } /* aí o cabeçalho rola junto */
+.calmo *, .calmo *::before, .calmo *::after { transition: none !important; animation: none !important; }
+.calmo .toast { transition: opacity 0.2s !important; }
+.calmo .toast:not(.visivel) { transition: opacity 0.2s, visibility 0s 0.2s !important; }
+.calmo .historico li.novo { animation: brilhar 1.6s var(--ease) !important; }
+.calmo .entrando { animation: entrar-pagina 0.45s var(--ease) both !important; }
+
+/* ---------- troca de página (transição entre as abas) ----------
+   O app.js troca a página dentro de document.startViewTransition(): o navegador fotografa a tela
+   antes e depois e anima as duas fotos. A página que sai some rápido subindo um pouco; a que entra
+   sobe suave. Voltar no histórico (data-direcao="volta") faz o caminho contrário.
+   O cabeçalho tem nome próprio (view-transition-name: topo) e não se mexe.
+   Recarga de página (envio de formulário) usa a mesma animação (@view-transition). */
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: sair-pagina 0.2s cubic-bezier(0.4, 0, 1, 1) both; }
+::view-transition-new(root) { animation: entrar-pagina 0.45s cubic-bezier(0.2, 0.7, 0.1, 1) 0.06s both; }
+html[data-direcao="volta"]::view-transition-old(root) { animation-name: sair-pagina-volta; }
+html[data-direcao="volta"]::view-transition-new(root) { animation-name: entrar-pagina-volta; }
+::view-transition-group(topo), ::view-transition-old(topo), ::view-transition-new(topo) { animation: none; }
+::view-transition-old(topo) { display: none; }
+@keyframes sair-pagina { to { opacity: 0; transform: translateY(-12px); } }
+@keyframes entrar-pagina { from { opacity: 0; transform: translateY(26px); } }
+@keyframes sair-pagina-volta { to { opacity: 0; transform: translateY(12px); } }
+@keyframes entrar-pagina-volta { from { opacity: 0; transform: translateY(-26px); } }
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+  ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+}
+
 /* =========================================================
    CAMADA DE MOVIMENTO (ativa quando html.movimento — ver movimento.js)
+   O site PHP não carrega mais o movimento.js (fica parado, com foco nas obras): daqui até
+   "DESEMPENHO" (cortina, cursor, poeira, mergulho, corredor preso, regras empilhadas...)
+   só o protótipo estático (frontend/prototipo) ainda usa.
    ========================================================= */
 
 html.lenis, html.lenis body { height: auto; }
@@ -1346,15 +1415,108 @@ html.lenis, html.lenis body { height: auto; }
   inset: 0;
   z-index: 0;
   background: url("../img/obras/noite-de-cravo.webp") center / cover;
-  animation: respirar 22s ease-in-out infinite alternate;
 }
-.porta__arte::before { z-index: 1; }
+.porta__arte::before { z-index: 1; pointer-events: none; } /* véu por cima das obras: deixa o mouse chegar no quadro */
 .porta__arte blockquote { z-index: 2; }
-@keyframes respirar { from { transform: scale(1); } to { transform: scale(1.14) rotate(1.5deg); } }
+
+/* ---------- passarela de obras no login ----------
+   As obras publicadas passam no painel da esquerda: cada uma entra pela direita, desliza devagar
+   e sai pela esquerda enquanto a próxima já vai aparecendo (o app.js marca a vez de cada uma:
+   ligarPassarela). A obra aparece inteira, numa moldura fina, sobre um fundo desfocado dela mesma.
+   Sem JS ou com "reduzir movimento", fica só a primeira, parada (.vista). */
+.porta__arte--obras::after { content: none; }  /* sai a imagem fixa de antes */
+.porta__obra {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+/* .vista = o ponto 16% da animação (obra inteira à mostra, já deslizando): a primeira começa daí, sem pulo */
+.porta__obra.vista { opacity: 1; }
+.porta__obra.vista .porta__tela { translate: 3.4% 0; }
+.porta__obra.vista .porta__fundo { translate: 1.36% 0; }
+.porta__fundo {
+  position: absolute;
+  inset: -12%;
+  width: 124%;
+  height: 124%;
+  object-fit: cover;
+  filter: blur(26px) brightness(0.5) saturate(1.15);
+}
+/* a obra numa das molduras do site (.quadro + moldura do id), pendurada no prego, no meio do painel.
+   O painel tem a altura da tela menos o cabeçalho (100vh - 75px). Em cima ficam ~195px para a legenda
+   e o prego; embaixo, ~200px para a frase. A moldura e o passe-partout somam até ~130px. O que sobra
+   é a altura máxima da obra: 100vh - 75 - 195 - 200 - 130 = 100vh - 600px. A obra aparece inteira. */
+.porta__tela {
+  position: absolute;
+  left: 50%;
+  top: calc(50% - 2px);
+  margin: 0;
+  transform: translate(-50%, -50%);
+}
+.porta__tela .quadro__passe img { width: auto; height: auto; max-width: min(30vw, 540px); max-height: max(120px, calc(100vh - 600px)); }
+.porta__tela .quadro--fino .quadro__passe img { max-height: max(110px, calc(100vh - 630px)); }
+/* o painel ignora o mouse (as obras ficam empilhadas); só o quadro que está à mostra pode balançar */
+.porta__obra.ativa .porta__tela .quadro,
+.porta__obra.vista .porta__tela .quadro { pointer-events: auto; }
+/* com obras passando, a frase fica menor (duas linhas): a arte é o foco */
+.porta__arte--obras blockquote { max-width: 26em; }
+.porta__arte--obras p { font-size: clamp(1.5rem, 2.1vw, 2.1rem); }
+.porta__legenda {
+  position: absolute;
+  top: clamp(32px, 3.6vw, 50px);
+  left: clamp(32px, 3.6vw, 50px);
+  right: clamp(32px, 3.6vw, 50px);
+  display: grid;
+  gap: 4px;
+  color: #fffaf3;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.45);
+}
+.porta__legenda span { font: 500 0.68rem/1.4 var(--fonte-mono); letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.8; }
+.porta__legenda strong { font: italic 500 clamp(1.3rem, 1.8vw, 1.7rem)/1.1 var(--fonte-display); }
+.porta__legenda em { font: 400 clamp(1.2rem, 1.6vw, 1.5rem)/1.2 var(--fonte-script); font-style: normal; color: #f3dc9a; }
+/* a figura inteira (com a legenda) só aparece e some; a obra e o fundo é que deslizam da direita
+   para a esquerda (propriedade translate, que soma com o transform de centralizar). O fundo anda
+   menos que a obra: dá profundidade. */
+@keyframes passar { 0% { opacity: 0; } 16% { opacity: 1; } 84% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes deslizar { from { translate: 5% 0; } to { translate: -5% 0; } }
+@keyframes deslizar-fundo { from { translate: 2% 0; } to { translate: -2% 0; } }
+/* a vez de cada obra: 7 s passando (16% entrando, 16% saindo, a seguinte começa a entrar aos 84%).
+   Escrito por extenso e com !important porque o modo calmo desliga as animações do site;
+   --atraso (herdado pela obra e pelo fundo) deixa a primeira continuar de onde a .vista parou. */
+.porta__obra.ativa,
+.porta__obra.ativa .porta__tela,
+.porta__obra.ativa .porta__fundo,
+.calmo .porta__obra.ativa,
+.calmo .porta__obra.ativa .porta__tela,
+.calmo .porta__obra.ativa .porta__fundo {
+  animation-name: passar !important;
+  animation-duration: 7s !important;
+  animation-timing-function: linear !important;
+  animation-fill-mode: both !important;
+  animation-delay: var(--atraso, 0s) !important;
+  animation-iteration-count: 1 !important;
+}
+.porta__obra.ativa .porta__tela, .calmo .porta__obra.ativa .porta__tela { animation-name: deslizar !important; will-change: translate; }
+.porta__obra.ativa .porta__fundo, .calmo .porta__obra.ativa .porta__fundo { animation-name: deslizar-fundo !important; will-change: translate; }
+/* celular: painel mais alto, com a legenda em cima, a obra no meio e a frase embaixo sem se cobrirem */
+@media (max-width: 860px) {
+  .porta__arte--obras { min-height: 530px; }
+  .porta__tela { top: 53%; }
+  .porta__tela .quadro__passe img { max-width: 60vw; max-height: 150px; }
+  .porta__tela .quadro--fino .quadro__passe img { max-height: 140px; }
+  .porta__legenda { gap: 2px; }
+  .porta__legenda strong { font-size: 1.15rem; }
+  .porta__legenda em { font-size: 1.15rem; }
+  .porta__arte--obras p { font-size: 1.45rem; }
+  .porta__arte--obras cite { margin-top: 10px; }
+}
 
 /* ---------- correções ---------- */
 html, body { overflow-x: clip; }
-.toast:not(.visivel) { visibility: hidden; transition: transform 0.5s var(--ease), visibility 0s 0.5s; }
+.toast:not(.visivel) { visibility: hidden; transition: opacity 0.25s, visibility 0s 0.25s; }
 /* filete interno do quadro dourado via outline (o ::before é do fio de pendurar) */
 
 
@@ -1499,7 +1661,7 @@ html, body { overflow-x: clip; }
 /* ---------- telas baixas: zoom do navegador, notebook com barra de tarefas, celular deitado ---------- */
 @media (max-height: 700px) {
   .topo__interno { min-height: 60px; }
-  .marca__nome { font-size: 1.7rem; }
+  .marca__nome { font-size: 2.1rem; }
   .presas .corredor { --fixo: 462px; padding-block: 76px 12px; }
   .presas .corredor__trilho { padding-top: 40px; }
   .presas .corredor__item .placa { margin-top: 12px; }
@@ -1764,8 +1926,7 @@ fieldset.cartao-form > legend + * { clear: both; }
    número no canto (como o selo da Curadoria); no celular aparece também a palavra */
 .nav__sino { display: inline-flex; align-items: center; gap: 10px; }
 .nav__icone { position: relative; display: inline-grid; place-items: center; }
-.nav__sino svg { display: block; width: 1.05em; height: 1.05em; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.3s var(--ease); transform-origin: 50% 15%; }
-.nav__sino:hover svg { transform: rotate(-12deg); }
+.nav__sino svg { display: block; width: 1.05em; height: 1.05em; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .nav__icone .nav__aviso { position: absolute; top: -0.55em; right: -0.75em; min-width: 1.45em; height: 1.45em; margin: 0; padding: 0 0.32em; font-size: 0.58rem; vertical-align: 0; box-shadow: 0 0 0 2px var(--parede); }
 .nav__rotulo { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @media (max-width: 880px) { .nav__rotulo { position: static; width: auto; height: auto; overflow: visible; clip: auto; } }

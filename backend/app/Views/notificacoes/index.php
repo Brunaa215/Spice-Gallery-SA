@@ -18,7 +18,7 @@ $rotulos = [
   <main id="conteudo">
     <section class="leiloes-cab envolve" aria-labelledby="notificacoes-titulo">
       <p class="rotulo">Recados da casa<?= $novas ? ' · ' . $novas . ($novas === 1 ? ' nova' : ' novas') : '' ?></p>
-      <h1 id="notificacoes-titulo">Notifi<span>cações</span></h1>
+      <h1 id="notificacoes-titulo">Suas <span>notificações</span></h1>
       <p>Quando um leilão em que você participa termina, o aviso chega aqui. Quem arremata recebe o contato do artista, e o artista recebe o contato de quem arrematou, para combinarem a entrega.</p>
     </section>
 

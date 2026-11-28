@@ -1,5 +1,6 @@
 /* Spice Gallery: comportamento das páginas (sem dependências).
-   Efeitos visuais opcionais vêm de window.SpiceMov (movimento.js). */
+   O site PHP não carrega mais o movimento.js: sem window.SpiceMov, todo mov().x abaixo
+   simplesmente não faz nada. Os ganchos ficam porque o protótipo estático ainda usa. */
 (() => {
   'use strict';
 
@@ -22,6 +23,116 @@
     clearTimeout(tToast);
     tToast = setTimeout(() => toast.classList.remove('visivel'), 4200);
   };
+
+  // o elemento sobe suave (keyframe "entrar-pagina" no CSS); usado na troca de aba de entrar/criar conta
+  // e na troca de página quando o navegador não tem View Transitions
+  const entrar = (el) => {
+    if (!el) return;
+    el.classList.remove('entrando');
+    void el.offsetWidth; // recomeça a animação se a classe já estava
+    el.classList.add('entrando');
+    el.addEventListener('animationend', () => el.classList.remove('entrando'), { once: true });
+  };
+
+  /* ---------- obra em 3D (página da obra) ----------
+     O quadro gira em 3D seguindo o mouse (no celular, inclina conforme a rolagem), com a obra um pouco
+     à frente do passe-partout (profundidade) e um reflexo de vidro que anda com a luz. Ao abrir a
+     página ele entra girado e assenta. Só transform/opacity, num requestAnimationFrame que dorme quando
+     o quadro para. Com "reduzir movimento" no sistema, nada disso liga. Devolve a função que desliga. */
+  function ligarObra3d(parede) {
+    const quadro = $('.quadro', parede);
+    const passe = quadro && $('.quadro__passe', quadro);
+    if (!passe || matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
+    const reflexo = Object.assign(document.createElement('span'), { className: 'reflexo' });
+    reflexo.setAttribute('aria-hidden', 'true');
+    passe.append(reflexo);
+    parede.classList.add('em-3d');
+
+    const GIRO_X = 9, GIRO_Y = 13; // graus, no máximo
+    const atual = { rx: 6, ry: -15, z: 0, luz: 0, lx: 0, ly: 0 }; // entra girado...
+    const alvo = { rx: 0, ry: 0, z: 0, luz: 0, lx: 0, ly: 0 };    // ...e assenta reto
+    const limitar = (v, a) => Math.max(-a, Math.min(a, v));
+    let raf = 0;
+    const passo = () => {
+      let mexendo = false;
+      for (const k in alvo) {
+        const d = alvo[k] - atual[k];
+        atual[k] += d * 0.1;
+        if (Math.abs(d) > 0.01) mexendo = true;
+      }
+      quadro.style.transform = `perspective(1100px) rotateX(${atual.rx.toFixed(2)}deg) rotateY(${atual.ry.toFixed(2)}deg) translateZ(${atual.z.toFixed(1)}px)`;
+      reflexo.style.opacity = atual.luz.toFixed(3);
+      reflexo.style.setProperty('--lx', `${atual.lx.toFixed(1)}%`);
+      reflexo.style.setProperty('--ly', `${atual.ly.toFixed(1)}%`);
+      raf = mexendo ? requestAnimationFrame(passo) : 0;
+    };
+    const acordar = () => { if (!raf) raf = requestAnimationFrame(passo); };
+
+    let rolar = null;
+    if (matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      // mouse em qualquer ponto da parede: o quadro "olha" para ele
+      parede.addEventListener('pointermove', (e) => {
+        const b = quadro.getBoundingClientRect();
+        const x = limitar((e.clientX - b.left) / b.width - 0.5, 0.75);
+        const y = limitar((e.clientY - b.top) / b.height - 0.5, 0.75);
+        Object.assign(alvo, { rx: -y * 2 * GIRO_X, ry: x * 2 * GIRO_Y, z: 26, luz: 0.85, lx: -x * 70, ly: -y * 70 });
+        acordar();
+      });
+      parede.addEventListener('pointerleave', () => {
+        Object.assign(alvo, { rx: 0, ry: 0, z: 0, luz: 0 });
+        acordar();
+      });
+    } else {
+      // toque: inclina de leve conforme o quadro passa pela tela
+      rolar = () => {
+        const b = quadro.getBoundingClientRect();
+        const meio = (b.top + b.height / 2) / innerHeight - 0.5;
+        Object.assign(alvo, { rx: limitar(meio * 16, 8), luz: Math.min(0.5, Math.abs(meio)), ly: meio * 60 });
+        acordar();
+      };
+      addEventListener('scroll', rolar, { passive: true });
+      rolar();
+    }
+    acordar();
+    return () => {
+      cancelAnimationFrame(raf);
+      if (rolar) removeEventListener('scroll', rolar);
+    };
+  }
+
+  /* ---------- passarela de obras (painel do login) ----------
+     Cada obra fica 7 s passando (animação "passar" no CSS: entra pela direita, desliza e sai pela
+     esquerda). A seguinte começa a entrar quando a atual começa a sair (84% = 5,88 s), então sempre
+     há uma obra na tela. A primeira já está à mostra (.vista) e continua do mesmo ponto, sem pulo.
+     Com "reduzir movimento" no sistema, fica só a primeira, parada. Devolve a função que desliga. */
+  function ligarPassarela(painel) {
+    const obras = $$('.porta__obra', painel);
+    if (obras.length < 2 || matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
+    const DURA = 7000, VEZ = DURA * 0.84, ENTRADA = DURA * 0.16;
+    const ativar = (el, jaPassou = 0) => {
+      el.classList.remove('vista', 'ativa');
+      el.style.setProperty('--atraso', `${-jaPassou}ms`);
+      void el.offsetWidth; // recomeça a animação do zero
+      el.classList.add('ativa');
+      // a obra e o fundo também animam e o animationend deles sobe até aqui: só vale o da figura
+      const fim = (e) => {
+        if (e.target !== el) return;
+        el.removeEventListener('animationend', fim);
+        el.classList.remove('ativa');
+      };
+      el.addEventListener('animationend', fim);
+    };
+    let vez = 0;
+    let timer;
+    const proxima = () => {
+      vez = (vez + 1) % obras.length;
+      ativar(obras[vez]);
+      timer = setTimeout(proxima, VEZ);
+    };
+    ativar(obras[0], ENTRADA);                 // a primeira já entrou: segue de onde a .vista está
+    timer = setTimeout(proxima, VEZ - ENTRADA);
+    return () => clearTimeout(timer);
+  }
 
   /* ---------- formulário de lance (RN-08) ----------
      Fora do montar(): o painel do leilão ao vivo é trocado pelo servidor e o formulário novo
@@ -142,9 +253,7 @@
           const v = String(Math.floor(resto / seg)).padStart(2, '0');
           resto %= seg;
           const b = digitos[i];
-          if (b.textContent === v) return;
-          b.textContent = v;
-          b.animate?.([{ transform: 'translateY(-45%)', opacity: 0 }, { transform: 'none', opacity: 1 }], { duration: 450, easing: 'cubic-bezier(.2,.7,.1,1)' });
+          if (b.textContent !== v) b.textContent = v; // troca seca, sem o dígito "caindo" a cada segundo
         });
       });
     };
@@ -156,6 +265,14 @@
 
     /* ---------- lance (RN-08) ---------- */
     ligarLance($('[data-lance]'));
+
+    /* ---------- obra em 3D ---------- */
+    const parede3d = $('[data-obra-3d]');
+    const desligar3d = parede3d ? ligarObra3d(parede3d) : null;
+
+    /* ---------- passarela de obras no login ---------- */
+    const passarela = $('[data-passarela]');
+    const desligarPassarela = passarela ? ligarPassarela(passarela) : null;
 
     /* ---------- leilão ao vivo ----------
        A cada 2 s (5 s antes de abrir) pergunta ao servidor se algo mudou, mandando a versão que tem.
@@ -206,7 +323,6 @@
         const campoNovo = form?.elements.valor;
         if (campoNovo && digitado && Number(digitado) >= Number(campoNovo.min)) campoNovo.value = digitado;
         if (campoNovo && focado) campoNovo.focus({ preventScroll: true });
-        $('[data-lance-atual]', painel)?.animate?.([{ transform: 'scale(1.1)' }, { transform: 'none' }], { duration: 600, easing: 'cubic-bezier(.2,.7,.1,1)' });
 
         if (estadoAntes !== d.estado) {
           avisar({ AO_VIVO: 'O leilão abriu! Já dá para dar lances.', ENCERRADO: 'Martelo batido: o leilão foi encerrado.' }[d.estado] || 'A situação do leilão mudou.');
@@ -232,7 +348,7 @@
         const nota = form.querySelector(`[name="nota"][value="${b.dataset.nota}"]`);
         if (nota) nota.checked = true;
         $('[type="submit"]', form).textContent = 'Salvar alterações';
-        mov().rolar ? mov().rolar(form) : form.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        mov().rolar ? mov().rolar(form) : form.scrollIntoView({ block: 'center' }); // pulo direto, sem rolagem animada
         form.elements.comentario.focus({ preventScroll: true });
       })
     );
@@ -372,7 +488,8 @@
         a.tabIndex = sel ? 0 : -1;
         document.getElementById(a.getAttribute('aria-controls')).hidden = !sel;
       });
-      if (animar) mov().revelar?.(document.getElementById(aba.getAttribute('aria-controls')));
+      const painelAba = document.getElementById(aba.getAttribute('aria-controls'));
+      if (animar) mov().revelar ? mov().revelar(painelAba) : entrar(painelAba);
     };
     abas.forEach((a, i) => {
       a.addEventListener('click', () => ativar(a));
@@ -399,9 +516,33 @@
     return () => {
       clearInterval(relogio);
       clearTimeout(consulta);
+      desligar3d?.();
+      desligarPassarela?.();
     };
   }
   let desmontar = montar();
+
+  /* ---------- quadro pendurado balança no prego ----------
+     Um ouvinte só, no documento (serve para todas as páginas, inclusive depois da troca sem recarregar).
+     Quando o mouse entra num quadro pendurado (ou o dedo toca nele), ele balança para o lado contrário
+     de onde entrou (--lado) e vai parando (animação "balancar" no CSS). Enquanto balança, não recomeça.
+     A obra em 3D da página da obra fica de fora (ela já segue o mouse). */
+  const reduzMovimento = matchMedia('(prefers-reduced-motion: reduce)');
+  document.addEventListener('pointerover', (e) => {
+    const q = e.target.closest?.('.quadro--pendurado');
+    if (!q || q.contains(e.relatedTarget) || reduzMovimento.matches) return; // só na entrada
+    if (q.classList.contains('balancando') || q.closest('.em-3d')) return;
+    const b = q.getBoundingClientRect();
+    // com o prego em cima, rotate positivo leva a base para a esquerda: entrou pela esquerda = -1
+    q.style.setProperty('--lado', e.clientX < b.left + b.width / 2 ? '-1' : '1');
+    q.classList.add('balancando');
+    const fim = (ev) => {
+      if (ev.target !== q) return; // animationend dos filhos sobe até aqui
+      q.removeEventListener('animationend', fim);
+      q.classList.remove('balancando');
+    };
+    q.addEventListener('animationend', fim);
+  }, { passive: true });
 
   /* ---------- confirmação antes de excluir ---------- */
   document.addEventListener('submit', (e) => {
@@ -411,8 +552,9 @@
 
   /* =========================================================
      NAVEGAÇÃO SEM RECARREGAR
-     Link interno: baixa a página nova com fetch, a cortina cobre, troca o conteúdo do <body>
-     (cabeçalho, main, rodapé) e remonta comportamento + animações. Cortina, cursor, aviso e
+     Link interno: baixa a página nova com fetch, troca o conteúdo do <body> (cabeçalho, main,
+     rodapé) dentro de uma View Transition (no protótipo, a cortina cobre) e remonta o
+     comportamento. Cortina, cursor, aviso e
      scripts ficam (marcados com .cortina, script ou data-fixo). Funciona igual com as páginas
      geradas pelo PHP: ele só precisa devolver HTML completo, como já devolveria.
      Em file:// o navegador bloqueia fetch: aí cada link recarrega a página, com a cortina.
@@ -473,24 +615,41 @@
         return;
       }
       if (empurrar) history.pushState({ y: 0 }, '', pagina.url + hash);
-      desmontar();
-      mov().desmontar?.();
-      document.title = doc.title;
-      document.body.className = doc.body.className;
-      [...document.body.children].filter((el) => !fixo(el)).forEach((el) => el.remove());
-      document.body.prepend(...[...doc.body.children].filter((el) => !fixo(el)));
-      atual = semHash(location.href);
-      scrollTo({ top: 0, behavior: 'instant' });
-      const main = $('main');
-      if (main) {
-        main.tabIndex = -1; // leitor de tela e teclado começam pela página nova
-        main.focus({ preventScroll: true });
+      // troca tudo de uma vez (DOM e rolagem): é o "depois" que a transição fotografa
+      const trocar = () => {
+        desmontar();
+        mov().desmontar?.();
+        document.title = doc.title;
+        document.body.className = doc.body.className;
+        [...document.body.children].filter((el) => !fixo(el)).forEach((el) => el.remove());
+        document.body.prepend(...[...doc.body.children].filter((el) => !fixo(el)));
+        atual = semHash(location.href);
+        scrollTo({ top: 0, behavior: 'instant' });
+        const main = $('main');
+        if (main) {
+          main.tabIndex = -1; // leitor de tela e teclado começam pela página nova
+          main.focus({ preventScroll: true });
+        }
+        desmontar = montar();
+        const alvo = hash && document.getElementById(decodeURIComponent(hash.slice(1)));
+        if (mov().montar) mov().montar(y, alvo);
+        else if (alvo) alvo.scrollIntoView();
+        else scrollTo({ top: y, behavior: 'instant' });
+      };
+      // Transição entre as abas: o navegador fotografa a página atual, troca e anima a passagem
+      // (CSS "troca de página" no style.css). Voltar no histórico anima no sentido contrário.
+      // Sem a API (navegador antigo), a página nova só sobe suave (.entrando).
+      // O protótipo tem a cortina do movimento.js e não usa nada disso.
+      document.documentElement.dataset.direcao = empurrar ? 'frente' : 'volta';
+      if (document.startViewTransition && !mov().cobrir) {
+        const t = document.startViewTransition(trocar);
+        t.ready.catch(() => {}); // transição pulada (outro clique no meio): a troca acontece igual
+        t.finished.catch(() => {});
+        await t.updateCallbackDone;
+      } else {
+        trocar();
+        if (!mov().cobrir) entrar($('main'));
       }
-      desmontar = montar();
-      const alvo = hash && document.getElementById(decodeURIComponent(hash.slice(1)));
-      if (mov().montar) mov().montar(y, alvo);
-      else if (alvo) alvo.scrollIntoView();
-      else scrollTo({ top: y, behavior: 'instant' });
     } catch (erro) {
       console.warn('Navegação sem recarregar falhou, recarregando:', erro);
       if (minha === vez) location.href = url;

@@ -9,7 +9,7 @@ use App\Models\Movimentacao;
   <main id="conteudo">
     <section class="leiloes-cab envolve" aria-labelledby="carteira-titulo">
       <p class="rotulo">Créditos fictícios</p>
-      <h1 id="carteira-titulo">Car<span>teira</span></h1>
+      <h1 id="carteira-titulo">Sua <span>carteira</span></h1>
       <p>Os créditos servem para dar lances e arrematar obras. É dinheiro de mentira: nada é cobrado e nada sai do site.</p>
     </section>
 

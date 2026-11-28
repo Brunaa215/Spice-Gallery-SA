@@ -10,7 +10,7 @@ $titulo = $obra['titulo'];
 $total = (int) $obra['avaliacoes'];
 ?>
 <article class="obra" data-categoria="<?= e($obra['categoria']) ?>">
-  <a class="obra__link" href="<?= e(url('obras.show', ['id' => $obra['id']])) ?>" data-cursor="Ver obra">
+  <a class="obra__link" href="<?= e(url('obras.show', ['id' => $obra['id']])) ?>">
     <figure class="quadro <?= moldura($obra['id']) ?>"><div class="quadro__passe"><img src="<?= e($obra['urlImagem']) ?>" alt="<?= e($titulo . ', de ' . $obra['autor']) ?>" loading="lazy"></div></figure>
     <div class="placa">
       <span class="placa__num"><?= numeroObra($obra['id']) ?></span>

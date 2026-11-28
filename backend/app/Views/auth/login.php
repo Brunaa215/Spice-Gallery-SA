@@ -1,12 +1,34 @@
 <?php
 /**
  * Entrar e criar conta, em abas (era entrar.html). Abre na aba "Criar conta" com #cadastro.
- * Variáveis: $old (o que foi digitado antes de um erro)
+ * Variáveis: $old (o que foi digitado antes de um erro),
+ *            $passarela (obras publicadas que passam no painel da esquerda; vazio = imagem fixa)
  */
 use App\Core\Csrf;
+use App\Models\Obra;
+
+$passarela = $passarela ?? [];
 ?>
   <main id="conteudo" class="porta">
-    <div class="porta__arte">
+    <div class="porta__arte<?= $passarela ? ' porta__arte--obras' : '' ?>"<?= count($passarela) > 1 ? ' data-passarela' : '' ?>>
+      <?php foreach ($passarela as $i => $o): ?>
+        <!-- a primeira já aparece (sem JS ou com "reduzir movimento" fica só ela); o app.js faz as outras passarem -->
+        <figure class="porta__obra<?= $i === 0 ? ' vista' : '' ?>"<?= $i ? ' aria-hidden="true"' : '' ?>>
+          <img class="porta__fundo" src="<?= e($o['urlImagem']) ?>" alt="" decoding="async">
+          <!-- a mesma moldura que a obra tem na galeria (ouro, laca verde, laca rosa ou camafeu), pendurada num prego -->
+          <!-- .porta__tela desliza (passarela); o .quadro dentro dele balança no prego ao passar o mouse -->
+          <div class="porta__tela">
+            <div class="quadro <?= moldura($o['id']) ?> quadro--pendurado">
+              <div class="quadro__passe"><img src="<?= e($o['urlImagem']) ?>" alt="<?= e($o['titulo'] . ', de ' . $o['autor']) ?>" decoding="async"></div>
+            </div>
+          </div>
+          <figcaption class="porta__legenda">
+            <span><?= numeroObra($o['id']) ?> · <?= e(Obra::categoria($o['categoria'])) ?></span>
+            <strong><?= e($o['titulo']) ?></strong>
+            <em><?= e($o['autor']) ?></em>
+          </figcaption>
+        </figure>
+      <?php endforeach; ?>
       <blockquote>
         <p>A primeira parede é a mais difícil de encontrar.</p>
         <cite>Rafa Quintino, 22 · autor de Noite de Cravo</cite>
